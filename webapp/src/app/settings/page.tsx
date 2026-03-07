@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Settings, Tags, Target, Trash2, DatabaseZap, ShieldAlert, Palette, Plus, Check, User, Save, Camera } from "lucide-react";
+import { Settings, Tags, Target, Trash2, DatabaseZap, ShieldAlert, Palette, Plus, Check, User, Save, Camera, LogOut } from "lucide-react";
+import { logoutUser } from "@/actions/auth";
 import { useGlobal } from "@/contexts/GlobalContext";
 import { getCategories, createCategory, deleteCategory } from "@/actions/categories";
 import { getDashboardLimits, upsertLimit } from "@/actions/limits";
@@ -422,6 +423,21 @@ export default function SettingsPage() {
                         </div>
                     </div>
                 </motion.section>
+
+                {/* Logout */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-6"
+                >
+                    <button
+                        onClick={() => logoutUser()}
+                        className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl bg-red-500/10 text-red-400 border border-red-500/15 hover:bg-red-500 hover:text-white transition-all duration-300 font-semibold text-base"
+                    >
+                        <LogOut className="w-5 h-5" />
+                        Sair da Conta
+                    </button>
+                </motion.div>
 
             </div>
         </div>

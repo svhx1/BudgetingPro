@@ -12,11 +12,9 @@ import {
     Eye,
     EyeOff,
     ChevronLeft,
-    ChevronRight,
-    LogOut
+    ChevronRight
 } from "lucide-react";
 import { useGlobal } from "@/contexts/GlobalContext";
-import { logoutUser } from "@/actions/auth";
 
 export default function Sidebar() {
     const pathname = usePathname();
@@ -120,8 +118,8 @@ export default function Sidebar() {
                 </nav>
 
                 {/* User */}
-                <div className="mt-auto space-y-3">
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-(--color-glass) border border-(--color-glass-border)">
+                <div className="mt-auto">
+                    <Link href="/settings" className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-(--color-glass) border border-(--color-glass-border) hover:bg-(--color-glass-hover) transition-colors">
                         {profileData.avatarUrl ? (
                             <img
                                 src={profileData.avatarUrl}
@@ -135,16 +133,9 @@ export default function Sidebar() {
                         )}
                         <div className="flex flex-col">
                             <span className="text-sm font-medium text-white">{profileData.name || "Minha Conta"}</span>
-                            <span className="text-xs text-(--color-text-muted)">Premium</span>
+                            <span className="text-xs text-(--color-text-muted)">Configurações</span>
                         </div>
-                    </div>
-                    <button
-                        onClick={() => logoutUser()}
-                        className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl text-sm text-red-400/80 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all"
-                    >
-                        <LogOut className="w-4 h-4" />
-                        <span>Sair</span>
-                    </button>
+                    </Link>
                 </div>
             </aside>
 
