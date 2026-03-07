@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { ThemeConfig, CustomTheme, BUILT_IN_THEMES, DEFAULT_CUSTOM_THEME, applyTheme, applyCustomTheme } from "@/lib/themes";
 
 type Period = {
     month: number;
@@ -32,6 +33,16 @@ interface GlobalContextProps {
     addToast: (message: string, type?: ToastType) => void;
     profileData: ProfileData;
     setProfileData: (data: ProfileData) => void;
+    // Theme
+    currentThemeId: string;
+    setThemeById: (id: string) => void;
+    customTheme: CustomTheme;
+    setCustomTheme: (theme: CustomTheme) => void;
+    // Decorations
+    decorationId: string | null;
+    setDecorationId: (id: string | null) => void;
+    hatId: string | null;
+    setHatId: (id: string | null) => void;
 }
 
 const GlobalContext = createContext<GlobalContextProps | undefined>(undefined);
@@ -53,19 +64,72 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
         avatarUrl: null,
     });
 
-    // Load avatar from localStorage on mount
+    // Theme state
+    const [currentThemeId, setCurrentThemeId] = useState("midnight");
+    const [customTheme, setCustomThemeState] = useState<CustomTheme>(DEFAULT_CUSTOM_THEME);
+
+    // Decoration state
+    const [decorationId, setDecorationIdState] = useState<string | null>(null);
+    const [hatId, setHatIdState] = useState<string | null>(null);
+
+    // Load all preferences from localStorage
     useEffect(() => {
         const savedAvatar = localStorage.getItem("budgeting_avatar");
-        if (savedAvatar) {
-            setProfileDataState(prev => ({ ...prev, avatarUrl: savedAvatar }));
+        if (savedAvatar) setProfileDataState(prev => ({ ...prev, avatarUrl: savedAvatar }));
+
+        const savedTheme = localStorage.getItem("budgeting_theme");
+        if (savedTheme) setCurrentThemeId(savedTheme);
+
+        const savedCustom = localStorage.getItem("budgeting_custom_theme");
+        if (savedCustom) {
+            try { setCustomThemeState(JSON.parse(savedCustom)); } catch { }
         }
+
+        const savedDecoration = localStorage.getItem("budgeting_decoration");
+        if (savedDecoration) setDecorationIdState(savedDecoration);
+
+        const savedHat = localStorage.getItem("budgeting_hat");
+        if (savedHat) setHatIdState(savedHat);
     }, []);
+
+    // Apply theme whenever it changes
+    useEffect(() => {
+        if (currentThemeId === "custom") {
+            applyCustomTheme(customTheme);
+        } else {
+            const theme = BUILT_IN_THEMES.find(t => t.id === currentThemeId);
+            if (theme) applyTheme(theme);
+        }
+    }, [currentThemeId, customTheme]);
+
+    const setThemeById = (id: string) => {
+        setCurrentThemeId(id);
+        localStorage.setItem("budgeting_theme", id);
+    };
+
+    const setCustomTheme = (theme: CustomTheme) => {
+        setCustomThemeState(theme);
+        localStorage.setItem("budgeting_custom_theme", JSON.stringify(theme));
+        if (currentThemeId === "custom") {
+            applyCustomTheme(theme);
+        }
+    };
+
+    const setDecorationId = (id: string | null) => {
+        setDecorationIdState(id);
+        if (id) localStorage.setItem("budgeting_decoration", id);
+        else localStorage.removeItem("budgeting_decoration");
+    };
+
+    const setHatId = (id: string | null) => {
+        setHatIdState(id);
+        if (id) localStorage.setItem("budgeting_hat", id);
+        else localStorage.removeItem("budgeting_hat");
+    };
 
     const setProfileData = (data: ProfileData) => {
         setProfileDataState(data);
-        if (data.avatarUrl) {
-            localStorage.setItem("budgeting_avatar", data.avatarUrl);
-        }
+        if (data.avatarUrl) localStorage.setItem("budgeting_avatar", data.avatarUrl);
     };
 
     const [toasts, setToasts] = useState<ToastInfo[]>([]);
@@ -93,12 +157,20 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
                 addToast,
                 profileData,
                 setProfileData,
+                currentThemeId,
+                setThemeById,
+                customTheme,
+                setCustomTheme,
+                decorationId,
+                setDecorationId,
+                hatId,
+                setHatId,
             }}
         >
             {children}
 
-            {/* Global Toasts Container */}
-            <div className="fixed top-4 right-4 md:bottom-10 md:right-10 md:top-auto z-[9999] flex flex-col gap-3 pointer-events-none">
+            {/* Global Toasts Container — top right */}
+            <div className="fixed top-4 right-4 z-[9999] flex flex-col gap-3 pointer-events-none">
                 {toasts.map(toast => (
                     <div
                         key={toast.id}

@@ -1,5 +1,6 @@
 "use client";
 
+import AvatarWithDecoration from "@/components/profile/AvatarWithDecoration";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
@@ -120,17 +121,7 @@ export default function Sidebar() {
                 {/* User */}
                 <div className="mt-auto">
                     <Link href="/settings" className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-(--color-glass) border border-(--color-glass-border) hover:bg-(--color-glass-hover) transition-colors">
-                        {profileData.avatarUrl ? (
-                            <img
-                                src={profileData.avatarUrl}
-                                alt="Avatar"
-                                className="w-8 h-8 rounded-full object-cover ring-1 ring-white/10"
-                            />
-                        ) : (
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-(--color-neon-green) to-emerald-300 flex items-center justify-center text-xs font-bold text-white">
-                                {profileData.name ? profileData.name.charAt(0).toUpperCase() : "?"}
-                            </div>
-                        )}
+                        <AvatarWithDecoration size={32} />
                         <div className="flex flex-col">
                             <span className="text-sm font-medium text-white">{profileData.name || "Minha Conta"}</span>
                             <span className="text-xs text-(--color-text-muted)">Configurações</span>
