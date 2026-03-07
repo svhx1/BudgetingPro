@@ -6,18 +6,13 @@
   --color-glass-hover: rgba(255, 255, 255, 0.05);
   --color-glass-border: rgba(255, 255, 255, 0.06);
   --color-neon-green: #059669;
-  /* emerald-600 para glow mais sóbrio */
   --color-neon-green-light: #10b981;
-  /* emerald-500 para texto e detalhes bright */
   --color-neon-red: #dc2626;
-  /* red-600 */
   --color-neon-red-light: #ef4444;
-  /* red-500 */
   --color-text-main: #f8fafc;
   --color-text-muted: #94a3b8;
 
   --radius-glass: 1.5rem;
-  /* ~ 3xl squircle feeling */
 
   --shadow-neon-green: 0 0 20px -5px rgba(16, 185, 129, 0.3);
   --shadow-neon-red: 0 0 20px -5px rgba(239, 68, 68, 0.3);
@@ -46,7 +41,7 @@ body {
   position: relative;
 }
 
-/* Utilitários globais pra facilitar o Vibe Coding com Glassmorphism */
+/* Glass utilities */
 .glass-panel {
   background-color: var(--color-glass);
   backdrop-filter: blur(20px);
@@ -69,7 +64,7 @@ body {
   background-color: var(--color-glass-hover);
 }
 
-/* Custom scrollbar for dark theme */
+/* Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
 }
@@ -96,20 +91,86 @@ body {
   scrollbar-width: none;
 }
 
-/* === Decoration Animations === */
-@keyframes sparkle {
+/* ===================================================================
+   DISCORD-STYLE DECORATION ANIMATIONS
+   =================================================================== */
 
-  0%,
-  100% {
-    box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.3), 0 0 16px 4px rgba(251, 191, 36, 0.2);
-  }
+/* CSS custom property for conic-gradient angle */
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
 
-  50% {
-    box-shadow: 0 0 16px 4px rgba(255, 255, 255, 0.6), 0 0 32px 8px rgba(251, 191, 36, 0.4);
+/* Spinning border ring (Discord Nitro style) */
+.deco-spin {
+  animation: deco-rotate 3s linear infinite;
+}
+
+.deco-spin-slow {
+  animation: deco-rotate 6s linear infinite;
+}
+
+@keyframes deco-rotate {
+  to {
+    --angle: 360deg;
   }
 }
 
-@keyframes pulse-glow {
+/* Pulsing glow effects */
+.deco-pulse-emerald {
+  animation: deco-p-emerald 2s ease-in-out infinite;
+}
+
+@keyframes deco-p-emerald {
+
+  0%,
+  100% {
+    box-shadow: 0 0 10px 3px rgba(16, 185, 129, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 20px 6px rgba(16, 185, 129, 0.6), 0 0 35px 10px rgba(16, 185, 129, 0.2);
+  }
+}
+
+.deco-pulse-fire {
+  animation: deco-p-fire 2s ease-in-out infinite;
+}
+
+@keyframes deco-p-fire {
+
+  0%,
+  100% {
+    box-shadow: 0 0 10px 3px rgba(239, 68, 68, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 20px 6px rgba(239, 68, 68, 0.6), 0 0 35px 10px rgba(249, 115, 22, 0.2);
+  }
+}
+
+.deco-pulse-ice {
+  animation: deco-p-ice 2.5s ease-in-out infinite;
+}
+
+@keyframes deco-p-ice {
+
+  0%,
+  100% {
+    box-shadow: 0 0 10px 3px rgba(56, 189, 248, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 20px 6px rgba(56, 189, 248, 0.6), 0 0 35px 10px rgba(56, 189, 248, 0.2);
+  }
+}
+
+.deco-pulse-cosmic {
+  animation: deco-p-cosmic 2.5s ease-in-out infinite;
+}
+
+@keyframes deco-p-cosmic {
 
   0%,
   100% {
@@ -117,39 +178,106 @@ body {
   }
 
   50% {
-    box-shadow: 0 0 25px 8px rgba(139, 92, 246, 0.5), 0 0 40px 12px rgba(139, 92, 246, 0.2);
+    box-shadow: 0 0 20px 6px rgba(139, 92, 246, 0.6), 0 0 35px 10px rgba(236, 72, 153, 0.2);
   }
 }
 
-@keyframes orbit-ring {
-  0% {
-    box-shadow: 4px 0 8px 2px rgba(59, 130, 246, 0.5), -4px 0 8px 2px rgba(16, 185, 129, 0.3);
-  }
+.deco-pulse-gold {
+  animation: deco-p-gold 2s ease-in-out infinite;
+}
 
-  25% {
-    box-shadow: 0 4px 8px 2px rgba(59, 130, 246, 0.5), 0 -4px 8px 2px rgba(16, 185, 129, 0.3);
+@keyframes deco-p-gold {
+
+  0%,
+  100% {
+    box-shadow: 0 0 10px 3px rgba(251, 191, 36, 0.3);
   }
 
   50% {
-    box-shadow: -4px 0 8px 2px rgba(59, 130, 246, 0.5), 4px 0 8px 2px rgba(16, 185, 129, 0.3);
-  }
-
-  75% {
-    box-shadow: 0 -4px 8px 2px rgba(59, 130, 246, 0.5), 0 4px 8px 2px rgba(16, 185, 129, 0.3);
-  }
-
-  100% {
-    box-shadow: 4px 0 8px 2px rgba(59, 130, 246, 0.5), -4px 0 8px 2px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 0 20px 6px rgba(251, 191, 36, 0.6), 0 0 35px 10px rgba(245, 158, 11, 0.2);
   }
 }
 
-@keyframes ripple {
+.deco-heartbeat {
+  animation: deco-hb 1.5s ease-in-out infinite;
+}
+
+@keyframes deco-hb {
+
+  0%,
+  100% {
+    box-shadow: 0 0 8px 2px rgba(239, 68, 68, 0.3);
+    transform: scale(1);
+  }
+
+  15% {
+    box-shadow: 0 0 18px 5px rgba(239, 68, 68, 0.6);
+    transform: scale(1.04);
+  }
+
+  30% {
+    box-shadow: 0 0 8px 2px rgba(239, 68, 68, 0.3);
+    transform: scale(1);
+  }
+
+  45% {
+    box-shadow: 0 0 14px 4px rgba(239, 68, 68, 0.5);
+    transform: scale(1.02);
+  }
+}
+
+.deco-breathe {
+  animation: deco-breathe-kf 4s ease-in-out infinite;
+}
+
+@keyframes deco-breathe-kf {
+
+  0%,
+  100% {
+    box-shadow: 0 0 8px 2px rgba(59, 130, 246, 0.2);
+  }
+
+  50% {
+    box-shadow: 0 0 25px 8px rgba(59, 130, 246, 0.5), 0 0 50px 15px rgba(59, 130, 246, 0.15);
+  }
+}
+
+.deco-lightning {
+  animation: deco-lightning-kf 3s ease-in-out infinite;
+}
+
+@keyframes deco-lightning-kf {
+
+  0%,
+  88%,
+  100% {
+    box-shadow: 0 0 6px 2px rgba(251, 191, 36, 0.15);
+  }
+
+  90% {
+    box-shadow: 0 0 30px 10px rgba(251, 191, 36, 0.8), 0 0 50px 15px rgba(255, 255, 255, 0.2);
+  }
+
+  93% {
+    box-shadow: 0 0 4px 1px rgba(251, 191, 36, 0.1);
+  }
+
+  95% {
+    box-shadow: 0 0 22px 7px rgba(251, 191, 36, 0.6);
+  }
+}
+
+.deco-ripple {
+  animation: deco-ripple-kf 2s ease-out infinite;
+}
+
+@keyframes deco-ripple-kf {
   0% {
     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
   }
 
   50% {
-    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
   }
 
   100% {
@@ -157,95 +285,30 @@ body {
   }
 }
 
-@keyframes heartbeat {
+.deco-glitch {
+  animation: deco-glitch-kf 2s steps(5) infinite;
+}
+
+@keyframes deco-glitch-kf {
 
   0%,
   100% {
-    transform: scale(1);
-    box-shadow: 0 0 10px 3px rgba(239, 68, 68, 0.3);
+    box-shadow: 2px 0 6px rgba(239, 68, 68, 0.4), -2px 0 6px rgba(59, 130, 246, 0.4);
   }
 
-  15% {
-    transform: scale(1.05);
-    box-shadow: 0 0 20px 6px rgba(239, 68, 68, 0.5);
+  20% {
+    box-shadow: -3px 1px 8px rgba(239, 68, 68, 0.5), 3px -1px 8px rgba(59, 130, 246, 0.5);
   }
 
-  30% {
-    transform: scale(1);
-    box-shadow: 0 0 10px 3px rgba(239, 68, 68, 0.3);
+  40% {
+    box-shadow: 1px -2px 6px rgba(16, 185, 129, 0.4), -1px 2px 6px rgba(236, 72, 153, 0.4);
   }
 
-  45% {
-    transform: scale(1.03);
-    box-shadow: 0 0 15px 5px rgba(239, 68, 68, 0.4);
-  }
-}
-
-@keyframes lightning-flash {
-
-  0%,
-  90%,
-  100% {
-    box-shadow: 0 0 8px 2px rgba(251, 191, 36, 0.2);
+  60% {
+    box-shadow: -2px 0 10px rgba(139, 92, 246, 0.5), 2px 0 10px rgba(251, 191, 36, 0.4);
   }
 
-  92% {
-    box-shadow: 0 0 30px 10px rgba(251, 191, 36, 0.8), 0 0 60px 20px rgba(255, 255, 255, 0.3);
-  }
-
-  95% {
-    box-shadow: 0 0 5px 2px rgba(251, 191, 36, 0.1);
-  }
-
-  97% {
-    box-shadow: 0 0 25px 8px rgba(251, 191, 36, 0.6);
-  }
-}
-
-@keyframes bubble-float {
-
-  0%,
-  100% {
-    box-shadow: 0 0 10px 3px rgba(56, 189, 248, 0.3);
-    transform: translateY(0);
-  }
-
-  50% {
-    box-shadow: 0 0 20px 6px rgba(56, 189, 248, 0.5);
-    transform: translateY(-2px);
-  }
-}
-
-@keyframes flame-flicker {
-  0% {
-    box-shadow: 0 -3px 10px 2px rgba(249, 115, 22, 0.4), 0 -6px 15px 4px rgba(239, 68, 68, 0.2);
-  }
-
-  100% {
-    box-shadow: 0 -5px 15px 4px rgba(249, 115, 22, 0.6), 0 -8px 25px 6px rgba(239, 68, 68, 0.3);
-  }
-}
-
-@keyframes snow-drift {
-
-  0%,
-  100% {
-    box-shadow: 2px -2px 8px 2px rgba(255, 255, 255, 0.3), -2px 2px 8px 2px rgba(186, 230, 253, 0.2);
-  }
-
-  50% {
-    box-shadow: -2px -3px 12px 3px rgba(255, 255, 255, 0.4), 2px 3px 12px 3px rgba(186, 230, 253, 0.3);
-  }
-}
-
-@keyframes confetti-pop {
-
-  0%,
-  100% {
-    box-shadow: 3px -3px 6px 1px rgba(239, 68, 68, 0.3), -3px -3px 6px 1px rgba(59, 130, 246, 0.3), 0 3px 6px 1px rgba(16, 185, 129, 0.3);
-  }
-
-  50% {
-    box-shadow: 5px -5px 10px 2px rgba(251, 191, 36, 0.4), -5px -5px 10px 2px rgba(236, 72, 153, 0.4), 0 5px 10px 2px rgba(139, 92, 246, 0.4);
+  80% {
+    box-shadow: 3px 1px 6px rgba(56, 189, 248, 0.4), -3px -1px 6px rgba(249, 115, 22, 0.4);
   }
 }

@@ -6,12 +6,12 @@ import { motion } from "framer-motion";
 import AvatarWithDecoration from "@/components/profile/AvatarWithDecoration";
 
 export default function DecorationPicker() {
-    const { decorationId, setDecorationId, hatId, setHatId, profileData } = useGlobal();
+    const { decorationId, setDecorationId, hatId, setHatId } = useGlobal();
 
-    const categories: { key: Decoration["category"]; label: string }[] = [
-        { key: "ring", label: "Anéis" },
-        { key: "glow", label: "Auras" },
-        { key: "animated", label: "Animados" },
+    const categories: { key: Decoration["category"]; label: string; desc: string }[] = [
+        { key: "ring", label: "Bordas Animadas", desc: "Estilo Discord Nitro" },
+        { key: "glow", label: "Brilhos", desc: "Efeitos estáticos" },
+        { key: "animated", label: "Efeitos Pulsantes", desc: "Animações dinâmicas" },
     ];
 
     return (
@@ -19,7 +19,7 @@ export default function DecorationPicker() {
             {/* Live Preview */}
             <div className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-white/5 border border-white/10">
                 <AvatarWithDecoration size={80} />
-                <p className="text-sm text-(--color-text-muted)">Preview</p>
+                <p className="text-sm text-(--color-text-muted)">Preview ao vivo</p>
                 {(decorationId || hatId) && (
                     <button
                         onClick={() => { setDecorationId(null); setHatId(null); }}
@@ -30,11 +30,14 @@ export default function DecorationPicker() {
                 )}
             </div>
 
-            {/* Decorations by category */}
+            {/* Decorations */}
             {categories.map(cat => (
                 <div key={cat.key}>
-                    <h4 className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-wider mb-3">{cat.label}</h4>
-                    <div className="grid grid-cols-5 sm:grid-cols-6 gap-2">
+                    <div className="mb-3">
+                        <h4 className="text-xs font-semibold text-white uppercase tracking-wider">{cat.label}</h4>
+                        <p className="text-[10px] text-(--color-text-muted)">{cat.desc}</p>
+                    </div>
+                    <div className="grid grid-cols-5 sm:grid-cols-5 gap-2">
                         {DECORATIONS.filter(d => d.category === cat.key).map(dec => {
                             const isActive = decorationId === dec.id;
                             return (
@@ -42,23 +45,37 @@ export default function DecorationPicker() {
                                     key={dec.id}
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => setDecorationId(isActive ? null : dec.id)}
-                                    className={`relative flex flex-col items-center gap-1 p-2 rounded-xl border text-center transition-all ${isActive
+                                    className={`flex flex-col items-center gap-1 p-2 rounded-xl border text-center transition-all ${isActive
                                         ? "border-white/30 bg-white/10"
                                         : "border-white/5 hover:border-white/15 hover:bg-white/5"
                                         }`}
                                     title={dec.name}
                                 >
-                                    {/* Mini preview circle */}
-                                    <div
-                                        className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-indigo-500"
-                                        style={{
-                                            boxShadow: dec.category !== "animated" ? dec.css : "0 0 8px rgba(255,255,255,0.2)",
-                                            ...(dec.category === "animated" ? { animation: dec.css.split(":")[1]?.split(";")[0]?.trim() } : {}),
-                                        }}
-                                    />
-                                    <span className="text-[9px] text-(--color-text-muted) truncate w-full">{dec.name}</span>
+                                    {/* Mini preview */}
+                                    <div className="relative w-8 h-8">
+                                        {dec.borderGradient ? (
+                                            <div
+                                                className={`w-8 h-8 rounded-full ${dec.animationClass || ""}`}
+                                                style={{
+                                                    background: dec.borderGradient,
+                                                    mask: "radial-gradient(circle, transparent 40%, black 44%)",
+                                                    WebkitMask: "radial-gradient(circle, transparent 40%, black 44%)",
+                                                }}
+                                            />
+                                        ) : dec.boxShadow ? (
+                                            <div
+                                                className="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-400 to-indigo-500 mx-auto mt-1"
+                                                style={{ boxShadow: dec.boxShadow }}
+                                            />
+                                        ) : (
+                                            <div
+                                                className={`w-6 h-6 rounded-full bg-gradient-to-br from-emerald-400 to-indigo-500 mx-auto mt-1 ${dec.animationClass || ""}`}
+                                            />
+                                        )}
+                                    </div>
+                                    <span className="text-[8px] text-(--color-text-muted) truncate w-full leading-tight">{dec.name}</span>
                                 </motion.button>
-                            )
+                            );
                         })}
                     </div>
                 </div>
@@ -66,8 +83,11 @@ export default function DecorationPicker() {
 
             {/* Hats */}
             <div>
-                <h4 className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-wider mb-3">Chapéus & Acessórios</h4>
-                <div className="grid grid-cols-5 sm:grid-cols-6 gap-2">
+                <div className="mb-3">
+                    <h4 className="text-xs font-semibold text-white uppercase tracking-wider">Chapéus & Acessórios</h4>
+                    <p className="text-[10px] text-(--color-text-muted)">Posicionados sobre a foto</p>
+                </div>
+                <div className="grid grid-cols-5 sm:grid-cols-5 gap-2">
                     {HATS.map(hat => {
                         const isActive = hatId === hat.id;
                         return (
@@ -81,8 +101,11 @@ export default function DecorationPicker() {
                                     }`}
                                 title={hat.name}
                             >
-                                <span className="text-xl">{hat.emoji}</span>
-                                <span className="text-[9px] text-(--color-text-muted) truncate w-full text-center">{hat.name}</span>
+                                <div
+                                    className="w-8 h-8"
+                                    dangerouslySetInnerHTML={{ __html: hat.svg }}
+                                />
+                                <span className="text-[8px] text-(--color-text-muted) truncate w-full text-center leading-tight">{hat.name}</span>
                             </motion.button>
                         );
                     })}
