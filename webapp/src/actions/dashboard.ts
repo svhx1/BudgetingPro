@@ -23,6 +23,14 @@ async function fetchDashboardSummary(userId: string, month: number, year: number
     const incomes = transactions.filter((t: any) => t.type === "INCOME").reduce((acc: number, t: any) => acc + t.amount, 0);
     const expenses = transactions.filter((t: any) => t.type === "EXPENSE").reduce((acc: number, t: any) => acc + t.amount, 0);
 
+    // Credit used this month
+    const creditUsed = transactions
+        .filter((t: any) => t.type === "EXPENSE" && t.paymentMethod === "CREDIT")
+        .reduce((acc: number, t: any) => acc + t.amount, 0);
+
+    // Month net balance (just this month)
+    const monthBalance = incomes - expenses;
+
     // ACCUMULATED BALANCE: all transactions from all time up to today
     const today = new Date();
     today.setHours(23, 59, 59, 999);
@@ -39,7 +47,7 @@ async function fetchDashboardSummary(userId: string, month: number, year: number
     const totalExpenses = allPastTransactions.filter((t: any) => t.type === "EXPENSE").reduce((acc: number, t: any) => acc + t.amount, 0);
     const balance = totalIncomes - totalExpenses;
 
-    return { incomes, expenses, balance, transactions };
+    return { incomes, expenses, balance, creditUsed, monthBalance, transactions };
 }
 
 export async function getDashboardSummary(month: number, year: number) {
@@ -49,6 +57,6 @@ export async function getDashboardSummary(month: number, year: number) {
         return { success: true, data };
     } catch (error) {
         console.error("Erro ao buscar resumo do dashboard:", error);
-        return { success: false, data: { incomes: 0, expenses: 0, balance: 0, transactions: [] } };
+        return { success: false, data: { incomes: 0, expenses: 0, balance: 0, creditUsed: 0, monthBalance: 0, transactions: [] } };
     }
 }

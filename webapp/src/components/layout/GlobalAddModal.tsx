@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { PlusCircle, RefreshCw, Layers, CalendarDays, X, Plus } from "lucide-react";
+import { PlusCircle, RefreshCw, Layers, CalendarDays, X, Plus, CreditCard, Banknote } from "lucide-react";
 import { createTransaction } from "@/actions/transactions";
 import { getCategories, createCategory } from "@/actions/categories";
 import { useGlobal } from "@/contexts/GlobalContext";
@@ -18,6 +18,7 @@ export default function GlobalAddModal() {
     const [date, setDate] = useState<string>(new Date().toISOString().split("T")[0]);
     const [categoryId, setCategoryId] = useState<string>("");
     const [loading, setLoading] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState<"DEBIT" | "CREDIT">("DEBIT");
 
     const [dbCategories, setDbCategories] = useState<any[]>([]);
     const [showNewCat, setShowNewCat] = useState(false);
@@ -78,6 +79,7 @@ export default function GlobalAddModal() {
             categoryId,
             recurrence,
             installments: recurrence === "parcelado" ? installments : undefined,
+            paymentMethod: type === "EXPENSE" ? paymentMethod : undefined,
         });
 
         if (res?.success) {
@@ -167,6 +169,37 @@ export default function GlobalAddModal() {
                                         />
                                     </div>
                                 </div>
+
+                                {/* Payment Method — only for expenses */}
+                                {isExpense && (
+                                    <div className="flex flex-col gap-2">
+                                        <label className="text-sm font-medium text-(--color-text-muted) uppercase tracking-wider">Método de Pagamento</label>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={() => setPaymentMethod("DEBIT")}
+                                                className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 transition-all duration-200 ${paymentMethod === "DEBIT"
+                                                        ? "bg-white/10 border-white/30 text-white"
+                                                        : "bg-transparent border-white/10 text-(--color-text-muted) hover:bg-white/5"
+                                                    }`}
+                                            >
+                                                <Banknote className="w-4 h-4" />
+                                                <span className="text-sm font-semibold">Débito</span>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setPaymentMethod("CREDIT")}
+                                                className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 transition-all duration-200 ${paymentMethod === "CREDIT"
+                                                        ? "bg-purple-500/15 border-purple-500/30 text-purple-300"
+                                                        : "bg-transparent border-white/10 text-(--color-text-muted) hover:bg-white/5"
+                                                    }`}
+                                            >
+                                                <CreditCard className="w-4 h-4" />
+                                                <span className="text-sm font-semibold">Crédito</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Base Info Row */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

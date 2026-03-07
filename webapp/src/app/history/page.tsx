@@ -12,6 +12,7 @@ export default function HistoryPage() {
     const [transactions, setTransactions] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [totalMoved, setTotalMoved] = useState(0);
+    const [monthBalance, setMonthBalance] = useState(0);
 
     // Local month selector for history
     const now = new Date();
@@ -28,6 +29,7 @@ export default function HistoryPage() {
             if (res.success && res.data) {
                 setTransactions(res.data.transactions);
                 setTotalMoved(res.data.incomes + res.data.expenses);
+                setMonthBalance(res.data.monthBalance || 0);
             }
             setLoading(false);
         }
@@ -91,11 +93,19 @@ export default function HistoryPage() {
                             Extrato Detalhado
                         </h1>
                     </div>
-                    <div className="flex items-center gap-2 px-4 py-2 glass-panel rounded-full text-sm font-medium">
-                        <span className="text-(--color-text-muted)">Total Movimentado:</span>
-                        <span className="text-white">
-                            {isPrivacyMode ? "R$ ••••" : `R$ ${totalMoved.toFixed(2).replace('.', ',')}`}
-                        </span>
+                    <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
+                        <div className="flex items-center gap-2 px-4 py-2 glass-panel rounded-full text-sm font-medium">
+                            <span className="text-(--color-text-muted)">Total Movimentado:</span>
+                            <span className="text-white">
+                                {isPrivacyMode ? "R$ ••••" : `R$ ${totalMoved.toFixed(2).replace('.', ',')}`}
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-2 px-4 py-2 glass-panel rounded-full text-sm font-medium">
+                            <span className="text-(--color-text-muted)">Saldo do Mês:</span>
+                            <span className={monthBalance >= 0 ? "text-emerald-400" : "text-red-400"}>
+                                {isPrivacyMode ? "R$ ••••" : `R$ ${Math.abs(monthBalance).toFixed(2).replace('.', ',')}`}
+                            </span>
+                        </div>
                     </div>
                 </div>
 

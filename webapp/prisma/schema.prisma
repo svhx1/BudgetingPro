@@ -61,6 +61,7 @@ model Transaction {
   amount       Float
   type         String   // "INCOME" | "EXPENSE"
   date         DateTime
+  paymentMethod String? // "DEBIT" | "CREDIT" (only for EXPENSE)
   
   // Recorrência e Parcelamentos (UUID único por grupo de transações vinculadas)
   groupId      String?

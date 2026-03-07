@@ -12,13 +12,14 @@ export type TransactionInput = {
     categoryId: string;
     recurrence: "unico" | "parcelado" | "fixo";
     installments?: number;
+    paymentMethod?: "DEBIT" | "CREDIT";
 };
 
 export async function createTransaction(data: TransactionInput) {
     try {
         const userId = await getCurrentUserId();
         const {
-            description, amount, type, date, categoryId, recurrence, installments
+            description, amount, type, date, categoryId, recurrence, installments, paymentMethod
         } = data;
 
         const baseDate = new Date(date);
@@ -44,6 +45,7 @@ export async function createTransaction(data: TransactionInput) {
                     date: baseDate,
                     categoryId,
                     userId,
+                    paymentMethod: type === "EXPENSE" ? (paymentMethod || "DEBIT") : null,
                 },
             });
         }
@@ -64,6 +66,7 @@ export async function createTransaction(data: TransactionInput) {
                     userId,
                     groupId,
                     installment: `${i + 1}/${installments}`,
+                    paymentMethod: type === "EXPENSE" ? (paymentMethod || "DEBIT") : null,
                 };
             });
 
@@ -83,7 +86,8 @@ export async function createTransaction(data: TransactionInput) {
                     categoryId,
                     userId,
                     groupId,
-                    installment: "Fixo"
+                    installment: "Fixo",
+                    paymentMethod: type === "EXPENSE" ? (paymentMethod || "DEBIT") : null,
                 };
             });
 
