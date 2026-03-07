@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String        @id @default(cuid())
+  email     String        @unique
+  name      String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  
+  transactions Transaction[]
+  categories   Category[]
+  limits       BudgetLimit[]
+}
+
+model Category {
+  id        String       @id @default(cuid())
+  name      String
+  color     String       @default("#10b981") // Padrão verde neon
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  transactions Transaction[]
+  budgetLimit  BudgetLimit?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([name, userId])
+}
+
+model BudgetLimit {
+  id          String   @id @default(cuid())
+  amount      Float
+  categoryId  String   @unique
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Transaction {
+  id           String   @id @default(cuid())
+  description  String
+  amount       Float
+  type         String   // "INCOME" | "EXPENSE"
+  date         DateTime
+  
+  // Recorrência e Parcelamentos (UUID único por grupo de transações vinculadas)
+  groupId      String?
+  installment  String?  // Ex: "1/12"
+  
+  categoryId   String
+  category     Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model VerificationCode {
+  id        String   @id @default(cuid())
+  email     String
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email, code])
+}

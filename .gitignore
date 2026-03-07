@@ -1,0 +1,30 @@
+# Temporary files
+.tmp/
+.temp/
+
+# Environment Variables
+.env
+.env.local
+
+# Credentials
+credentials.json
+token.json
+
+# Standard
+node_modules/
+__pycache__/
+*.pyc
+
+# Next.js
+.next/
+out/
+
+# Prisma
+prisma/migrations/
+
+# OS
+.DS_Store
+Thumbs.db
+.agents/skills/
+.gemini/
+*.db

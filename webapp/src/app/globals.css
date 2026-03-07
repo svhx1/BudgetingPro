@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@theme {
+  --color-base-bg: #050505;
+  --color-glass: rgba(255, 255, 255, 0.02);
+  --color-glass-hover: rgba(255, 255, 255, 0.05);
+  --color-glass-border: rgba(255, 255, 255, 0.06);
+  --color-neon-green: #059669;
+  /* emerald-600 para glow mais sóbrio */
+  --color-neon-green-light: #10b981;
+  /* emerald-500 para texto e detalhes bright */
+  --color-neon-red: #dc2626;
+  /* red-600 */
+  --color-neon-red-light: #ef4444;
+  /* red-500 */
+  --color-text-main: #f8fafc;
+  --color-text-muted: #94a3b8;
+
+  --radius-glass: 1.5rem;
+  /* ~ 3xl squircle feeling */
+
+  --shadow-neon-green: 0 0 20px -5px rgba(16, 185, 129, 0.3);
+  --shadow-neon-red: 0 0 20px -5px rgba(239, 68, 68, 0.3);
+  --shadow-glass: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--color-base-bg);
+  color: var(--color-text-main);
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.03) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(239, 68, 68, 0.02) 0%, transparent 40%);
+  min-height: 100vh;
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+/* Utilitários globais pra facilitar o Vibe Coding com Glassmorphism */
+.glass-panel {
+  background-color: var(--color-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-glass);
+  box-shadow: none;
+  transition: box-shadow 0.4s ease, border-color 0.4s ease, transform 0.3s ease;
+}
+
+.glass-panel:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.glass-button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-button:hover {
+  background-color: var(--color-glass-hover);
+}
+
+/* Custom scrollbar for dark theme */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
