@@ -179,15 +179,16 @@ export default function SettingsPage() {
                         <User className="w-5 h-5 text-(--color-neon-green-light)" />
                         <h2 className="text-lg font-semibold text-white">Meu Perfil</h2>
                     </div>
-                    <form action={logoutUser}>
-                        <button
-                            type="submit"
-                            className="p-2 rounded-xl hover:bg-red-500/10 text-(--color-text-muted) hover:text-red-400 transition-colors"
-                            title="Sair da conta"
-                        >
-                            <LogOut className="w-4 h-4" />
-                        </button>
-                    </form>
+                    <button
+                        onClick={async () => {
+                            await logoutUser();
+                            window.location.href = "/login";
+                        }}
+                        className="p-2 rounded-xl hover:bg-red-500/10 text-(--color-text-muted) hover:text-red-400 transition-colors"
+                        title="Sair da conta"
+                    >
+                        <LogOut className="w-4 h-4" />
+                    </button>
                 </div>
 
                 <div className="flex flex-col md:flex-row items-start md:items-center gap-6">

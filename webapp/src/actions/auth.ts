@@ -112,7 +112,7 @@ export async function registerUser(name: string, email: string, password: string
 export async function logoutUser() {
     const cookieStore = await cookies();
     cookieStore.delete("budgeting_user_id");
-    redirect("/login");
+    return { success: true };
 }
 
 export async function getLoggedUserId() {
