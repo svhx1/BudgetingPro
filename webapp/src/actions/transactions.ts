@@ -22,6 +22,18 @@ export async function createTransaction(data: TransactionInput) {
         } = data;
 
         const baseDate = new Date(date);
+        const originalDay = baseDate.getDate();
+
+        // Advance month preserving end-of-month logic:
+        // If original day is 31 but target month has 30 days, use day 30, etc.
+        function advanceMonth(base: Date, months: number): Date {
+            const d = new Date(base);
+            const targetMonth = d.getMonth() + months;
+            d.setMonth(targetMonth, 1); // go to day 1 of target month
+            const lastDayOfMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+            d.setDate(Math.min(originalDay, lastDayOfMonth));
+            return d;
+        }
 
         if (recurrence === "unico") {
             await prisma.transaction.create({
@@ -41,8 +53,7 @@ export async function createTransaction(data: TransactionInput) {
             const installmentAmount = amount / installments;
 
             const transactions = Array.from({ length: installments }).map((_, i) => {
-                const nextDate = new Date(baseDate);
-                nextDate.setMonth(nextDate.getMonth() + i);
+                const nextDate = advanceMonth(baseDate, i);
 
                 return {
                     description: `${description} (${i + 1}/${installments})`,
@@ -62,8 +73,7 @@ export async function createTransaction(data: TransactionInput) {
         else if (recurrence === "fixo") {
             const groupId = crypto.randomUUID();
             const transactions = Array.from({ length: 12 }).map((_, i) => {
-                const nextDate = new Date(baseDate);
-                nextDate.setMonth(nextDate.getMonth() + i);
+                const nextDate = advanceMonth(baseDate, i);
 
                 return {
                     description,
