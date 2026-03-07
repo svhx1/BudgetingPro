@@ -48,7 +48,7 @@ export default function GradientEditor() {
         if (selectedPoint === id) setSelectedPoint(null);
     };
 
-    const handleDrag = useCallback((e: React.MouseEvent<HTMLDivElement>, pointId: string) => {
+    const handleDrag = (e: React.MouseEvent<HTMLDivElement>, pointId: string) => {
         e.stopPropagation();
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -67,7 +67,7 @@ export default function GradientEditor() {
 
         document.addEventListener("mousemove", onMove);
         document.addEventListener("mouseup", onUp);
-    }, [customTheme, setCustomTheme]);
+    };
 
     const bgGradients = customTheme.points
         .map(p => `radial-gradient(circle at ${p.x}% ${p.y}%, ${p.color}25 0%, transparent ${p.radius}%)`)

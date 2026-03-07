@@ -77,6 +77,7 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
         const savedAvatar = localStorage.getItem("budgeting_avatar");
         const savedName = localStorage.getItem("budgeting_name");
         const savedEmail = localStorage.getItem("budgeting_email");
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setProfileDataState(prev => ({
             ...prev,
             ...(savedAvatar ? { avatarUrl: savedAvatar } : {}),

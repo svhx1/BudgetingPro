@@ -38,6 +38,7 @@ export default function GlobalAddModal() {
         if (isAddModalOpen) {
             // Pick up type from FAB bubbles
             if (window.__budgeting_tx_type) {
+                // eslint-disable-next-line react-hooks/set-state-in-effect
                 setType(window.__budgeting_tx_type);
                 delete window.__budgeting_tx_type;
             }

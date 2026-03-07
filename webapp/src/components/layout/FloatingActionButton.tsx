@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, TrendingDown, TrendingUp } from "lucide-react";
 import { useGlobal } from "@/contexts/GlobalContext";
@@ -20,12 +20,31 @@ export default function FloatingActionButton() {
         setAddModalOpen(true);
     };
 
-    // iOS-style: fast pop with overshoot bounce
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener("resize", checkMobile);
+        return () => window.removeEventListener("resize", checkMobile);
+    }, []);
+
+    // iOS-style: snap rápido com leve tremidinha (bouncy, mas rápido)
     const bubbleTransition = {
         type: "spring" as const,
-        stiffness: 700,
-        damping: 15,
-        mass: 0.4,
+        stiffness: 900, // Maior stiffness = mais rápido e firme
+        damping: 10,    // Menor damping = vibração (overshoot/tremidinha) um pouco além de parar no exato zero
+        mass: 0.3,      // Massa menor = menos letargia
+    };
+
+    // Calculate explosion positions based on screen size
+    const getPos = (btn: "INCOME" | "EXPENSE") => {
+        if (isMobile) {
+            // Mobile: straight up, stacked vertically
+            return btn === "INCOME" ? { x: 0, y: -130 } : { x: 0, y: -70 };
+        }
+        // Desktop: diagonal splash from bottom-right corner
+        return btn === "INCOME" ? { x: -55, y: -60 } : { x: 30, y: -70 };
     };
 
     return (
@@ -36,7 +55,7 @@ export default function FloatingActionButton() {
                     <>
                         <motion.button
                             initial={{ scale: 0, x: 0, y: 0 }}
-                            animate={{ scale: 1, x: -55, y: -60 }}
+                            animate={{ scale: 1, ...getPos("INCOME") }}
                             exit={{ scale: 0, x: 0, y: 0, transition: { duration: 0.1 } }}
                             transition={bubbleTransition}
                             onClick={() => handleSelect("INCOME")}
@@ -54,7 +73,7 @@ export default function FloatingActionButton() {
 
                         <motion.button
                             initial={{ scale: 0, x: 0, y: 0 }}
-                            animate={{ scale: 1, x: 30, y: -70 }}
+                            animate={{ scale: 1, ...getPos("EXPENSE") }}
                             exit={{ scale: 0, x: 0, y: 0, transition: { duration: 0.1 } }}
                             transition={{ ...bubbleTransition, delay: 0.02 }}
                             onClick={() => handleSelect("EXPENSE")}

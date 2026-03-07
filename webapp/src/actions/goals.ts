@@ -56,7 +56,7 @@ export async function getGoals() {
 
             let projectedMonths = 0;
             let projectedDate: Date | null = null;
-            let reached = current >= target;
+            const reached = current >= target;
 
             // Só consegue projetar se não bateu a meta ainda, e se tem depósito mensal
             if (!reached && P > 0) {
