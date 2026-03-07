@@ -18,7 +18,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     }
 
     return (
-        <div className="flex flex-col md:flex-row min-h-screen">
+        <div className="flex flex-col md:flex-row min-h-screen overflow-x-hidden">
             <Sidebar />
 
             {/* Mobile Header with Profile Photo */}
@@ -36,7 +36,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 </Link>
             </div>
 
-            <main className="flex-1 p-6 md:p-10 md:ml-64 overflow-auto pb-24 md:pb-10">
+            <main className="flex-1 p-6 md:p-10 md:ml-64 overflow-x-hidden overflow-y-auto pb-24 md:pb-10 max-w-[100vw]">
                 <div className="mx-auto max-w-6xl">
                     {children}
                 </div>
