@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/session";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 
 export async function getUserProfile() {
     try {
@@ -46,7 +46,7 @@ export async function uploadAvatar(formData: FormData) {
         const uint8 = new Uint8Array(arrayBuffer);
 
         // Upload to Supabase Storage (upsert — overwrite if exists)
-        const { error: uploadError } = await supabase.storage
+        const { error: uploadError } = await getSupabase().storage
             .from("avatars")
             .upload(filePath, uint8, {
                 contentType: file.type,
@@ -59,7 +59,7 @@ export async function uploadAvatar(formData: FormData) {
         }
 
         // Get public URL
-        const { data: urlData } = supabase.storage
+        const { data: urlData } = getSupabase().storage
             .from("avatars")
             .getPublicUrl(filePath);
 
