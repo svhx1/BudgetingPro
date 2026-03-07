@@ -80,7 +80,6 @@ export default function RegisterPage() {
                     <div className="flex flex-col gap-2">
                         <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">Nome</label>
                         <div className="relative group">
-                            <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-indigo-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500" />
                             <div className="relative flex items-center">
                                 <User className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-white transition-colors" />
                                 <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo"
@@ -92,7 +91,6 @@ export default function RegisterPage() {
                     <div className="flex flex-col gap-2">
                         <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">Email</label>
                         <div className="relative group">
-                            <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-indigo-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500" />
                             <div className="relative flex items-center">
                                 <Mail className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-white transition-colors" />
                                 <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu.email@exemplo.com"
@@ -104,7 +102,6 @@ export default function RegisterPage() {
                     <div className="flex flex-col gap-2">
                         <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">Senha</label>
                         <div className="relative group">
-                            <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-indigo-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500" />
                             <div className="relative flex items-center">
                                 <Lock className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-white transition-colors" />
                                 <input type={showPassword ? "text" : "password"} required minLength={4} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mínimo 4 caracteres"
@@ -119,7 +116,6 @@ export default function RegisterPage() {
                     <div className="flex flex-col gap-2">
                         <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">Confirmar Senha</label>
                         <div className="relative group">
-                            <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-indigo-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500" />
                             <div className="relative flex items-center">
                                 <Lock className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-white transition-colors" />
                                 <input type={showPassword ? "text" : "password"} required minLength={4} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repita a senha"
