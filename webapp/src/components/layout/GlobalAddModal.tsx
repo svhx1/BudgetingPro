@@ -35,6 +35,11 @@ export default function GlobalAddModal() {
             }
         }
         if (isAddModalOpen) {
+            // Pick up type from FAB bubbles
+            if (window.__budgeting_tx_type) {
+                setType(window.__budgeting_tx_type);
+                delete window.__budgeting_tx_type;
+            }
             fetchCats();
             setShowNewCat(false);
             setNewCatName("");
@@ -116,11 +121,23 @@ export default function GlobalAddModal() {
                     >
                         <div className={`glass-panel p-6 md:p-8 flex flex-col gap-6 transition-all duration-500 w-full overflow-y-auto rounded-3xl hide-scrollbar ${glowColor}`}>
 
-                            {/* Header */}
+                            {/* Header with type indicator */}
                             <div className="flex items-center justify-between mb-2">
-                                <div>
-                                    <h2 className="text-2xl font-bold tracking-tight text-white">Transação Rápida</h2>
-                                    <p className="text-sm text-(--color-text-muted) font-light">Adicione uma receita ou despesa facilmente.</p>
+                                <div className="flex items-center gap-3">
+                                    <div className={`p-2 rounded-xl ${isExpense ? "bg-red-500/10" : "bg-emerald-500/10"}`}>
+                                        {isExpense
+                                            ? <PlusCircle className="w-5 h-5 text-red-400" />
+                                            : <PlusCircle className="w-5 h-5 text-emerald-400" />
+                                        }
+                                    </div>
+                                    <div>
+                                        <h2 className="text-2xl font-bold tracking-tight text-white">
+                                            {isExpense ? "Nova Despesa" : "Nova Receita"}
+                                        </h2>
+                                        <p className="text-sm text-(--color-text-muted) font-light">
+                                            {isExpense ? "Registrar uma saída" : "Registrar uma entrada"}
+                                        </p>
+                                    </div>
                                 </div>
                                 <button
                                     onClick={() => setAddModalOpen(false)}
@@ -131,29 +148,6 @@ export default function GlobalAddModal() {
                             </div>
 
                             <form onSubmit={handleSave} className="flex flex-col gap-6">
-                                {/* Type Selector Toggle */}
-                                <div className="flex p-1 bg-white/5 rounded-2xl border border-white/10 relative">
-                                    <div
-                                        className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-xl transition-all duration-300 ease-in-out ${isExpense ? "left-1 bg-red-500/20 border border-red-500/30" : "left-[calc(50%+2px)] bg-emerald-500/20 border border-emerald-500/30"
-                                            }`}
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setType("EXPENSE")}
-                                        className={`flex-1 py-3 text-sm font-medium rounded-xl z-10 transition-colors ${isExpense ? "text-red-400" : "text-(--color-text-muted) hover:text-white"
-                                            }`}
-                                    >
-                                        Despesa (Saída)
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setType("INCOME")}
-                                        className={`flex-1 py-3 text-sm font-medium rounded-xl z-10 transition-colors ${!isExpense ? "text-emerald-400" : "text-(--color-text-muted) hover:text-white"
-                                            }`}
-                                    >
-                                        Receita (Entrada)
-                                    </button>
-                                </div>
 
                                 {/* Amount Input */}
                                 <div className="flex flex-col gap-2">
