@@ -44,7 +44,9 @@ export default function GlobalAddModal() {
     const handleCreateCategory = async () => {
         if (!newCatName.trim()) return;
         setCreatingCat(true);
-        const res = await createCategory(newCatName.trim());
+        const colors = ["#10b981", "#3b82f6", "#f59e0b", "#ec4899", "#8b5cf6", "#ef4444", "#14b8a6", "#f97316"];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        const res = await createCategory(newCatName.trim(), randomColor);
         if (res.success && res.data) {
             setDbCategories(prev => [...prev, res.data]);
             setCategoryId(res.data.id);

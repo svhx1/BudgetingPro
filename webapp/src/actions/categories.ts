@@ -21,12 +21,12 @@ export async function getCategories() {
 export async function createCategory(name: string, color: string) {
     try {
         const userId = await getCurrentUserId();
-        await prisma.category.create({
+        const category = await prisma.category.create({
             data: { userId, name, color }
         });
         revalidatePath("/settings");
         revalidatePath("/");
-        return { success: true };
+        return { success: true, data: category };
     } catch (error) {
         console.error("Erro ao criar categoria:", error);
         return { success: false, error: "Falha ao criar categoria (pode já existir)" };
