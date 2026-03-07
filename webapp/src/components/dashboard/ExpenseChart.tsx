@@ -97,8 +97,9 @@ export default function ExpenseChart() {
                                 stroke="none"
                                 cornerRadius={6}
                                 onClick={(data) => {
+                                    const name = data.name || "";
                                     setSelectedCategory(
-                                        selectedCategory === data.name ? null : data.name
+                                        selectedCategory === name ? null : name
                                     );
                                 }}
                             >
