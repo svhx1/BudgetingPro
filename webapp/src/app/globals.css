@@ -14,9 +14,9 @@
 
   --radius-glass: 1.5rem;
 
-  --shadow-neon-green: 0 0 20px -5px rgba(16, 185, 129, 0.3);
-  --shadow-neon-red: 0 0 20px -5px rgba(239, 68, 68, 0.3);
-  --shadow-glass: 0 4px 30px rgba(0, 0, 0, 0.5);
+  --shadow-neon-green: 0 0 10px -3px rgba(16, 185, 129, 0.15);
+  --shadow-neon-red: 0 0 10px -3px rgba(239, 68, 68, 0.15);
+  --shadow-glass: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 :root {
