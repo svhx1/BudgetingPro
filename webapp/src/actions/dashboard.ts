@@ -2,7 +2,6 @@
 
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/session";
-import { unstable_cache } from "next/cache";
 
 async function fetchDashboardSummary(userId: string, month: number, year: number) {
     const startDate = new Date(year, month, 1);
@@ -46,15 +45,7 @@ async function fetchDashboardSummary(userId: string, month: number, year: number
 export async function getDashboardSummary(month: number, year: number) {
     try {
         const userId = await getCurrentUserId();
-
-        const getCachedSummary = unstable_cache(
-            () => fetchDashboardSummary(userId, month, year),
-            [`dashboard-summary-${userId}-${month}-${year}`],
-            { revalidate: 30, tags: [`user-${userId}`] }
-        );
-
-        const data = await getCachedSummary();
-
+        const data = await fetchDashboardSummary(userId, month, year);
         return { success: true, data };
     } catch (error) {
         console.error("Erro ao buscar resumo do dashboard:", error);
