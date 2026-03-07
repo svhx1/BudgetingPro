@@ -154,7 +154,15 @@ export default function HistoryPage() {
                                             </div>
                                             <div className="flex flex-col flex-1">
                                                 <div className="flex items-center gap-2">
-                                                    <p className="text-white font-semibold text-base">{t.description}</p>
+                                                    <p className={`font-semibold text-base ${!t.description ? 'text-(--color-text-muted) italic' : 'text-white'}`}>
+                                                        {t.description || "Sem descrição"}
+                                                    </p>
+                                                    {!t.description && (
+                                                        <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-orange-500/10 border border-orange-500/20 text-[10px] uppercase font-bold text-orange-400" title="Adicione uma descrição depois">
+                                                            <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+                                                            Pendente
+                                                        </span>
+                                                    )}
                                                     {isSeries && (
                                                         <span className="px-2 py-0.5 rounded-full bg-white/10 text-[10px] uppercase font-bold text-(--color-text-muted)">
                                                             {t.installment || "Série"}

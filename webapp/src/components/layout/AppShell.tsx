@@ -6,6 +6,7 @@ import Sidebar from "@/components/layout/Sidebar";
 import GlobalAddModal from "@/components/layout/GlobalAddModal";
 import FloatingActionButton from "@/components/layout/FloatingActionButton";
 import AvatarWithDecoration from "@/components/profile/AvatarWithDecoration";
+import AlertsManager from "@/components/layout/AlertsManager";
 import { useGlobal } from "@/contexts/GlobalContext";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
@@ -43,6 +44,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </main>
             <GlobalAddModal />
             <FloatingActionButton />
+            <AlertsManager />
         </div>
     );
 }

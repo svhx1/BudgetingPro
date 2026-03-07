@@ -26,6 +26,7 @@ model User {
   categories   Category[]
   limits       BudgetLimit[]
   goals        Goal[]
+  allocations  BudgetAllocation[]
 }
 
 model Category {
@@ -37,6 +38,7 @@ model Category {
   
   transactions Transaction[]
   budgetLimit  BudgetLimit?
+  allocations  BudgetAllocation[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -101,4 +103,19 @@ model Goal {
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+}
+
+model BudgetAllocation {
+  id         String   @id @default(cuid())
+  amount     Float
+  month      Int      // Mês corrente (0-11)
+  year       Int      // Ano corrente (ex: 2026)
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([month, year, categoryId, userId]) // Só pode haver um orçamento por categoria em um mês
 }

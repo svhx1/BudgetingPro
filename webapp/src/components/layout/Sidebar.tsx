@@ -13,7 +13,8 @@ import {
     Eye,
     EyeOff,
     ChevronLeft,
-    ChevronRight
+    ChevronRight,
+    PieChart
 } from "lucide-react";
 import { useGlobal } from "@/contexts/GlobalContext";
 
@@ -25,6 +26,7 @@ export default function Sidebar() {
         { name: "Dashboard", icon: LayoutDashboard, href: "/" },
         { name: "Extrato", icon: ArrowRightLeft, href: "/history" },
         { name: "Metas", icon: Target, href: "/goals" },
+        { name: "Orçamento", icon: PieChart, href: "/budget" },
         { name: "Ajustes", icon: Settings, href: "/settings" },
     ];
 

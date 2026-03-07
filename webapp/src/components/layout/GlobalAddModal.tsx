@@ -179,8 +179,8 @@ export default function GlobalAddModal() {
                                                 type="button"
                                                 onClick={() => setPaymentMethod("DEBIT")}
                                                 className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 transition-all duration-200 ${paymentMethod === "DEBIT"
-                                                        ? "bg-white/10 border-white/30 text-white"
-                                                        : "bg-transparent border-white/10 text-(--color-text-muted) hover:bg-white/5"
+                                                    ? "bg-white/10 border-white/30 text-white"
+                                                    : "bg-transparent border-white/10 text-(--color-text-muted) hover:bg-white/5"
                                                     }`}
                                             >
                                                 <Banknote className="w-4 h-4" />
@@ -190,8 +190,8 @@ export default function GlobalAddModal() {
                                                 type="button"
                                                 onClick={() => setPaymentMethod("CREDIT")}
                                                 className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 transition-all duration-200 ${paymentMethod === "CREDIT"
-                                                        ? "bg-purple-500/15 border-purple-500/30 text-purple-300"
-                                                        : "bg-transparent border-white/10 text-(--color-text-muted) hover:bg-white/5"
+                                                    ? "bg-purple-500/15 border-purple-500/30 text-purple-300"
+                                                    : "bg-transparent border-white/10 text-(--color-text-muted) hover:bg-white/5"
                                                     }`}
                                             >
                                                 <CreditCard className="w-4 h-4" />
@@ -204,10 +204,12 @@ export default function GlobalAddModal() {
                                 {/* Base Info Row */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="flex flex-col gap-2">
-                                        <label className="text-sm font-medium text-(--color-text-muted) uppercase tracking-wider">Descrição</label>
+                                        <label className="text-sm font-medium text-(--color-text-muted) uppercase tracking-wider flex justify-between">
+                                            <span>Descrição</span>
+                                            <span className="text-[10px] text-orange-400 capitalize bg-orange-500/10 px-2 py-0.5 rounded-md">Opcional</span>
+                                        </label>
                                         <input
                                             type="text"
-                                            required
                                             value={description}
                                             onChange={(e) => setDescription(e.target.value)}
                                             placeholder="Ex: Supermercado"
