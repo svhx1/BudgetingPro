@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { PlusCircle, RefreshCw, Layers, CalendarDays, Wallet, X } from "lucide-react";
+import { PlusCircle, RefreshCw, Layers, CalendarDays, X, Plus } from "lucide-react";
 import { createTransaction } from "@/actions/transactions";
-import { getCategories } from "@/actions/categories";
+import { getCategories, createCategory } from "@/actions/categories";
 import { useGlobal } from "@/contexts/GlobalContext";
 
 export default function GlobalAddModal() {
@@ -20,6 +20,9 @@ export default function GlobalAddModal() {
     const [loading, setLoading] = useState(false);
 
     const [dbCategories, setDbCategories] = useState<any[]>([]);
+    const [showNewCat, setShowNewCat] = useState(false);
+    const [newCatName, setNewCatName] = useState("");
+    const [creatingCat, setCreatingCat] = useState(false);
 
     useEffect(() => {
         async function fetchCats() {
@@ -33,8 +36,26 @@ export default function GlobalAddModal() {
         }
         if (isAddModalOpen) {
             fetchCats();
+            setShowNewCat(false);
+            setNewCatName("");
         }
     }, [isAddModalOpen, refreshTrigger]);
+
+    const handleCreateCategory = async () => {
+        if (!newCatName.trim()) return;
+        setCreatingCat(true);
+        const res = await createCategory(newCatName.trim());
+        if (res.success && res.data) {
+            setDbCategories(prev => [...prev, res.data]);
+            setCategoryId(res.data.id);
+            setNewCatName("");
+            setShowNewCat(false);
+            addToast(`Categoria "${newCatName.trim()}" criada!`, "success");
+        } else {
+            addToast(res.error || "Erro ao criar categoria", "error");
+        }
+        setCreatingCat(false);
+    };
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -58,7 +79,7 @@ export default function GlobalAddModal() {
             setDate(new Date().toISOString().split("T")[0]);
             setAddModalOpen(false);
             addToast("Sua transação já está no banco e no Dashboard!", "success");
-            triggerRefresh(); // Avisa todo o software para re-renderizar componentes client-side
+            triggerRefresh();
         } else {
             addToast("Erro ao registrar no banco de dados.", "error");
         }
@@ -181,34 +202,62 @@ export default function GlobalAddModal() {
                                     </div>
                                 </div>
 
-                                {/* Categories & Accounts (Mocks for layout) */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="flex flex-col gap-2">
+                                {/* Category with inline create */}
+                                <div className="flex flex-col gap-2">
+                                    <div className="flex items-center justify-between">
                                         <label className="text-sm font-medium text-(--color-text-muted) uppercase tracking-wider">Categoria</label>
-                                        <select
-                                            required
-                                            value={categoryId}
-                                            onChange={(e) => setCategoryId(e.target.value)}
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white outline-none focus:border-white/30 appearance-none"
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowNewCat(!showNewCat)}
+                                            className="flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300 transition-colors font-medium"
                                         >
-                                            {dbCategories.length === 0 && <option value="" disabled className="text-black">Nenhuma categoria criada</option>}
-                                            {dbCategories.map(cat => (
-                                                <option key={cat.id} value={cat.id} className="text-black">{cat.name}</option>
-                                            ))}
-                                        </select>
+                                            <Plus className="w-3.5 h-3.5" />
+                                            Nova
+                                        </button>
                                     </div>
 
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-sm font-medium text-(--color-text-muted) uppercase tracking-wider">Conta / Cartão</label>
-                                        <div className="relative">
-                                            <Wallet className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-(--color-text-muted)" />
-                                            <select className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white outline-none focus:border-white/30 appearance-none">
-                                                <option value="nubank">Cartão Nubank</option>
-                                                <option value="itau">Conta Corrente Itaú</option>
-                                                <option value="dinheiro">Dinheiro Vivo</option>
-                                            </select>
-                                        </div>
-                                    </div>
+                                    <AnimatePresence>
+                                        {showNewCat && (
+                                            <motion.div
+                                                initial={{ height: 0, opacity: 0 }}
+                                                animate={{ height: "auto", opacity: 1 }}
+                                                exit={{ height: 0, opacity: 0 }}
+                                                className="overflow-hidden"
+                                            >
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <input
+                                                        type="text"
+                                                        value={newCatName}
+                                                        onChange={(e) => setNewCatName(e.target.value)}
+                                                        placeholder="Nome da categoria"
+                                                        className="flex-1 bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-white text-sm outline-none focus:border-emerald-500/30 transition-colors"
+                                                        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleCreateCategory(); } }}
+                                                        autoFocus
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleCreateCategory}
+                                                        disabled={creatingCat || !newCatName.trim()}
+                                                        className="px-4 py-2.5 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-sm font-medium hover:bg-emerald-500/30 transition-all disabled:opacity-50"
+                                                    >
+                                                        {creatingCat ? "..." : "Criar"}
+                                                    </button>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+
+                                    <select
+                                        required
+                                        value={categoryId}
+                                        onChange={(e) => setCategoryId(e.target.value)}
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white outline-none focus:border-white/30 appearance-none"
+                                    >
+                                        {dbCategories.length === 0 && <option value="" disabled className="text-black">Nenhuma categoria criada</option>}
+                                        {dbCategories.map(cat => (
+                                            <option key={cat.id} value={cat.id} className="text-black">{cat.name}</option>
+                                        ))}
+                                    </select>
                                 </div>
 
                                 {/* Recurrence Engine */}

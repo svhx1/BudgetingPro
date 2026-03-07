@@ -28,6 +28,13 @@
   color-scheme: dark;
 }
 
+html,
+body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+}
+
 body {
   background-color: var(--color-base-bg);
   color: var(--color-text-main);
@@ -36,6 +43,7 @@ body {
     radial-gradient(circle at 90% 80%, rgba(239, 68, 68, 0.02) 0%, transparent 40%);
   min-height: 100vh;
   font-family: var(--font-geist-sans), sans-serif;
+  position: relative;
 }
 
 /* Utilitários globais pra facilitar o Vibe Coding com Glassmorphism */
@@ -77,4 +85,13 @@ body {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
