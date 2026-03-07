@@ -107,7 +107,10 @@ export default function CashflowChart() {
                 {viewOptions.map(opt => (
                     <button
                         key={opt.value}
-                        onClick={() => setViewMode(opt.value)}
+                        onClick={() => {
+                            setViewMode(opt.value);
+                            if (opt.value === "compare") setPeriod("month");
+                        }}
                         className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all ${viewMode === opt.value
                             ? "text-white"
                             : "text-white/30 hover:text-white/60"
