@@ -7,7 +7,7 @@ import FloatingActionButton from "@/components/layout/FloatingActionButton";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-    const isAuthPage = ["/login", "/register", "/verify"].includes(pathname);
+    const isAuthPage = ["/login", "/register"].includes(pathname);
 
     if (isAuthPage) {
         return <>{children}</>;

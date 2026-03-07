@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Wallet, Mail, User, ArrowRight } from "lucide-react";
-import { sendVerificationCode } from "@/actions/auth";
-import { useRouter } from "next/navigation";
+import { registerUser } from "@/actions/auth";
 import Link from "next/link";
 
 export default function RegisterPage() {
@@ -12,26 +11,24 @@ export default function RegisterPage() {
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const router = useRouter();
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError("");
 
-        const res = await sendVerificationCode(email);
+        const res = await registerUser(name, email);
 
         if (res?.success) {
-            router.push(`/verify?email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}`);
+            window.location.href = "/";
         } else {
-            setError(res?.error || "Erro ao enviar código.");
+            setError(res?.error || "Erro ao criar conta.");
             setLoading(false);
         }
     };
 
     return (
         <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black text-white selection:bg-(--color-neon-green-light) selection:text-black">
-            {/* Liquid Background */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
                 <motion.div
                     animate={{ rotate: 360 }}
@@ -45,7 +42,6 @@ export default function RegisterPage() {
                 />
             </div>
 
-            {/* Card */}
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 30 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -67,47 +63,31 @@ export default function RegisterPage() {
                         Criar Conta
                     </h1>
                     <p className="text-(--color-text-muted) text-sm text-center mt-2 font-light">
-                        Preencha seus dados e enviaremos um código de verificação.
+                        Preencha seus dados para começar.
                     </p>
                 </div>
 
                 <form onSubmit={handleRegister} className="flex flex-col gap-5">
                     <div className="flex flex-col gap-2">
-                        <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">
-                            Nome
-                        </label>
+                        <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">Nome</label>
                         <div className="relative group">
                             <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-indigo-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500" />
                             <div className="relative flex items-center">
                                 <User className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-white transition-colors" />
-                                <input
-                                    type="text"
-                                    required
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    placeholder="Seu nome completo"
-                                    className="w-full bg-black/50 backdrop-blur-sm border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/30 outline-none focus:border-white/30 transition-all font-medium"
-                                />
+                                <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo"
+                                    className="w-full bg-black/50 backdrop-blur-sm border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/30 outline-none focus:border-white/30 transition-all font-medium" />
                             </div>
                         </div>
                     </div>
 
                     <div className="flex flex-col gap-2">
-                        <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">
-                            Email
-                        </label>
+                        <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">Email</label>
                         <div className="relative group">
                             <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-indigo-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500" />
                             <div className="relative flex items-center">
                                 <Mail className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-white transition-colors" />
-                                <input
-                                    type="email"
-                                    required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="seu.email@exemplo.com"
-                                    className="w-full bg-black/50 backdrop-blur-sm border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/30 outline-none focus:border-white/30 transition-all font-medium"
-                                />
+                                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu.email@exemplo.com"
+                                    className="w-full bg-black/50 backdrop-blur-sm border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/30 outline-none focus:border-white/30 transition-all font-medium" />
                             </div>
                         </div>
                     </div>
@@ -118,14 +98,9 @@ export default function RegisterPage() {
                         </motion.p>
                     )}
 
-                    <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        disabled={loading}
-                        type="submit"
-                        className="group relative w-full flex items-center justify-center gap-3 bg-white text-black py-4 rounded-2xl font-bold mt-2 hover:bg-gray-100 transition-all disabled:opacity-70"
-                    >
-                        {loading ? "Enviando código..." : "Criar Conta"}
+                    <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} disabled={loading} type="submit"
+                        className="group relative w-full flex items-center justify-center gap-3 bg-white text-black py-4 rounded-2xl font-bold mt-2 hover:bg-gray-100 transition-all disabled:opacity-70">
+                        {loading ? "Criando conta..." : "Criar Conta"}
                         {!loading && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
                     </motion.button>
                 </form>

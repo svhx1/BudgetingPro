@@ -3,34 +3,31 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Wallet, Mail, ArrowRight } from "lucide-react";
-import { sendVerificationCode } from "@/actions/auth";
-import { useRouter } from "next/navigation";
+import { loginUser } from "@/actions/auth";
 import Link from "next/link";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const router = useRouter();
 
-    const handleSendCode = async (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError("");
 
-        const res = await sendVerificationCode(email);
+        const res = await loginUser(email);
 
         if (res?.success) {
-            router.push(`/verify?email=${encodeURIComponent(email)}`);
+            window.location.href = "/";
         } else {
-            setError(res?.error || "Erro ao enviar código.");
+            setError(res?.error || "Erro ao entrar.");
             setLoading(false);
         }
     };
 
     return (
         <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black text-white selection:bg-(--color-neon-green-light) selection:text-black">
-            {/* Liquid Background */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
                 <motion.div
                     animate={{ rotate: 360 }}
@@ -44,7 +41,6 @@ export default function LoginPage() {
                 />
             </div>
 
-            {/* Card */}
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 30 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -66,11 +62,11 @@ export default function LoginPage() {
                         Entrar no Budgeting
                     </h1>
                     <p className="text-(--color-text-muted) text-sm text-center mt-2 font-light">
-                        Vamos enviar um código de verificação para o seu email.
+                        Insira seu e-mail para acessar sua conta.
                     </p>
                 </div>
 
-                <form onSubmit={handleSendCode} className="flex flex-col gap-6">
+                <form onSubmit={handleLogin} className="flex flex-col gap-6">
                     <div className="flex flex-col gap-2">
                         <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">
                             Email
@@ -104,7 +100,7 @@ export default function LoginPage() {
                         type="submit"
                         className="group relative w-full flex items-center justify-center gap-3 bg-white text-black py-4 rounded-2xl font-bold mt-2 hover:bg-gray-100 transition-all disabled:opacity-70"
                     >
-                        {loading ? "Enviando código..." : "Enviar Código"}
+                        {loading ? "Entrando..." : "Entrar"}
                         {!loading && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
                     </motion.button>
                 </form>

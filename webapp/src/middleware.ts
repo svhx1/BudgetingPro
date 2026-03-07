@@ -11,7 +11,7 @@ export function middleware(request: NextRequest) {
     }
 
     const userId = request.cookies.get('budgeting_user_id')?.value;
-    const publicPaths = ['/login', '/register', '/verify'];
+    const publicPaths = ['/login', '/register'];
     const isPublicPage = publicPaths.some(p => request.nextUrl.pathname === p);
 
     if (!userId && !isPublicPage) {
