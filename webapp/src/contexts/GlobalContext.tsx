@@ -75,7 +75,14 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
     // Load all preferences from localStorage
     useEffect(() => {
         const savedAvatar = localStorage.getItem("budgeting_avatar");
-        if (savedAvatar) setProfileDataState(prev => ({ ...prev, avatarUrl: savedAvatar }));
+        const savedName = localStorage.getItem("budgeting_name");
+        const savedEmail = localStorage.getItem("budgeting_email");
+        setProfileDataState(prev => ({
+            ...prev,
+            ...(savedAvatar ? { avatarUrl: savedAvatar } : {}),
+            ...(savedName ? { name: savedName } : {}),
+            ...(savedEmail ? { email: savedEmail } : {}),
+        }));
 
         const savedTheme = localStorage.getItem("budgeting_theme");
         if (savedTheme) setCurrentThemeId(savedTheme);
@@ -130,6 +137,8 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
     const setProfileData = (data: ProfileData) => {
         setProfileDataState(data);
         if (data.avatarUrl) localStorage.setItem("budgeting_avatar", data.avatarUrl);
+        if (data.name) localStorage.setItem("budgeting_name", data.name);
+        if (data.email) localStorage.setItem("budgeting_email", data.email);
     };
 
     const [toasts, setToasts] = useState<ToastInfo[]>([]);
