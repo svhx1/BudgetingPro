@@ -7,7 +7,7 @@ import { logoutUser } from "@/actions/auth";
 import { useGlobal } from "@/contexts/GlobalContext";
 import { getCategories, createCategory, deleteCategory } from "@/actions/categories";
 import { getDashboardLimits, upsertLimit } from "@/actions/limits";
-import { getUserProfile, updateUserProfile } from "@/actions/profile";
+import { getUserProfile, updateUserProfile, uploadAvatar } from "@/actions/profile";
 import ThemeSelector from "@/components/settings/ThemeSelector";
 import GradientEditor from "@/components/settings/GradientEditor";
 import DecorationPicker from "@/components/settings/DecorationPicker";
@@ -20,9 +20,15 @@ export default function SettingsPage() {
 
     const [loadingData, setLoadingData] = useState(true);
 
-    // Profile
-    const [profileName, setProfileName] = useState("");
-    const [profileEmail, setProfileEmail] = useState("");
+    // Profile — pre-load from localStorage for instant display
+    const [profileName, setProfileName] = useState(() => {
+        if (typeof window !== "undefined") return localStorage.getItem("budgeting_name") || "";
+        return "";
+    });
+    const [profileEmail, setProfileEmail] = useState(() => {
+        if (typeof window !== "undefined") return localStorage.getItem("budgeting_email") || "";
+        return "";
+    });
     const [profileDirty, setProfileDirty] = useState(false);
     const [savingProfile, setSavingProfile] = useState(false);
 
@@ -51,8 +57,11 @@ export default function SettingsPage() {
         if (profileRes.success && profileRes.data) {
             setProfileName(profileRes.data.name || "");
             setProfileEmail(profileRes.data.email || "");
-            // Sync name/email to global context (avatar stays from localStorage)
-            setProfileData({ ...profileData, name: profileRes.data.name || "", email: profileRes.data.email || "" });
+            setProfileData({
+                name: profileRes.data.name || "",
+                email: profileRes.data.email || "",
+                avatarUrl: profileRes.data.avatarUrl || profileData.avatarUrl || null,
+            });
         }
         setLoadingData(false);
     };
@@ -165,9 +174,18 @@ export default function SettingsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="glass-panel p-6 md:p-8 mb-8"
             >
-                <div className="flex items-center gap-3 mb-6">
-                    <User className="w-5 h-5 text-(--color-neon-green-light)" />
-                    <h2 className="text-lg font-semibold text-white">Meu Perfil</h2>
+                <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                        <User className="w-5 h-5 text-(--color-neon-green-light)" />
+                        <h2 className="text-lg font-semibold text-white">Meu Perfil</h2>
+                    </div>
+                    <button
+                        onClick={() => logoutUser()}
+                        className="p-2 rounded-xl hover:bg-red-500/10 text-(--color-text-muted) hover:text-red-400 transition-colors"
+                        title="Sair da conta"
+                    >
+                        <LogOut className="w-4 h-4" />
+                    </button>
                 </div>
 
                 <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
@@ -178,48 +196,22 @@ export default function SettingsPage() {
                             accept="image/*"
                             className="hidden"
                             id="avatar-upload"
-                            onChange={(e) => {
+                            onChange={async (e) => {
                                 const file = e.target.files?.[0];
                                 if (!file) return;
-
-                                const processImage = (file: File) => {
-                                    const img = new Image();
-                                    const url = URL.createObjectURL(file);
-                                    img.onload = () => {
-                                        const MAX_SIZE = 400;
-                                        let w = img.width;
-                                        let h = img.height;
-
-                                        // Downscale proportionally
-                                        if (w > MAX_SIZE || h > MAX_SIZE) {
-                                            const ratio = Math.min(MAX_SIZE / w, MAX_SIZE / h);
-                                            w = Math.round(w * ratio);
-                                            h = Math.round(h * ratio);
-                                        }
-
-                                        const canvas = document.createElement("canvas");
-                                        canvas.width = w;
-                                        canvas.height = h;
-                                        const ctx = canvas.getContext("2d")!;
-                                        ctx.drawImage(img, 0, 0, w, h);
-
-                                        // Compress iteratively until ≤2MB
-                                        let quality = 0.9;
-                                        let result = canvas.toDataURL("image/jpeg", quality);
-                                        while (result.length > 2 * 1024 * 1024 && quality > 0.1) {
-                                            quality -= 0.1;
-                                            result = canvas.toDataURL("image/jpeg", quality);
-                                        }
-
-                                        setProfileData({ ...profileData, avatarUrl: result });
-                                        setProfileDirty(true);
-                                        addToast("Foto atualizada!", "success");
-                                        URL.revokeObjectURL(url);
-                                    };
-                                    img.src = url;
-                                };
-
-                                processImage(file);
+                                if (file.size > 2 * 1024 * 1024) {
+                                    return addToast("Imagem deve ter no máximo 2MB", "error");
+                                }
+                                addToast("Enviando foto...", "info");
+                                const fd = new FormData();
+                                fd.append("avatar", file);
+                                const res = await uploadAvatar(fd);
+                                if (res.success && res.url) {
+                                    setProfileData({ ...profileData, avatarUrl: res.url });
+                                    addToast("Foto atualizada!", "success");
+                                } else {
+                                    addToast(res.error || "Erro no upload", "error");
+                                }
                             }}
                         />
                         <label htmlFor="avatar-upload" className="cursor-pointer block">
@@ -457,20 +449,7 @@ export default function SettingsPage() {
                     </div>
                 </motion.section>
 
-                {/* Logout */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mt-6"
-                >
-                    <button
-                        onClick={() => logoutUser()}
-                        className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl bg-red-500/10 text-red-400 border border-red-500/15 hover:bg-red-500 hover:text-white transition-all duration-300 font-semibold text-base"
-                    >
-                        <LogOut className="w-5 h-5" />
-                        Sair da Conta
-                    </button>
-                </motion.div>
+
 
             </div>
         </div>
