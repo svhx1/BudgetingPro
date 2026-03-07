@@ -2,13 +2,16 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Wallet, Mail, User, ArrowRight } from "lucide-react";
+import { Wallet, Mail, User, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { registerUser } from "@/actions/auth";
 import Link from "next/link";
 
 export default function RegisterPage() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -17,7 +20,13 @@ export default function RegisterPage() {
         setLoading(true);
         setError("");
 
-        const res = await registerUser(name, email);
+        if (password !== confirmPassword) {
+            setError("As senhas não coincidem.");
+            setLoading(false);
+            return;
+        }
+
+        const res = await registerUser(name, email, password);
 
         if (res?.success) {
             window.location.href = "/";
@@ -67,7 +76,7 @@ export default function RegisterPage() {
                     </p>
                 </div>
 
-                <form onSubmit={handleRegister} className="flex flex-col gap-5">
+                <form onSubmit={handleRegister} className="flex flex-col gap-4">
                     <div className="flex flex-col gap-2">
                         <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">Nome</label>
                         <div className="relative group">
@@ -75,7 +84,7 @@ export default function RegisterPage() {
                             <div className="relative flex items-center">
                                 <User className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-white transition-colors" />
                                 <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo"
-                                    className="w-full bg-black/50 backdrop-blur-sm border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/30 outline-none focus:border-white/30 transition-all font-medium" />
+                                    className="w-full bg-black/50 backdrop-blur-sm border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-white placeholder-white/30 outline-none focus:border-white/30 transition-all font-medium" />
                             </div>
                         </div>
                     </div>
@@ -87,7 +96,34 @@ export default function RegisterPage() {
                             <div className="relative flex items-center">
                                 <Mail className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-white transition-colors" />
                                 <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu.email@exemplo.com"
-                                    className="w-full bg-black/50 backdrop-blur-sm border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/30 outline-none focus:border-white/30 transition-all font-medium" />
+                                    className="w-full bg-black/50 backdrop-blur-sm border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-white placeholder-white/30 outline-none focus:border-white/30 transition-all font-medium" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">Senha</label>
+                        <div className="relative group">
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-indigo-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500" />
+                            <div className="relative flex items-center">
+                                <Lock className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-white transition-colors" />
+                                <input type={showPassword ? "text" : "password"} required minLength={4} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mínimo 4 caracteres"
+                                    className="w-full bg-black/50 backdrop-blur-sm border border-white/10 rounded-2xl py-3.5 pl-12 pr-12 text-white placeholder-white/30 outline-none focus:border-white/30 transition-all font-medium" />
+                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 text-(--color-text-muted) hover:text-white transition-colors">
+                                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">Confirmar Senha</label>
+                        <div className="relative group">
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-indigo-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500" />
+                            <div className="relative flex items-center">
+                                <Lock className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-white transition-colors" />
+                                <input type={showPassword ? "text" : "password"} required minLength={4} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repita a senha"
+                                    className="w-full bg-black/50 backdrop-blur-sm border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-white placeholder-white/30 outline-none focus:border-white/30 transition-all font-medium" />
                             </div>
                         </div>
                     </div>

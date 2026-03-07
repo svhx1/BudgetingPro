@@ -5,13 +5,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useGlobal } from "@/contexts/GlobalContext";
 import { getDashboardSummary } from "@/actions/dashboard";
 import { deleteTransaction } from "@/actions/transactions";
-import { Trash2, Coffee, ArrowUpRight, ArrowDownRight, Layers, ShieldAlert } from "lucide-react";
+import { Trash2, Coffee, ArrowUpRight, ArrowDownRight, Layers, ShieldAlert, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function HistoryPage() {
-    const { isPrivacyMode, currentPeriod, refreshTrigger, triggerRefresh, addToast } = useGlobal();
+    const { isPrivacyMode, refreshTrigger, triggerRefresh, addToast } = useGlobal();
     const [transactions, setTransactions] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [totalMoved, setTotalMoved] = useState(0);
+
+    // Local month selector for history
+    const now = new Date();
+    const [month, setMonth] = useState(now.getMonth());
+    const [year, setYear] = useState(now.getFullYear());
 
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedTx, setSelectedTx] = useState<any>(null);
@@ -19,7 +24,7 @@ export default function HistoryPage() {
     useEffect(() => {
         async function fetch() {
             setLoading(true);
-            const res = await getDashboardSummary(currentPeriod.month, currentPeriod.year);
+            const res = await getDashboardSummary(month, year);
             if (res.success && res.data) {
                 setTransactions(res.data.transactions);
                 setTotalMoved(res.data.incomes + res.data.expenses);
@@ -27,7 +32,17 @@ export default function HistoryPage() {
             setLoading(false);
         }
         fetch();
-    }, [currentPeriod.month, currentPeriod.year, refreshTrigger]);
+    }, [month, year, refreshTrigger]);
+
+    const prevMonth = () => {
+        if (month === 0) { setMonth(11); setYear(year - 1); }
+        else setMonth(month - 1);
+    };
+
+    const nextMonth = () => {
+        if (month === 11) { setMonth(0); setYear(year + 1); }
+        else setMonth(month + 1);
+    };
 
     const handleDeleteClick = (tx: any) => {
         setSelectedTx(tx);
@@ -38,7 +53,6 @@ export default function HistoryPage() {
         if (!selectedTx) return;
 
         if (deleteSeries && selectedTx.groupId) {
-            // Deleta todas transações do mesmo grupo
             const groupTxs = transactions.filter(t => t.groupId === selectedTx.groupId);
             addToast(`Deletando ${groupTxs.length} transações da série...`, "info");
             for (const tx of groupTxs) {
@@ -70,20 +84,33 @@ export default function HistoryPage() {
 
     return (
         <div className="flex flex-col min-h-screen w-full">
-            <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div>
-                    <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-2">
-                        Extrato Detalhado
-                    </h1>
-                    <p className="text-lg text-(--color-text-muted) font-light">
-                        Fluxo exato do mês de {monthNames[currentPeriod.month]} de {currentPeriod.year}
-                    </p>
+            <header className="mb-8 flex flex-col gap-4">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                    <div>
+                        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-2">
+                            Extrato Detalhado
+                        </h1>
+                    </div>
+                    <div className="flex items-center gap-2 px-4 py-2 glass-panel rounded-full text-sm font-medium">
+                        <span className="text-(--color-text-muted)">Total Movimentado:</span>
+                        <span className="text-white">
+                            {isPrivacyMode ? "R$ ••••" : `R$ ${totalMoved.toFixed(2).replace('.', ',')}`}
+                        </span>
+                    </div>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-2 glass-panel rounded-full text-sm font-medium">
-                    <span className="text-(--color-text-muted)">Total Movimentado:</span>
-                    <span className="text-white">
-                        {isPrivacyMode ? "R$ ••••" : `R$ ${totalMoved.toFixed(2).replace('.', ',')}`}
-                    </span>
+
+                {/* Month Selector */}
+                <div className="flex items-center justify-center gap-4">
+                    <button onClick={prevMonth} className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-(--color-text-muted) hover:text-white transition-all">
+                        <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <div className="px-6 py-2.5 rounded-2xl bg-white/5 border border-white/10 min-w-[200px] text-center">
+                        <span className="text-white font-bold text-lg">{monthNames[month]}</span>
+                        <span className="text-(--color-text-muted) ml-2 text-sm">{year}</span>
+                    </div>
+                    <button onClick={nextMonth} className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-(--color-text-muted) hover:text-white transition-all">
+                        <ChevronRight className="w-5 h-5" />
+                    </button>
                 </div>
             </header>
 

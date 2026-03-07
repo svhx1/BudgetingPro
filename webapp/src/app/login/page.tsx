@@ -2,12 +2,15 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Wallet, Mail, ArrowRight } from "lucide-react";
+import { Wallet, Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { loginUser } from "@/actions/auth";
 import Link from "next/link";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [stayLoggedIn, setStayLoggedIn] = useState(true);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -16,7 +19,7 @@ export default function LoginPage() {
         setLoading(true);
         setError("");
 
-        const res = await loginUser(email);
+        const res = await loginUser(email, password, stayLoggedIn);
 
         if (res?.success) {
             window.location.href = "/";
@@ -62,30 +65,47 @@ export default function LoginPage() {
                         Entrar no Budgeting
                     </h1>
                     <p className="text-(--color-text-muted) text-sm text-center mt-2 font-light">
-                        Insira seu e-mail para acessar sua conta.
+                        Insira suas credenciais para acessar.
                     </p>
                 </div>
 
-                <form onSubmit={handleLogin} className="flex flex-col gap-6">
+                <form onSubmit={handleLogin} className="flex flex-col gap-5">
                     <div className="flex flex-col gap-2">
-                        <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">
-                            Email
-                        </label>
+                        <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">Email</label>
                         <div className="relative group">
                             <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-indigo-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500" />
                             <div className="relative flex items-center">
                                 <Mail className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-white transition-colors" />
-                                <input
-                                    type="email"
-                                    required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="seu.email@exemplo.com"
-                                    className="w-full bg-black/50 backdrop-blur-sm border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/30 outline-none focus:border-white/30 transition-all font-medium"
-                                />
+                                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu.email@exemplo.com"
+                                    className="w-full bg-black/50 backdrop-blur-sm border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/30 outline-none focus:border-white/30 transition-all font-medium" />
                             </div>
                         </div>
                     </div>
+
+                    <div className="flex flex-col gap-2">
+                        <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">Senha</label>
+                        <div className="relative group">
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-indigo-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500" />
+                            <div className="relative flex items-center">
+                                <Lock className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-white transition-colors" />
+                                <input type={showPassword ? "text" : "password"} required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••"
+                                    className="w-full bg-black/50 backdrop-blur-sm border border-white/10 rounded-2xl py-4 pl-12 pr-12 text-white placeholder-white/30 outline-none focus:border-white/30 transition-all font-medium" />
+                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 text-(--color-text-muted) hover:text-white transition-colors">
+                                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <label className="flex items-center gap-3 cursor-pointer pl-1">
+                        <div className="relative">
+                            <input type="checkbox" checked={stayLoggedIn} onChange={(e) => setStayLoggedIn(e.target.checked)}
+                                className="sr-only peer" />
+                            <div className="w-10 h-6 bg-white/10 rounded-full peer-checked:bg-emerald-500/40 transition-colors border border-white/10 peer-checked:border-emerald-500/30" />
+                            <div className="absolute top-0.5 left-0.5 w-5 h-5 bg-white/70 rounded-full transition-all peer-checked:translate-x-4 peer-checked:bg-emerald-400" />
+                        </div>
+                        <span className="text-sm text-(--color-text-muted)">Manter conectado</span>
+                    </label>
 
                     {error && (
                         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-400 text-sm text-center bg-red-500/10 py-2 rounded-lg border border-red-500/20">
@@ -93,13 +113,8 @@ export default function LoginPage() {
                         </motion.p>
                     )}
 
-                    <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        disabled={loading}
-                        type="submit"
-                        className="group relative w-full flex items-center justify-center gap-3 bg-white text-black py-4 rounded-2xl font-bold mt-2 hover:bg-gray-100 transition-all disabled:opacity-70"
-                    >
+                    <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} disabled={loading} type="submit"
+                        className="group relative w-full flex items-center justify-center gap-3 bg-white text-black py-4 rounded-2xl font-bold mt-2 hover:bg-gray-100 transition-all disabled:opacity-70">
                         {loading ? "Entrando..." : "Entrar"}
                         {!loading && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
                     </motion.button>
