@@ -30,11 +30,11 @@ export default function FloatingActionButton() {
                         {/* Income bubble — floats up-left */}
                         <motion.button
                             initial={{ scale: 0, opacity: 0, x: 0, y: 0 }}
-                            animate={{ scale: 1, opacity: 1, x: -65, y: -50 }}
+                            animate={{ scale: 1, opacity: 1, x: -55, y: -60 }}
                             exit={{ scale: 0, opacity: 0, x: 0, y: 0 }}
                             transition={{ type: "spring", stiffness: 500, damping: 22 }}
                             onClick={() => handleSelect("INCOME")}
-                            className="absolute w-12 h-12 rounded-full flex items-center justify-center border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-shadow"
+                            className="absolute w-12 h-12 rounded-full flex items-center justify-center border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] hover:scale-110 transition-all"
                             style={{
                                 background: "linear-gradient(135deg, rgba(16,185,129,0.25) 0%, rgba(16,185,129,0.08) 100%)",
                                 backdropFilter: "blur(20px)",
@@ -44,14 +44,14 @@ export default function FloatingActionButton() {
                             <TrendingUp className="w-5 h-5 text-emerald-400" strokeWidth={2.5} />
                         </motion.button>
 
-                        {/* Expense bubble — floats up-right */}
+                        {/* Expense bubble — floats directly up */}
                         <motion.button
                             initial={{ scale: 0, opacity: 0, x: 0, y: 0 }}
-                            animate={{ scale: 1, opacity: 1, x: 65, y: -50 }}
+                            animate={{ scale: 1, opacity: 1, x: 30, y: -70 }}
                             exit={{ scale: 0, opacity: 0, x: 0, y: 0 }}
                             transition={{ type: "spring", stiffness: 500, damping: 22, delay: 0.04 }}
                             onClick={() => handleSelect("EXPENSE")}
-                            className="absolute w-12 h-12 rounded-full flex items-center justify-center border border-red-500/30 shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:shadow-[0_0_30px_rgba(239,68,68,0.5)] transition-shadow"
+                            className="absolute w-12 h-12 rounded-full flex items-center justify-center border border-red-500/30 shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:shadow-[0_0_30px_rgba(239,68,68,0.5)] hover:scale-110 transition-all"
                             style={{
                                 background: "linear-gradient(135deg, rgba(239,68,68,0.25) 0%, rgba(239,68,68,0.08) 100%)",
                                 backdropFilter: "blur(20px)",
