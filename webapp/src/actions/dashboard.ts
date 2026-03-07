@@ -8,6 +8,7 @@ async function fetchDashboardSummary(userId: string, month: number, year: number
     const startDate = new Date(year, month, 1);
     const endDate = new Date(year, month + 1, 0, 23, 59, 59);
 
+    // Current month transactions (for entradas/saidas display)
     const transactions = await prisma.transaction.findMany({
         where: {
             userId,
@@ -23,14 +24,21 @@ async function fetchDashboardSummary(userId: string, month: number, year: number
     const incomes = transactions.filter((t: any) => t.type === "INCOME").reduce((acc: number, t: any) => acc + t.amount, 0);
     const expenses = transactions.filter((t: any) => t.type === "EXPENSE").reduce((acc: number, t: any) => acc + t.amount, 0);
 
-    // Balance only counts transactions up to TODAY
+    // ACCUMULATED BALANCE: all transactions from all time up to today
     const today = new Date();
     today.setHours(23, 59, 59, 999);
 
-    const pastTransactions = transactions.filter((t: any) => new Date(t.date) <= today);
-    const pastIncomes = pastTransactions.filter((t: any) => t.type === "INCOME").reduce((acc: number, t: any) => acc + t.amount, 0);
-    const pastExpenses = pastTransactions.filter((t: any) => t.type === "EXPENSE").reduce((acc: number, t: any) => acc + t.amount, 0);
-    const balance = pastIncomes - pastExpenses;
+    const allPastTransactions = await prisma.transaction.findMany({
+        where: {
+            userId,
+            date: { lte: today },
+        },
+        select: { type: true, amount: true },
+    });
+
+    const totalIncomes = allPastTransactions.filter((t: any) => t.type === "INCOME").reduce((acc: number, t: any) => acc + t.amount, 0);
+    const totalExpenses = allPastTransactions.filter((t: any) => t.type === "EXPENSE").reduce((acc: number, t: any) => acc + t.amount, 0);
+    const balance = totalIncomes - totalExpenses;
 
     return { incomes, expenses, balance, transactions };
 }

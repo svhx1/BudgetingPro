@@ -20,20 +20,27 @@ export default function FloatingActionButton() {
         setAddModalOpen(true);
     };
 
+    // iOS-style: fast pop with overshoot bounce
+    const bubbleTransition = {
+        type: "spring" as const,
+        stiffness: 700,
+        damping: 15,
+        mass: 0.4,
+    };
+
     return (
         <div className="fixed bottom-28 left-1/2 -translate-x-1/2 md:bottom-10 md:left-auto md:right-10 md:translate-x-0 z-40 flex items-center justify-center">
 
-            {/* Bubbles — liquid glass circles */}
             <AnimatePresence>
                 {isExpanded && (
                     <>
                         <motion.button
-                            initial={{ scale: 0, opacity: 0, x: 0, y: 0 }}
-                            animate={{ scale: 1, opacity: 1, x: -55, y: -60 }}
-                            exit={{ scale: 0, opacity: 0, x: 0, y: 0 }}
-                            transition={{ duration: 0.15, ease: "easeOut" }}
+                            initial={{ scale: 0, x: 0, y: 0 }}
+                            animate={{ scale: 1, x: -55, y: -60 }}
+                            exit={{ scale: 0, x: 0, y: 0, transition: { duration: 0.1 } }}
+                            transition={bubbleTransition}
                             onClick={() => handleSelect("INCOME")}
-                            className="absolute w-12 h-12 rounded-full flex items-center justify-center border border-white/15 hover:scale-110 transition-transform"
+                            className="absolute w-12 h-12 rounded-full flex items-center justify-center border border-white/15 active:scale-90 transition-transform"
                             style={{
                                 background: "linear-gradient(135deg, rgba(16,185,129,0.15) 0%, rgba(255,255,255,0.04) 100%)",
                                 backdropFilter: "blur(24px)",
@@ -46,12 +53,12 @@ export default function FloatingActionButton() {
                         </motion.button>
 
                         <motion.button
-                            initial={{ scale: 0, opacity: 0, x: 0, y: 0 }}
-                            animate={{ scale: 1, opacity: 1, x: 30, y: -70 }}
-                            exit={{ scale: 0, opacity: 0, x: 0, y: 0 }}
-                            transition={{ duration: 0.15, ease: "easeOut", delay: 0.03 }}
+                            initial={{ scale: 0, x: 0, y: 0 }}
+                            animate={{ scale: 1, x: 30, y: -70 }}
+                            exit={{ scale: 0, x: 0, y: 0, transition: { duration: 0.1 } }}
+                            transition={{ ...bubbleTransition, delay: 0.02 }}
                             onClick={() => handleSelect("EXPENSE")}
-                            className="absolute w-12 h-12 rounded-full flex items-center justify-center border border-white/15 hover:scale-110 transition-transform"
+                            className="absolute w-12 h-12 rounded-full flex items-center justify-center border border-white/15 active:scale-90 transition-transform"
                             style={{
                                 background: "linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(255,255,255,0.04) 100%)",
                                 backdropFilter: "blur(24px)",
@@ -66,21 +73,19 @@ export default function FloatingActionButton() {
                 )}
             </AnimatePresence>
 
-            {/* Main FAB */}
             <AnimatePresence>
                 {!isAddModalOpen && (
                     <motion.button
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0, opacity: 0 }}
-                        whileHover={{ scale: 1.1 }}
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        exit={{ scale: 0 }}
                         whileTap={{ scale: 0.9 }}
                         onClick={() => setIsExpanded(prev => !prev)}
-                        className="relative p-4 md:p-5 rounded-full bg-(--color-neon-green) text-black shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all duration-200"
+                        className="relative p-4 md:p-5 rounded-full bg-(--color-neon-green) text-black shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-shadow duration-200"
                     >
                         <motion.div
                             animate={{ rotate: isExpanded ? 45 : 0 }}
-                            transition={{ duration: 0.15 }}
+                            transition={{ type: "spring", stiffness: 700, damping: 15, mass: 0.4 }}
                         >
                             <Plus className="w-6 h-6 md:w-8 md:h-8" strokeWidth={3} />
                         </motion.div>

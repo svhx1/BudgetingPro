@@ -66,12 +66,7 @@ export default function SummaryCards() {
                         {isPrivacyMode ? "R$ ••••" : formatCurrency(summary.balance)}
                     </h2>
                 )}
-                <div className="flex items-center gap-2 mt-2">
-                    <DollarSign className={`w-4 h-4 ${summary.balance >= 0 ? 'text-emerald-400' : 'text-red-400'}`} />
-                    <span className="text-xs text-(--color-text-muted)">
-                        {summary.balance >= 0 ? "Você está no positivo" : "Atenção: saldo negativo"}
-                    </span>
-                </div>
+
                 <div
                     className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full opacity-0 group-hover:opacity-40 transition-opacity duration-[800ms] pointer-events-none"
                     style={{ background: `radial-gradient(circle, ${summary.balance >= 0 ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'} 0%, transparent 70%)` }}
