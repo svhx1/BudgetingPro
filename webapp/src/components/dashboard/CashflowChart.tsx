@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, Legend } from "recharts";
 import { motion } from "framer-motion";
 import { useGlobal } from "@/contexts/GlobalContext";
 import { getCashflowData, CashflowPeriod } from "@/actions/cashflow";
 import { CalendarDays } from "lucide-react";
 
-type ViewMode = "expense" | "income" | "balance";
+type ViewMode = "expense" | "income" | "balance" | "compare";
 
 const CustomTooltip = ({ active, payload, label, isPrivacyMode }: any) => {
     if (active && payload && payload.length) {
@@ -15,7 +15,8 @@ const CustomTooltip = ({ active, payload, label, isPrivacyMode }: any) => {
             <div className="bg-[#0d0d15]/95 backdrop-blur-2xl border border-white/10 rounded-xl px-4 py-3 shadow-2xl">
                 <p className="text-white/60 text-xs mb-1.5 font-medium">{label}</p>
                 {payload.map((p: any, i: number) => (
-                    <p key={i} className="text-sm font-semibold" style={{ color: p.fill }}>
+                    <p key={i} className="text-sm font-semibold" style={{ color: p.fill || p.color }}>
+                        {p.name === "income" ? "Receita: " : p.name === "expense" ? "Despesa: " : ""}
                         {isPrivacyMode ? "R$ ••••" : `R$ ${p.value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`}
                     </p>
                 ))}
@@ -55,6 +56,7 @@ export default function CashflowChart() {
         { label: "Saídas", value: "expense", color: "#ef4444", gradient: "barGradientExpense" },
         { label: "Entradas", value: "income", color: "#10b981", gradient: "barGradientIncome" },
         { label: "Sobras", value: "balance", color: "#f59e0b", gradient: "barGradientBalance" },
+        { label: "Comparativo", value: "compare", color: "#8b5cf6", gradient: "" },
     ];
 
     const activeView = viewOptions.find(v => v.value === viewMode)!;
@@ -101,7 +103,7 @@ export default function CashflowChart() {
             </div>
 
             {/* View mode toggle */}
-            <div className="relative z-10 flex items-center gap-2 mb-6">
+            <div className="relative z-10 flex items-center gap-2 mb-6 flex-wrap">
                 {viewOptions.map(opt => (
                     <button
                         key={opt.value}
@@ -128,21 +130,82 @@ export default function CashflowChart() {
                     <div className="absolute inset-0 flex items-center justify-center">
                         <div className="w-8 h-8 border-2 border-white/10 border-t-white/40 rounded-full animate-spin" />
                     </div>
+                ) : viewMode === "compare" ? (
+                    /* Comparative mode: two bars side by side */
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={data} barCategoryGap="20%" barGap={4}>
+                            <defs>
+                                <linearGradient id="barGradientIncomeComp" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="#34d399" stopOpacity={1} />
+                                    <stop offset="100%" stopColor="#059669" stopOpacity={0.5} />
+                                </linearGradient>
+                                <linearGradient id="barGradientExpenseComp" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="#f87171" stopOpacity={1} />
+                                    <stop offset="100%" stopColor="#dc2626" stopOpacity={0.5} />
+                                </linearGradient>
+                                <filter id="barGlowComp">
+                                    <feGaussianBlur stdDeviation="2" result="blur" />
+                                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                </filter>
+                            </defs>
+
+                            <CartesianGrid
+                                strokeDasharray="3 3"
+                                stroke="rgba(255,255,255,0.04)"
+                                horizontal={true}
+                                vertical={false}
+                            />
+
+                            <XAxis
+                                dataKey="label"
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 12 }}
+                            />
+                            <YAxis
+                                axisLine={false}
+                                tickLine={false}
+                                tickFormatter={formatYAxis}
+                                tick={{ fill: "rgba(255,255,255,0.25)", fontSize: 11 }}
+                                width={60}
+                            />
+
+                            <Tooltip
+                                content={<CustomTooltip isPrivacyMode={isPrivacyMode} />}
+                                cursor={{ fill: "rgba(255,255,255,0.03)", radius: 8 }}
+                            />
+
+                            <Bar
+                                dataKey="income"
+                                name="income"
+                                fill="url(#barGradientIncomeComp)"
+                                radius={[4, 4, 0, 0]}
+                                maxBarSize={28}
+                                filter="url(#barGlowComp)"
+                            />
+                            <Bar
+                                dataKey="expense"
+                                name="expense"
+                                fill="url(#barGradientExpenseComp)"
+                                radius={[4, 4, 0, 0]}
+                                maxBarSize={28}
+                                filter="url(#barGlowComp)"
+                            />
+                        </BarChart>
+                    </ResponsiveContainer>
                 ) : (
+                    /* Single bar mode */
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={data} barCategoryGap="20%">
                             <defs>
-                                {/* Saídas — Red */}
                                 <linearGradient id="barGradientExpense" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="0%" stopColor="#f87171" stopOpacity={1} />
                                     <stop offset="100%" stopColor="#dc2626" stopOpacity={0.5} />
                                 </linearGradient>
-                                {/* Entradas — Emerald (identidade visual) */}
                                 <linearGradient id="barGradientIncome" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="0%" stopColor="#34d399" stopOpacity={1} />
                                     <stop offset="100%" stopColor="#059669" stopOpacity={0.5} />
                                 </linearGradient>
-                                {/* Sobras — Amber */}
                                 <linearGradient id="barGradientBalance" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="0%" stopColor="#fbbf24" stopOpacity={1} />
                                     <stop offset="100%" stopColor="#d97706" stopOpacity={0.5} />
