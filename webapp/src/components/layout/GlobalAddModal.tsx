@@ -6,6 +6,7 @@ import { PlusCircle, RefreshCw, Layers, CalendarDays, X, Plus, CreditCard, Bankn
 import { createTransaction } from "@/actions/transactions";
 import { getCategories, createCategory } from "@/actions/categories";
 import { useGlobal } from "@/contexts/GlobalContext";
+import { DatePicker } from "@/components/ui/DatePicker";
 
 export default function GlobalAddModal() {
     const { isAddModalOpen, setAddModalOpen, triggerRefresh, refreshTrigger, addToast } = useGlobal();
@@ -142,7 +143,7 @@ export default function GlobalAddModal() {
                         }}
                         className="relative w-full max-w-2xl my-auto flex flex-col items-center justify-center z-10 max-h-[90vh]"
                     >
-                        <div className={`glass-panel p-6 md:p-8 flex flex-col gap-6 w-full overflow-y-auto rounded-3xl hide-scrollbar ${glowColor}`}>
+                        <div className={`glass-panel p-6 md:p-8 flex flex-col gap-6 w-full overflow-y-auto overflow-x-hidden rounded-3xl hide-scrollbar ${glowColor}`}>
 
                             {/* Header with type indicator */}
                             <div className="flex items-center justify-between mb-2">
@@ -237,19 +238,9 @@ export default function GlobalAddModal() {
                                         />
                                     </div>
 
-                                    <div className="flex flex-col gap-2">
+                                    <div className="flex flex-col gap-2 relative">
                                         <label className="text-sm font-medium text-(--color-text-muted) uppercase tracking-wider">Data</label>
-                                        <div className="relative">
-                                            <CalendarDays className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-(--color-text-muted)" />
-                                            <input
-                                                type="date"
-                                                required
-                                                value={date}
-                                                onChange={(e) => setDate(e.target.value)}
-                                                className="w-full bg-(--color-text-main)/5 hover:bg-(--color-text-main)/10 border border-(--color-text-main)/10 rounded-xl py-3 pl-12 pr-4 text-(--color-text-main) font-semibold outline-none focus:border-(--color-text-main)/30 transition-all cursor-pointer relative
-                                                [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer appearance-none"
-                                            />
-                                        </div>
+                                        <DatePicker value={date} onChange={setDate} />
                                     </div>
                                 </div>
 

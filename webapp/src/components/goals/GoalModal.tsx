@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Target, X, Calculator, Plus, Save } from "lucide-react";
+import { Trophy, Target, X, Calculator, CalendarDays, Plus, Image as ImageIcon, Wallet, ShieldAlert, Save } from "lucide-react";
+import { DatePicker } from "@/components/ui/DatePicker";
 import { createGoal, updateGoal, GoalInput } from "@/actions/goals";
 import { useGlobal } from "@/contexts/GlobalContext";
 
@@ -88,11 +89,10 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
             {isOpen && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto w-full h-full">
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        initial={{ opacity: 0, scale: 0.95, y: 30 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                        className="glass-panel border border-(--color-text-main)/10 rounded-3xl w-full max-w-lg shadow-[0_0_50px_rgba(0,0,0,0.5)] my-8 relative overflow-hidden flex flex-col max-h-[90vh]"
+                        exit={{ opacity: 0, scale: 0.95, y: 30 }}
+                        className="relative w-[95%] max-w-xl max-h-[90vh] flex flex-col glass-panel rounded-3xl overflow-hidden shadow-2xl border border-(--color-text-main)/10"
                     >
                         {/* Header */}
                         <div className="p-6 border-b border-(--color-text-main)/10 flex items-center justify-between shrink-0">
@@ -116,7 +116,7 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
                         </div>
 
                         {/* Form Body */}
-                        <div className="p-6 overflow-y-auto">
+                        <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 md:p-8 hide-scrollbar">
                             <form id="goal-form" onSubmit={handleSave} className="flex flex-col gap-6">
 
                                 <div className="flex flex-col gap-2">
@@ -215,7 +215,7 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
                                 {/* Deadline (Optional) */}
                                 <div className="flex flex-col gap-3 pt-2">
                                     <label className="flex items-center gap-3 cursor-pointer group">
-                                        <div className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${hasDeadline ? 'bg-(--color-neon-blue) border-(--color-neon-blue)' : 'bg-transparent border-(--color-text-main)/20 group-hover:border-(--color-text-main)/40'}`}>
+                                        <div className={`w - 5 h - 5 rounded flex items - center justify - center border transition - colors ${hasDeadline ? 'bg-(--color-neon-blue) border-(--color-neon-blue)' : 'bg-transparent border-(--color-text-main)/20 group-hover:border-(--color-text-main)/40'} `}>
                                             {hasDeadline && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}><Plus className="w-3 h-3 text-black rotate-45" /></motion.div>}
                                         </div>
                                         <span className="text-sm font-medium text-(--color-text-main) select-none">Possui data limite?</span>
@@ -227,16 +227,9 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
                                                 initial={{ height: 0, opacity: 0 }}
                                                 animate={{ height: "auto", opacity: 1 }}
                                                 exit={{ height: 0, opacity: 0 }}
-                                                className="overflow-hidden"
+                                                className="mt-1"
                                             >
-                                                <input
-                                                    type="date"
-                                                    required={hasDeadline}
-                                                    value={deadline}
-                                                    onChange={(e) => setDeadline(e.target.value)}
-                                                    min={new Date().toISOString().split("T")[0]}
-                                                    className="w-full mt-1 bg-(--color-text-main)/5 hover:bg-(--color-text-main)/10 border border-(--color-text-main)/10 rounded-xl py-3 px-4 text-(--color-text-main) font-semibold outline-none focus:border-(--color-text-main)/30 transition-all cursor-pointer relative appearance-none [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
-                                                />
+                                                <DatePicker value={deadline} onChange={setDeadline} />
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
