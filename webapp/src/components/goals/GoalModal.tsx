@@ -235,8 +235,7 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
                                                     value={deadline}
                                                     onChange={(e) => setDeadline(e.target.value)}
                                                     min={new Date().toISOString().split("T")[0]}
-                                                    className="w-full mt-1 bg-(--color-text-main)/5 border border-(--color-text-main)/10 rounded-xl py-3 px-4 text-(--color-text-main) outline-none focus:border-(--color-text-main)/30 transition-colors"
-                                                    style={{ colorScheme: 'dark' }}
+                                                    className="w-full mt-1 bg-(--color-text-main)/5 hover:bg-(--color-text-main)/10 border border-(--color-text-main)/10 rounded-xl py-3 px-4 text-(--color-text-main) font-semibold outline-none focus:border-(--color-text-main)/30 transition-all cursor-pointer relative appearance-none [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                                                 />
                                             </motion.div>
                                         )}

@@ -28,12 +28,15 @@ export interface TrendResponse {
     error?: string;
 }
 
-export async function getTrendData(month: number, year: number, type: TransactionType = "EXPENSE"): Promise<TrendResponse> {
+export async function getTrendData(jsMonth: number, year: number, type: TransactionType = "EXPENSE"): Promise<TrendResponse> {
     try {
         const userId = await getLoggedUserId();
         if (!userId) {
             return { success: false, error: "Não autorizado" };
         }
+
+        // Mapear o Month (jsMonth do frontend varia de 0 a 11) para 1-12
+        const month = jsMonth + 1;
 
         // Determinar as datas do Mês Atual (selecionado no App)
         // Usar formato UTC literal para evitar drift de Fuso Horário no Servidor (Ex: 01 de Março virar 28 de Fev as 21:00)

@@ -234,8 +234,8 @@ export default function GlobalAddModal() {
                                                 required
                                                 value={date}
                                                 onChange={(e) => setDate(e.target.value)}
-                                                className="w-full bg-(--color-text-main)/5 border border-(--color-text-main)/10 rounded-xl py-3 pl-12 pr-4 text-(--color-text-main) outline-none focus:border-(--color-text-main)/30 transition-colors"
-                                                style={{ colorScheme: 'dark' }}
+                                                className="w-full bg-(--color-text-main)/5 hover:bg-(--color-text-main)/10 border border-(--color-text-main)/10 rounded-xl py-3 pl-12 pr-4 text-(--color-text-main) font-semibold outline-none focus:border-(--color-text-main)/30 transition-all cursor-pointer relative
+                                                [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer appearance-none"
                                             />
                                         </div>
                                     </div>
