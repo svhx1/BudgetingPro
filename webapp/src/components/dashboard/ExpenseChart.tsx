@@ -10,8 +10,8 @@ import { useCachedData } from "@/hooks/useCachedData";
 const CustomTooltip = ({ active, payload, isPrivacyMode }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-[#1a1a1a]/95 backdrop-blur-xl p-3 border border-(--color-text-main)/10 rounded-xl shadow-xl">
-                <p className="text-(--color-text-main) font-medium mb-1">{payload[0].name}</p>
+            <div className="bg-[var(--color-base-bg)]/95 backdrop-blur-xl p-3 border border-[var(--color-text-main)]/10 rounded-xl shadow-xl">
+                <p className="text-[var(--color-text-main)] font-medium mb-1">{payload[0].name}</p>
                 <p className="text-sm" style={{ color: payload[0].payload.color }}>
                     {isPrivacyMode ? "R$ ••••" : `R$ ${payload[0].value.toFixed(2)}`}
                 </p>

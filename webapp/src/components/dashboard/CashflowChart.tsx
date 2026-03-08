@@ -13,8 +13,8 @@ type ViewMode = "expense" | "income" | "balance" | "compare";
 const CustomTooltip = ({ active, payload, label, isPrivacyMode }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-[#0d0d15]/95 backdrop-blur-2xl border border-(--color-text-main)/10 rounded-xl px-4 py-3 shadow-2xl">
-                <p className="text-(--color-text-main)/60 text-xs mb-1.5 font-medium">{label}</p>
+            <div className="bg-[var(--color-base-bg)]/95 backdrop-blur-2xl border border-[var(--color-text-main)]/10 rounded-xl px-4 py-3 shadow-2xl">
+                <p className="text-[var(--color-text-main)]/60 text-xs mb-1.5 font-medium">{label}</p>
                 {payload.map((p: any, i: number) => (
                     <p key={i} className="text-sm font-semibold" style={{ color: p.fill || p.color }}>
                         {p.name === "income" ? "Receita: " : p.name === "expense" ? "Despesa: " : ""}
@@ -151,7 +151,8 @@ export default function CashflowChart() {
 
                             <CartesianGrid
                                 strokeDasharray="3 3"
-                                stroke="rgba(255,255,255,0.04)"
+                                stroke="var(--color-text-muted)"
+                                strokeOpacity={0.15}
                                 horizontal={true}
                                 vertical={false}
                             />
@@ -160,19 +161,19 @@ export default function CashflowChart() {
                                 dataKey="label"
                                 axisLine={false}
                                 tickLine={false}
-                                tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 12 }}
+                                tick={{ fill: "var(--color-text-muted)", fontSize: 12 }}
                             />
                             <YAxis
                                 axisLine={false}
                                 tickLine={false}
                                 tickFormatter={formatYAxis}
-                                tick={{ fill: "rgba(255,255,255,0.25)", fontSize: 11 }}
+                                tick={{ fill: "var(--color-text-muted)", fontSize: 11 }}
                                 width={60}
                             />
 
                             <Tooltip
                                 content={<CustomTooltip isPrivacyMode={isPrivacyMode} />}
-                                cursor={{ fill: "rgba(255,255,255,0.03)", radius: 8 }}
+                                cursor={{ fill: "var(--color-text-main)", opacity: 0.05, radius: 8 }}
                             />
 
                             <Bar
@@ -218,7 +219,8 @@ export default function CashflowChart() {
 
                             <CartesianGrid
                                 strokeDasharray="3 3"
-                                stroke="rgba(255,255,255,0.04)"
+                                stroke="var(--color-text-muted)"
+                                strokeOpacity={0.15}
                                 horizontal={true}
                                 vertical={false}
                             />
@@ -227,19 +229,19 @@ export default function CashflowChart() {
                                 dataKey="label"
                                 axisLine={false}
                                 tickLine={false}
-                                tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 12 }}
+                                tick={{ fill: "var(--color-text-muted)", fontSize: 12 }}
                             />
                             <YAxis
                                 axisLine={false}
                                 tickLine={false}
                                 tickFormatter={formatYAxis}
-                                tick={{ fill: "rgba(255,255,255,0.25)", fontSize: 11 }}
+                                tick={{ fill: "var(--color-text-muted)", fontSize: 11 }}
                                 width={60}
                             />
 
                             <Tooltip
                                 content={<CustomTooltip isPrivacyMode={isPrivacyMode} />}
-                                cursor={{ fill: "rgba(255,255,255,0.03)", radius: 8 }}
+                                cursor={{ fill: "var(--color-text-main)", opacity: 0.05, radius: 8 }}
                             />
 
                             <Bar
