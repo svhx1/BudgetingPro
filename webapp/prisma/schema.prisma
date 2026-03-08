@@ -27,6 +27,7 @@ model User {
   limits       BudgetLimit[]
   goals        Goal[]
   allocations  BudgetAllocation[]
+  monthlySummaries MonthlySummary[]
 }
 
 model Category {
@@ -118,4 +119,25 @@ model BudgetAllocation {
   updatedAt  DateTime @updatedAt
 
   @@unique([month, year, categoryId, userId]) // Só pode haver um orçamento por categoria em um mês
+}
+
+// MATERIALIZED ROLLUP TABLE (Motor Matemático O(1) sugerido para Otimização Extrema)
+// Armazena a SOMA exata de todas as transações de um mês específico para leitura Instantânea do front.
+model MonthlySummary {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  month            Int      // 1 a 12 (Vamos usar 1-indexed para humano)
+  year             Int      // Ex: 2026
+  
+  totalIncomes     Float    @default(0)
+  totalExpenses    Float    @default(0)
+  totalCreditUsed  Float    @default(0) // Somente dos expenses onde paymentMethod === "CREDIT"
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([userId, month, year]) // Exclusivo: Cada usuário só tem 1 Summary por Mês/Ano
+  @@index([userId, year])          // Leitura veloz indexada
 }

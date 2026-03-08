@@ -4,49 +4,30 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/session";
 
 async function fetchDashboardSummary(userId: string, month: number, year: number) {
-    // Datas seguras em UTC Zero para ignorar fuso horário local
-    const monthStr = (month + 1).toString().padStart(2, '0'); // Mês vem 0-11 do frontend
-    const startDate = new Date(`${year}-${monthStr}-01T00:00:00.000Z`);
-
-    const endDateObj = new Date(year, month + 1, 0);
-    const endDayStr = endDateObj.getDate().toString().padStart(2, '0');
-    const endDate = new Date(`${year}-${monthStr}-${endDayStr}T23:59:59.999Z`);
-
-    // Busca apenas as transações do Mês Atual (necessárias pro Array Visual)
-    const transactions = await prisma.transaction.findMany({
-        where: {
-            userId,
-            date: { gte: startDate, lte: endDate },
-        },
-        include: { category: true },
-        orderBy: { date: 'desc' }
-    });
-
+    // 1. O(1) MATEMÁTICA RÁPIDA (Via Materialized Rollup Table)
+    // Busca a soma instantânea exata pré-calculada do mês
     let incomes = 0;
     let expenses = 0;
     let creditUsed = 0;
 
-    // Cálculo em memória O(N) apenas do micro-lote mensal
-    for (const t of transactions) {
-        if (t.type === "INCOME") incomes += t.amount;
-        if (t.type === "EXPENSE") {
-            expenses += t.amount;
-            if ((t as any).paymentMethod === "CREDIT") creditUsed += t.amount;
-        }
+    const summary = await (prisma as any).monthlySummary.findUnique({
+        where: { userId_month_year: { userId, month: month + 1, year } }
+    });
+
+    if (summary) {
+        incomes = summary.totalIncomes;
+        expenses = summary.totalExpenses;
+        creditUsed = summary.totalCreditUsed;
     }
 
     const monthBalance = incomes - expenses;
 
-    // SALDO HISTÓRICO GLOBAL (Otimizado via _sum DB-Side)
+    // 2. SALDO HISTÓRICO GLOBAL TOTAL (Continuamos usando _sum mas sem trazer Array pra Memória)
     const today = new Date();
-
-    // Agregação massiva de Entradas
     const pastIncomesAgg = await prisma.transaction.aggregate({
         where: { userId, type: "INCOME", date: { lte: today } },
         _sum: { amount: true }
     });
-
-    // Agregação massiva de Saídas
     const pastExpensesAgg = await prisma.transaction.aggregate({
         where: { userId, type: "EXPENSE", date: { lte: today } },
         _sum: { amount: true }
@@ -55,6 +36,22 @@ async function fetchDashboardSummary(userId: string, month: number, year: number
     const totalIncomes = pastIncomesAgg._sum.amount || 0;
     const totalExpenses = pastExpensesAgg._sum.amount || 0;
     const balance = totalIncomes - totalExpenses;
+
+    // 3. RECUPERAÇÃO LEVE GASTOS RECENTES (Apenas para Listagem Visual na Sidebar)
+    const monthStr = (month + 1).toString().padStart(2, '0');
+    const startDate = new Date(`${year}-${monthStr}-01T00:00:00.000Z`);
+    const endDateObj = new Date(year, month + 1, 0);
+    const endDayStr = endDateObj.getDate().toString().padStart(2, '0');
+    const endDate = new Date(`${year}-${monthStr}-${endDayStr}T23:59:59.999Z`);
+
+    const transactions = await prisma.transaction.findMany({
+        where: {
+            userId,
+            date: { gte: startDate, lte: endDate },
+        },
+        include: { category: true },
+        orderBy: { date: 'desc' }
+    });
 
     return { incomes, expenses, balance, creditUsed, monthBalance, transactions };
 }

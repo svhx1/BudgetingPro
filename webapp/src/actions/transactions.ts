@@ -15,6 +15,42 @@ export type TransactionInput = {
     paymentMethod?: "DEBIT" | "CREDIT";
 };
 
+// Sobrecarga de Tipagem para Bypass de Cache do TSLint que ainda não atualizou o Schema pós db push.
+type AugmentedTransactionInput = any;
+type PrismaMonthlySummaryClient = any;
+
+// HELPER: Sincroniza a tabela de Alta Performance (O(1) Rollup)
+async function updateMonthlySummary(userId: string, date: Date, type: "INCOME" | "EXPENSE", amount: number, paymentMethod: string | null | undefined, isDelete = false) {
+    const month = date.getMonth() + 1; // 1 to 12
+    const year = date.getFullYear();
+
+    const signal = isDelete ? -1 : 1;
+    const value = amount * signal;
+
+    const incomeDelta = type === "INCOME" ? value : 0;
+    const expenseDelta = type === "EXPENSE" ? value : 0;
+    const creditDelta = (type === "EXPENSE" && paymentMethod === "CREDIT") ? value : 0;
+
+    await prisma.monthlySummary.upsert({
+        where: {
+            userId_month_year: { userId, month, year }
+        },
+        update: {
+            totalIncomes: { increment: incomeDelta },
+            totalExpenses: { increment: expenseDelta },
+            totalCreditUsed: { increment: creditDelta }
+        },
+        create: {
+            userId,
+            month,
+            year,
+            totalIncomes: incomeDelta > 0 ? incomeDelta : 0,
+            totalExpenses: expenseDelta > 0 ? expenseDelta : 0,
+            totalCreditUsed: creditDelta > 0 ? creditDelta : 0
+        }
+    });
+}
+
 export async function createTransaction(data: TransactionInput) {
     try {
         const userId = await getCurrentUserId();
@@ -37,7 +73,7 @@ export async function createTransaction(data: TransactionInput) {
         }
 
         if (recurrence === "unico") {
-            await prisma.transaction.create({
+            await (prisma as any).transaction.create({
                 data: {
                     description,
                     amount,
@@ -48,6 +84,7 @@ export async function createTransaction(data: TransactionInput) {
                     paymentMethod: type === "EXPENSE" ? (paymentMethod || "DEBIT") : null,
                 },
             });
+            await updateMonthlySummary(userId, baseDate, type, amount, paymentMethod);
         }
 
         else if (recurrence === "parcelado" && installments) {
@@ -56,11 +93,10 @@ export async function createTransaction(data: TransactionInput) {
 
             const transactions = Array.from({ length: installments }).map((_, i) => {
                 const nextDate = advanceMonth(baseDate, i);
-
                 return {
                     description: `${description} (${i + 1}/${installments})`,
                     amount: parseFloat(installmentAmount.toFixed(2)),
-                    type,
+                    type: type,
                     date: nextDate,
                     categoryId,
                     userId,
@@ -70,18 +106,23 @@ export async function createTransaction(data: TransactionInput) {
                 };
             });
 
-            await prisma.transaction.createMany({ data: transactions });
+            // 1) Insere as transações em lote
+            await prisma.transaction.createMany({ data: transactions as any });
+
+            // 2) Sincroniza a Rollup Table Mês a Mês
+            await Promise.all(transactions.map(tx =>
+                updateMonthlySummary(tx.userId, tx.date, tx.type as "INCOME" | "EXPENSE", tx.amount, tx.paymentMethod)
+            ));
         }
 
         else if (recurrence === "fixo") {
             const groupId = crypto.randomUUID();
             const transactions = Array.from({ length: 12 }).map((_, i) => {
                 const nextDate = advanceMonth(baseDate, i);
-
                 return {
                     description,
                     amount,
-                    type,
+                    type: type,
                     date: nextDate,
                     categoryId,
                     userId,
@@ -91,7 +132,13 @@ export async function createTransaction(data: TransactionInput) {
                 };
             });
 
-            await prisma.transaction.createMany({ data: transactions });
+            // 1) Insere as transações em lote
+            await prisma.transaction.createMany({ data: transactions as any });
+
+            // 2) Sincroniza a Rollup Table Mês a Mês
+            await Promise.all(transactions.map(tx =>
+                updateMonthlySummary(tx.userId, tx.date, tx.type as "INCOME" | "EXPENSE", tx.amount, tx.paymentMethod)
+            ));
         }
 
         revalidatePath("/history");
@@ -106,9 +153,15 @@ export async function createTransaction(data: TransactionInput) {
 
 export async function deleteTransaction(id: string) {
     try {
+        const tx = await prisma.transaction.findUnique({ where: { id } });
+        if (!tx) return { success: false, error: "Transação não encontrada" };
+
         await prisma.transaction.delete({
             where: { id }
         });
+
+        await updateMonthlySummary(tx.userId, tx.date, tx.type as "INCOME" | "EXPENSE", tx.amount, (tx as any).paymentMethod, true);
+
         revalidatePath("/history");
         revalidatePath("/");
         return { success: true };
