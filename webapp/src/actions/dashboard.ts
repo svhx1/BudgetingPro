@@ -66,3 +66,67 @@ export async function getDashboardSummary(month: number, year: number) {
         return { success: false, data: { incomes: 0, expenses: 0, balance: 0, creditUsed: 0, monthBalance: 0, transactions: [] } };
     }
 }
+
+// FERRAMENTA DE ADMIN/RECOVERY MIGRATION: Reconstrói o Cache Rollup de TODO OU PARTE do histórico pra um Usuário
+export async function syncHistoricalBalances() {
+    try {
+        const userId = await getCurrentUserId();
+
+        // Puxa tudo.
+        const allTransactions = await prisma.transaction.findMany({
+            where: { userId }
+        });
+
+        // Agrupa In-Memory por "YYYY-MM"
+        const groupedMap = new Map<string, { incomes: number; expenses: number; credit: number }>();
+
+        for (const tx of allTransactions) {
+            const m = tx.date.getMonth() + 1;
+            const y = tx.date.getFullYear();
+            const slotKey = `${y}-${m}`;
+
+            if (!groupedMap.has(slotKey)) {
+                groupedMap.set(slotKey, { incomes: 0, expenses: 0, credit: 0 });
+            }
+
+            const box = groupedMap.get(slotKey)!;
+
+            if (tx.type === "INCOME") box.incomes += tx.amount;
+            if (tx.type === "EXPENSE") {
+                box.expenses += tx.amount;
+                if ((tx as any).paymentMethod === "CREDIT") box.credit += tx.amount;
+            }
+        }
+
+        // Deleta as velhas (do usuario logado)
+        await (prisma as any).monthlySummary.deleteMany({
+            where: { userId }
+        });
+
+        // Insere as novas
+        const upsertArray = Array.from(groupedMap.entries()).map(([key, data]) => {
+            const [yStr, mStr] = key.split("-");
+            const y = parseInt(yStr);
+            const m = parseInt(mStr);
+            return {
+                userId,
+                year: y,
+                month: m,
+                totalIncomes: data.incomes,
+                totalExpenses: data.expenses,
+                totalCreditUsed: data.credit
+            };
+        });
+
+        if (upsertArray.length > 0) {
+            await (prisma as any).monthlySummary.createMany({
+                data: upsertArray
+            });
+        }
+
+        return { success: true, count: upsertArray.length };
+    } catch (error) {
+        console.error("Backfill Sync falhou:", error);
+        return { success: false };
+    }
+}

@@ -157,6 +157,21 @@ export default function SettingsPage() {
         }
     };
 
+    const [syncLoading, setSyncLoading] = useState(false);
+    const handleSyncRollup = async () => {
+        setSyncLoading(true);
+        addToast("Reconstruindo Motor Matemático O(1)...", "info");
+        const { syncHistoricalBalances } = await import("@/actions/dashboard");
+        const res = await syncHistoricalBalances();
+        if (res.success) {
+            addToast(`Cashflow Resync Concluído! ${res.count} Meses Recuperados.`, "success");
+            triggerRefresh(); // Forza rebind global
+        } else {
+            addToast("Erro na resincronização.", "error");
+        }
+        setSyncLoading(false);
+    };
+
     return (
         <div className="flex flex-col min-h-screen w-full pb-10">
             <header className="mb-10">
@@ -423,7 +438,7 @@ export default function SettingsPage() {
                         <h2 className="text-xl font-bold text-(--color-text-main)">Developer Tools</h2>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="flex flex-col gap-2">
                             <h3 className="font-medium text-(--color-text-main)">Popular Banco de Dados</h3>
                             <p className="text-sm text-(--color-text-muted) mb-2">Gera 50 lançamentos aleatórios nos últimos 3 meses para testar a interface e paginadores.</p>
@@ -434,6 +449,19 @@ export default function SettingsPage() {
                             >
                                 <DatabaseZap className="w-4 h-4" />
                                 {mockLoading ? "Gerando..." : "Gerar Dados Mock"}
+                            </button>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <h3 className="font-medium text-(--color-text-main)">Sincronizar Cache O(1)</h3>
+                            <p className="text-sm text-(--color-text-muted) mb-2">Seus Saldos zeraram misteriosamente? Use isso para o Backend varrer registros órfãos antigos.</p>
+                            <button
+                                onClick={handleSyncRollup}
+                                disabled={syncLoading}
+                                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 transition-colors font-semibold disabled:opacity-50"
+                            >
+                                <DatabaseZap className="w-4 h-4" />
+                                {syncLoading ? "Aguarde..." : "Rodar Backfill O(1)"}
                             </button>
                         </div>
 
