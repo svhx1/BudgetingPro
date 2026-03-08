@@ -19,7 +19,6 @@ export default function GlobalAddModal() {
     const [description, setDescription] = useState<string>("");
     const [date, setDate] = useState<string>(new Date().toISOString().split("T")[0]);
     const [categoryId, setCategoryId] = useState<string>("");
-    const [loading, setLoading] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState<"DEBIT" | "CREDIT">("DEBIT");
 
     const [showNewCat, setShowNewCat] = useState(false);
@@ -77,9 +76,15 @@ export default function GlobalAddModal() {
             numericAmount = numericAmount * installments;
         }
 
-        setLoading(true);
+        // 1. Fechar modal imediatamente, resetar vars e notificar
+        setAddModalOpen(false);
+        setAmount("");
+        setDescription("");
+        setDate(new Date().toISOString().split("T")[0]);
+        addToast("Salvando transação...", "info");
 
-        const res = await createTransaction({
+        // 2. Disparar processamento em background (Fire-and-forget)
+        createTransaction({
             description,
             amount: numericAmount,
             type,
@@ -88,20 +93,17 @@ export default function GlobalAddModal() {
             recurrence,
             installments: recurrence === "parcelado" ? installments : undefined,
             paymentMethod: type === "EXPENSE" ? paymentMethod : undefined,
+        }).then((res) => {
+            if (res?.success) {
+                addToast("Transação salva com sucesso!", "success");
+                triggerRefresh();
+            } else {
+                addToast("Erro ao registrar no banco de dados.", "error");
+            }
+        }).catch((err) => {
+            console.error(err);
+            addToast("Falha de comunicação com o servidor.", "error");
         });
-
-        if (res?.success) {
-            setAmount("");
-            setDescription("");
-            setDate(new Date().toISOString().split("T")[0]);
-            setAddModalOpen(false);
-            addToast("Sua transação já está no banco e no Dashboard!", "success");
-            triggerRefresh();
-        } else {
-            addToast("Erro ao registrar no banco de dados.", "error");
-        }
-
-        setLoading(false);
     };
 
     const isExpense = type === "EXPENSE";

@@ -19,7 +19,6 @@ export default function GlobalEditModal() {
     const [description, setDescription] = useState<string>("");
     const [date, setDate] = useState<string>(new Date().toISOString().split("T")[0]);
     const [categoryId, setCategoryId] = useState<string>("");
-    const [loading, setLoading] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState<"DEBIT" | "CREDIT">("DEBIT");
 
     const [showNewCat, setShowNewCat] = useState(false);
@@ -95,9 +94,12 @@ export default function GlobalEditModal() {
             numericAmount = numericAmount * installments;
         }
 
-        setLoading(true);
+        // 1. Fechar modal imediatamente e notificar o processamento
+        setEditModalOpen(false);
+        addToast("Atualizando transação...", "info");
 
-        const res = await updateTransaction(editTxData.id, updateSeries, {
+        // 2. Disparar o update em background (Fire-and-forget)
+        updateTransaction(editTxData.id, updateSeries, {
             description,
             amount: numericAmount,
             type,
@@ -106,17 +108,17 @@ export default function GlobalEditModal() {
             recurrence,
             installments: recurrence === "parcelado" ? installments : undefined,
             paymentMethod: type === "EXPENSE" ? paymentMethod : undefined,
+        }).then((res) => {
+            if (res?.success) {
+                addToast("Transação atualizada com sucesso!", "success");
+                triggerRefresh();
+            } else {
+                addToast("Erro ao atualizar no banco de dados.", "error");
+            }
+        }).catch((err) => {
+            console.error(err);
+            addToast("Falha na comunicação com o servidor.", "error");
         });
-
-        if (res?.success) {
-            setEditModalOpen(false);
-            addToast("Transação atualizada com sucesso!", "success");
-            triggerRefresh();
-        } else {
-            addToast("Erro ao atualizar no banco de dados.", "error");
-        }
-
-        setLoading(false);
     };
 
     const isExpense = type === "EXPENSE";
