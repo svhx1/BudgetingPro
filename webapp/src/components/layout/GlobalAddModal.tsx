@@ -66,15 +66,23 @@ export default function GlobalAddModal() {
         setCreatingCat(false);
     };
 
+    const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const rawValue = e.target.value.replace(/\D/g, ""); // Remove non-digits
+        setAmount(rawValue);
+    };
+
+    const displayAmount = amount ? (Number(amount) / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "";
+
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!amount || isNaN(Number(amount))) return addToast("Insira um valor numérico válido.", "error");
+        const numericAmount = Number(amount) / 100;
+        if (!amount || numericAmount <= 0) return addToast("Insira um valor numérico válido.", "error");
 
         setLoading(true);
 
         const res = await createTransaction({
             description,
-            amount: parseFloat(amount),
+            amount: numericAmount,
             type,
             date,
             categoryId,
@@ -167,13 +175,13 @@ export default function GlobalAddModal() {
                                             R$
                                         </span>
                                         <input
-                                            type="number"
-                                            step="0.01"
+                                            type="text"
+                                            inputMode="numeric"
                                             required
-                                            value={amount}
-                                            onChange={(e) => setAmount(e.target.value)}
+                                            value={displayAmount}
+                                            onChange={handleAmountChange}
                                             placeholder="0,00"
-                                            className="w-full bg-(--color-text-main)/5 border border-(--color-text-main)/10 rounded-2xl py-4 pl-12 pr-4 text-3xl font-bold text-(--color-text-main) outline-none transition-colors"
+                                            className="w-full bg-(--color-text-main)/5 hover:bg-(--color-text-main)/10 border border-(--color-text-main)/10 rounded-2xl py-4 pl-12 pr-4 text-3xl font-bold text-(--color-text-main) outline-none focus:border-(--color-text-main)/30 transition-all"
                                         />
                                     </div>
                                 </div>
@@ -315,7 +323,10 @@ export default function GlobalAddModal() {
                                             <button
                                                 key={opt.id}
                                                 type="button"
-                                                onClick={() => setRecurrence(opt.id as any)}
+                                                onClick={() => {
+                                                    setRecurrence(opt.id as any);
+                                                    if (opt.id === "parcelado") setPaymentMethod("CREDIT");
+                                                }}
                                                 className={`py-3 px-2 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all duration-300 ${recurrence === opt.id
                                                     ? "bg-(--color-text-main)/10 border-(--color-text-main)/30 text-(--color-text-main)"
                                                     : "bg-transparent border-transparent text-(--color-text-muted) hover:bg-(--color-text-main)/5"
@@ -334,15 +345,18 @@ export default function GlobalAddModal() {
                                             animate={{ height: "auto", opacity: 1 }}
                                             className="flex items-center justify-between p-4 bg-(--color-text-main)/5 rounded-xl border border-(--color-text-main)/10 mt-2"
                                         >
-                                            <span className="text-sm text-(--color-text-muted)">Em quantas parcelas? (2x a 60x)</span>
-                                            <div className="flex items-center gap-4">
+                                            <span className="text-sm font-medium text-(--color-text-muted)">Em quantas parcelas?</span>
+                                            <div className="flex items-center gap-2">
                                                 <input
-                                                    type="range" min="2" max="60"
+                                                    type="number"
+                                                    min="2"
+                                                    max="999"
                                                     value={installments}
                                                     onChange={(e) => setInstallments(Number(e.target.value))}
-                                                    className="w-32 accent-(--color-neon-green-light)"
+                                                    onFocus={(e) => e.target.select()}
+                                                    className="w-20 bg-(--color-text-main)/5 hover:bg-(--color-text-main)/10 border border-(--color-text-main)/10 rounded-lg py-2 px-3 text-center text-lg font-bold text-(--color-text-main) outline-none focus:border-(--color-text-main)/30 transition-all appearance-none"
                                                 />
-                                                <span className="font-bold w-8 text-right text-(--color-text-main)">{installments}x</span>
+                                                <span className="font-bold text-(--color-text-muted)">vezes</span>
                                             </div>
                                         </motion.div>
                                     )}
