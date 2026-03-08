@@ -8,10 +8,13 @@ export async function resetDatabase() {
     try {
         const userId = await getCurrentUserId();
 
-        // Deleta BudgetLimits -> Transações -> Categorias nesta ordem para respeitar FK
+        // Deleta BudgetLimits -> Transações -> MonthlySummary nesta ordem
         await prisma.budgetLimit.deleteMany({ where: { userId } });
         await prisma.transaction.deleteMany({ where: { userId } });
-        await prisma.category.deleteMany({ where: { userId } });
+        // Importante zerar os saldos pre-computados quando limpar as transações:
+        await (prisma as any).monthlySummary.deleteMany({ where: { userId } });
+
+        // Categorias preservadas!
 
         revalidatePath("/");
         revalidatePath("/history");
@@ -31,6 +34,7 @@ export async function populateMockDatabase() {
         // Limpa antes
         await prisma.budgetLimit.deleteMany({ where: { userId } });
         await prisma.transaction.deleteMany({ where: { userId } });
+        await (prisma as any).monthlySummary.deleteMany({ where: { userId } });
         await prisma.category.deleteMany({ where: { userId } });
 
         // Cria categorias
