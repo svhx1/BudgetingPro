@@ -186,7 +186,7 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
                         key={toast.id}
                         className={`pointer-events-auto px-6 py-4 rounded-xl shadow-2xl border backdrop-blur-md transform transition-all duration-300 translate-y-0 opacity-100 flex items-center gap-3 ${toast.type === "success" ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400" :
                             toast.type === "error" ? "bg-red-500/10 border-red-500/30 text-red-500" :
-                                "bg-white/10 border-white/20 text-white"
+                                "bg-(--color-text-main)/10 border-(--color-text-main)/20 text-(--color-text-main)"
                             }`}
                     >
                         <span className="font-semibold text-sm max-w-[300px] break-words">{toast.message}</span>

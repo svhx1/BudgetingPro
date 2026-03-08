@@ -77,10 +77,10 @@ export default function BudgetAllocator() {
     if (loading) {
         return (
             <div className="flex flex-col gap-6 w-full animate-pulse">
-                <div className="h-32 bg-white/5 rounded-3xl" />
-                <div className="h-20 bg-white/5 rounded-2xl" />
-                <div className="h-20 bg-white/5 rounded-2xl" />
-                <div className="h-20 bg-white/5 rounded-2xl" />
+                <div className="h-32 bg-(--color-text-main)/5 rounded-3xl" />
+                <div className="h-20 bg-(--color-text-main)/5 rounded-2xl" />
+                <div className="h-20 bg-(--color-text-main)/5 rounded-2xl" />
+                <div className="h-20 bg-(--color-text-main)/5 rounded-2xl" />
             </div>
         );
     }
@@ -114,7 +114,7 @@ export default function BudgetAllocator() {
                                 isOverAllocated ? <AlertTriangle className="w-5 h-5 text-red-400" /> :
                                     <PieChart className="w-5 h-5 text-(--color-neon-blue)" />}
 
-                            <h2 className="text-sm font-bold text-white uppercase tracking-wider">
+                            <h2 className="text-sm font-bold text-(--color-text-main) uppercase tracking-wider">
                                 {isZeroBasedDone ? "Orçamento Perfeito" :
                                     isOverAllocated ? "Estourou as Receitas" :
                                         "Orçamento Base Zero"}
@@ -127,21 +127,21 @@ export default function BudgetAllocator() {
                             }`}>
                             {isPrivacyMode ? "R$ ••••" : formatBRL(Math.abs(unallocated))}
                         </h3>
-                        <p className="text-sm text-white/70 mt-2 font-medium">
+                        <p className="text-sm text-(--color-text-main)/70 mt-2 font-medium">
                             {isZeroBasedDone ? "Todo dinheiro tem um destino esse mês. Parabéns!" :
                                 isOverAllocated ? "Você alocou mais dinheiro do que declarou receber." :
                                     "Saldo restante para distribuir nas categorias."}
                         </p>
                     </div>
 
-                    <div className="flex flex-col gap-2 p-4 bg-black/40 rounded-2xl backdrop-blur-md border border-white/5 min-w-[200px]">
+                    <div className="flex flex-col gap-2 p-4 bg-black/40 rounded-2xl backdrop-blur-md border border-(--color-text-main)/5 min-w-[200px]">
                         <div className="flex justify-between items-center text-xs font-semibold text-(--color-text-muted)">
                             <span>Receitas Deste Mês</span>
                             <span className="text-emerald-400">{isPrivacyMode ? "••••" : formatBRL(summary.totalIncome)}</span>
                         </div>
                         <div className="flex justify-between items-center text-xs font-semibold text-(--color-text-muted)">
                             <span>Total Distribuído</span>
-                            <span className="text-white">{isPrivacyMode ? "••••" : formatBRL(summary.totalAllocated)}</span>
+                            <span className="text-(--color-text-main)">{isPrivacyMode ? "••••" : formatBRL(summary.totalAllocated)}</span>
                         </div>
                     </div>
                 </div>
@@ -149,7 +149,7 @@ export default function BudgetAllocator() {
 
             {/* List of Categories to Allocate */}
             <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                <h3 className="text-xl font-bold text-(--color-text-main) flex items-center gap-2">
                     <TrendingDown className="w-5 h-5 text-(--color-neon-blue)" />
                     Distribuição por Categoria
                 </h3>
@@ -168,7 +168,7 @@ export default function BudgetAllocator() {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: idx * 0.05 }}
-                                className={`p-5 rounded-2xl border transition-all duration-300 ${isOverBudget ? 'bg-red-500/5 border-red-500/20' : 'bg-[#111111] border-white/5 hover:border-white/10'
+                                className={`p-5 rounded-2xl border transition-all duration-300 ${isOverBudget ? 'bg-red-500/5 border-red-500/20' : 'bg-[#111111] border-(--color-text-main)/5 hover:border-(--color-text-main)/10'
                                     }`}
                             >
                                 <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
@@ -180,14 +180,14 @@ export default function BudgetAllocator() {
                                             style={{ backgroundColor: alloc.categoryColor }}
                                         />
                                         <div className="flex-1">
-                                            <h4 className="font-bold text-lg text-white mb-1 group-hover:text-(--color-neon-blue) transition-colors inline-flex items-center gap-2">
+                                            <h4 className="font-bold text-lg text-(--color-text-main) mb-1 group-hover:text-(--color-neon-blue) transition-colors inline-flex items-center gap-2">
                                                 {alloc.categoryName}
                                                 {isOverBudget && <AlertTriangle className="w-4 h-4 text-red-400" />}
                                             </h4>
 
                                             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-(--color-text-muted)">
                                                 <span className="flex items-center gap-1">
-                                                    Gasto: <span className="text-white font-medium">{isPrivacyMode ? '••••' : formatBRL(alloc.spent)}</span>
+                                                    Gasto: <span className="text-(--color-text-main) font-medium">{isPrivacyMode ? '••••' : formatBRL(alloc.spent)}</span>
                                                 </span>
 
                                                 {alloc.allocated > 0 && (
@@ -206,7 +206,7 @@ export default function BudgetAllocator() {
                                                 {alloc.allocated > 0 ? `${usageRatio.toFixed(0)}% utilizado` : "Sem limite numérico"}
                                             </span>
                                         </div>
-                                        <div className="w-full bg-white/5 rounded-full h-2 overflow-hidden relative">
+                                        <div className="w-full bg-(--color-text-main)/5 rounded-full h-2 overflow-hidden relative">
                                             <motion.div
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${Math.min(usageRatio, 100)}%` }}
@@ -217,7 +217,7 @@ export default function BudgetAllocator() {
                                     </div>
 
                                     {/* Action Box: Set Budget */}
-                                    <div className="flex items-center gap-2 w-full lg:w-auto mt-4 lg:mt-0 pt-4 lg:pt-0 border-t lg:border-t-0 border-white/5">
+                                    <div className="flex items-center gap-2 w-full lg:w-auto mt-4 lg:mt-0 pt-4 lg:pt-0 border-t lg:border-t-0 border-(--color-text-main)/5">
                                         <div className="relative flex-1 lg:w-40">
                                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-(--color-text-muted) text-sm font-medium">R$</span>
                                             <input
@@ -226,7 +226,7 @@ export default function BudgetAllocator() {
                                                 min="0"
                                                 value={localInputs[alloc.categoryId] || ""}
                                                 onChange={(e) => setLocalInputs(prev => ({ ...prev, [alloc.categoryId]: e.target.value }))}
-                                                className="w-full bg-black/40 border border-white/10 rounded-xl py-2.5 pl-9 pr-3 text-sm text-white font-semibold outline-none focus:border-white/30 transition-colors"
+                                                className="w-full bg-black/40 border border-(--color-text-main)/10 rounded-xl py-2.5 pl-9 pr-3 text-sm text-(--color-text-main) font-semibold outline-none focus:border-(--color-text-main)/30 transition-colors"
                                                 placeholder="Orçamento"
                                                 onKeyDown={(e) => e.key === 'Enter' && handleSaveAllocation(alloc.categoryId)}
                                             />
@@ -234,7 +234,7 @@ export default function BudgetAllocator() {
                                         <button
                                             onClick={() => handleSaveAllocation(alloc.categoryId)}
                                             disabled={savingId === alloc.categoryId}
-                                            className="p-2.5 bg-white/5 hover:bg-(--color-neon-blue)/20 border border-white/10 text-white rounded-xl transition-colors disabled:opacity-50"
+                                            className="p-2.5 bg-(--color-text-main)/5 hover:bg-(--color-neon-blue)/20 border border-(--color-text-main)/10 text-(--color-text-main) rounded-xl transition-colors disabled:opacity-50"
                                         >
                                             {savingId === alloc.categoryId ? (
                                                 <div className="w-5 h-5 border-2 border-transparent border-t-(--color-neon-blue) rounded-full animate-spin" />
@@ -251,7 +251,7 @@ export default function BudgetAllocator() {
                 </AnimatePresence>
 
                 {allocations.length === 0 && (
-                    <div className="p-10 text-center bg-white/5 rounded-3xl border border-white/10">
+                    <div className="p-10 text-center bg-(--color-text-main)/5 rounded-3xl border border-(--color-text-main)/10">
                         <p className="text-(--color-text-muted)">Crie categorias primeiro para poder distribuir seu orçamento nelas.</p>
                     </div>
                 )}

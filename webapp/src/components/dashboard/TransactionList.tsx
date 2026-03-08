@@ -111,7 +111,7 @@ export default function TransactionList() {
             ref={containerRef}
         >
             <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-semibold text-white">Transações Recentes</h3>
+                <h3 className="text-lg font-semibold text-(--color-text-main)">Transações Recentes</h3>
                 <Link href="/history" className="text-sm text-(--color-neon-green-light) hover:text-(--color-neon-green) transition-colors font-medium">
                     Ver todas
                 </Link>
@@ -133,7 +133,7 @@ export default function TransactionList() {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.4 + i * 0.08 }}
-                            className="group relative flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all duration-300"
+                            className="group relative flex items-center justify-between p-4 rounded-2xl bg-(--color-text-main)/5 border border-(--color-text-main)/5 hover:bg-(--color-text-main)/10 transition-all duration-300"
                         >
                             {/* Hover Glow */}
                             <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-300 pointer-events-none 
@@ -157,15 +157,15 @@ export default function TransactionList() {
                                         <input
                                             value={editDesc}
                                             onChange={(e) => setEditDesc(e.target.value)}
-                                            className="pointer-events-auto bg-white/10 border border-white/20 rounded-lg px-2 py-1 text-white text-sm outline-none focus:border-emerald-500/50 w-40"
+                                            className="pointer-events-auto bg-(--color-text-main)/10 border border-(--color-text-main)/20 rounded-lg px-2 py-1 text-(--color-text-main) text-sm outline-none focus:border-emerald-500/50 w-40"
                                             autoFocus
                                         />
                                     ) : (
-                                        <p className="text-white font-medium text-sm md:text-base line-clamp-1">{t.description}</p>
+                                        <p className="text-(--color-text-main) font-medium text-sm md:text-base line-clamp-1">{t.description}</p>
                                     )}
                                     <div className="flex items-center gap-2 text-xs text-(--color-text-muted) mt-1">
                                         <span>{t.category?.name || t.categoryId}</span>
-                                        <span className="w-1 h-1 rounded-full bg-white/20" />
+                                        <span className="w-1 h-1 rounded-full bg-(--color-text-main)/20" />
                                         <span>{formattedDate}</span>
                                     </div>
                                 </div>
@@ -177,7 +177,7 @@ export default function TransactionList() {
                                         <input
                                             value={editAmount}
                                             onChange={(e) => setEditAmount(e.target.value)}
-                                            className="bg-white/10 border border-white/20 rounded-lg px-2 py-1 text-white text-sm outline-none focus:border-emerald-500/50 w-20 text-right"
+                                            className="bg-(--color-text-main)/10 border border-(--color-text-main)/20 rounded-lg px-2 py-1 text-(--color-text-main) text-sm outline-none focus:border-emerald-500/50 w-20 text-right"
                                         />
                                         <button onClick={saveEdit} className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-colors">
                                             <Check className="w-4 h-4" />
@@ -187,7 +187,7 @@ export default function TransactionList() {
                                         </button>
                                     </div>
                                 ) : (
-                                    <div className={`pointer-events-none text-right font-medium min-w-fit ${t.type === 'INCOME' ? 'text-emerald-400' : 'text-white'}`}>
+                                    <div className={`pointer-events-none text-right font-medium min-w-fit ${t.type === 'INCOME' ? 'text-emerald-400' : 'text-(--color-text-main)'}`}>
                                         {t.type === 'INCOME' ? '+' : '-'} {isPrivacyMode ? "R$ ••••" : `R$ ${Math.abs(t.amount).toFixed(2).replace('.', ',')}`}
                                     </div>
                                 )}
@@ -205,7 +205,7 @@ export default function TransactionList() {
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
-                        className="fixed z-50 w-48 bg-[#1B1D22]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
+                        className="fixed z-50 w-48 bg-[#1B1D22]/95 backdrop-blur-xl border border-(--color-text-main)/10 rounded-2xl shadow-2xl overflow-hidden"
                         style={{ top: contextMenu.y, left: contextMenu.x }}
                         onClick={(e) => e.stopPropagation()}
                     >
@@ -215,12 +215,12 @@ export default function TransactionList() {
                                     const tx = transactions.find(t => t.id === contextMenu.id);
                                     if (tx) startEdit(tx);
                                 }}
-                                className="flex items-center gap-3 px-4 py-3 text-sm text-white hover:bg-white/5 transition-colors text-left"
+                                className="flex items-center gap-3 px-4 py-3 text-sm text-(--color-text-main) hover:bg-(--color-text-main)/5 transition-colors text-left"
                             >
                                 <Edit3 className="w-4 h-4 text-(--color-neon-green-light)" />
                                 Editar Transação
                             </button>
-                            <div className="h-px bg-white/10 my-1 mx-2" />
+                            <div className="h-px bg-(--color-text-main)/10 my-1 mx-2" />
                             <button
                                 onClick={async () => {
                                     const id = contextMenu.id;

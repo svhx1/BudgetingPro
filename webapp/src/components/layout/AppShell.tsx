@@ -39,7 +39,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 <Link href="/settings" className="flex items-center gap-3">
                     <AvatarWithDecoration size={40} />
                     <div className="flex flex-col">
-                        <span className="text-white text-sm font-semibold leading-tight">
+                        <span className="text-(--color-text-main) text-sm font-semibold leading-tight">
                             {profileData.name || "Minha Conta"}
                         </span>
                         <span className="text-(--color-text-muted) text-xs leading-tight">
@@ -48,14 +48,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                     </div>
                 </Link>
 
-                <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-2 py-1 backdrop-blur-md">
-                    <button onClick={() => handleMonthChange(-1)} className="p-1 text-(--color-text-muted) hover:text-white transition-colors">
+                <div className="flex items-center gap-2 bg-(--color-text-main)/5 border border-(--color-text-main)/10 rounded-full px-2 py-1 backdrop-blur-md">
+                    <button onClick={() => handleMonthChange(-1)} className="p-1 text-(--color-text-muted) hover:text-(--color-text-main) transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
                     </button>
-                    <span className="text-xs font-semibold text-white tracking-wider uppercase min-w-[50px] text-center">
+                    <span className="text-xs font-semibold text-(--color-text-main) tracking-wider uppercase min-w-[50px] text-center">
                         {monthNames[currentPeriod.month]}
                     </span>
-                    <button onClick={() => handleMonthChange(1)} className="p-1 text-(--color-text-muted) hover:text-white transition-colors">
+                    <button onClick={() => handleMonthChange(1)} className="p-1 text-(--color-text-muted) hover:text-(--color-text-main) transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
                     </button>
                 </div>

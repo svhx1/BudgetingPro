@@ -58,7 +58,7 @@ export default function FloatingActionButton() {
                             exit={{ scale: 0, x: 0, y: 0, transition: { duration: 0.1 } }}
                             transition={bubbleTransition}
                             onClick={() => handleSelect("INCOME")}
-                            className="absolute w-12 h-12 rounded-full flex items-center justify-center border border-white/15 active:scale-90 transition-transform"
+                            className="absolute w-12 h-12 rounded-full flex items-center justify-center border border-(--color-text-main)/15 active:scale-90 transition-transform"
                             style={{
                                 background: "linear-gradient(135deg, rgba(16,185,129,0.15) 0%, rgba(255,255,255,0.04) 100%)",
                                 backdropFilter: "blur(24px)",
@@ -76,7 +76,7 @@ export default function FloatingActionButton() {
                             exit={{ scale: 0, x: 0, y: 0, transition: { duration: 0.1 } }}
                             transition={{ ...bubbleTransition, delay: 0.02 }}
                             onClick={() => handleSelect("EXPENSE")}
-                            className="absolute w-12 h-12 rounded-full flex items-center justify-center border border-white/15 active:scale-90 transition-transform"
+                            className="absolute w-12 h-12 rounded-full flex items-center justify-center border border-(--color-text-main)/15 active:scale-90 transition-transform"
                             style={{
                                 background: "linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(255,255,255,0.04) 100%)",
                                 backdropFilter: "blur(24px)",

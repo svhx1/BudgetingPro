@@ -67,7 +67,7 @@ export default function BudgetLimits() {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="glass-panel p-6 flex flex-col h-full"
         >
-            <h3 className="text-lg font-semibold text-white mb-6">Limites de Gastos</h3>
+            <h3 className="text-lg font-semibold text-(--color-text-main) mb-6">Limites de Gastos</h3>
 
             <div className="space-y-5 flex-1 pr-2 custom-scrollbar overflow-y-auto">
                 {loading ? (
@@ -89,13 +89,13 @@ export default function BudgetLimits() {
                                     className="w-full text-left"
                                 >
                                     <div className="flex justify-between items-center mb-2">
-                                        <span className="text-sm font-medium text-white flex items-center gap-2">
+                                        <span className="text-sm font-medium text-(--color-text-main) flex items-center gap-2">
                                             {item.categoryName}
                                             {isExceeded && <AlertCircle className="w-4 h-4 text-red-500" />}
                                         </span>
                                         <div className="flex items-center gap-2">
                                             <div className="text-xs text-right">
-                                                <span className={isExceeded ? "text-red-400 font-bold" : "text-white"}>
+                                                <span className={isExceeded ? "text-red-400 font-bold" : "text-(--color-text-main)"}>
                                                     {isPrivacyMode ? "R$ ••••" : `R$ ${item.spent.toFixed(2)}`}
                                                 </span>
                                                 <span className="text-(--color-text-muted) mx-1">/</span>
@@ -113,7 +113,7 @@ export default function BudgetLimits() {
                                 </button>
 
                                 {/* Barra de Progresso */}
-                                <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden relative">
+                                <div className="h-2 w-full bg-(--color-text-main)/10 rounded-full overflow-hidden relative">
                                     <motion.div
                                         initial={{ width: 0 }}
                                         animate={{ width: `${percentage}%` }}
@@ -149,14 +149,14 @@ export default function BudgetLimits() {
                                                     <p className="text-xs text-(--color-text-muted) py-2">Nenhum gasto nesta categoria.</p>
                                                 ) : (
                                                     expandedTxs.map((tx: any) => (
-                                                        <div key={tx.id} className="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-white/5 transition-colors">
+                                                        <div key={tx.id} className="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-(--color-text-main)/5 transition-colors">
                                                             <div>
-                                                                <p className="text-xs text-white font-medium">{tx.description}</p>
+                                                                <p className="text-xs text-(--color-text-main) font-medium">{tx.description}</p>
                                                                 <p className="text-[10px] text-(--color-text-muted)">
                                                                     {new Date(tx.date).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}
                                                                 </p>
                                                             </div>
-                                                            <span className="text-xs text-white font-medium">
+                                                            <span className="text-xs text-(--color-text-main) font-medium">
                                                                 {isPrivacyMode ? "R$ ••••" : `R$ ${Math.abs(tx.amount).toFixed(2).replace(".", ",")}`}
                                                             </span>
                                                         </div>

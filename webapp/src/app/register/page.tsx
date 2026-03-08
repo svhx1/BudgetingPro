@@ -37,7 +37,7 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black text-white selection:bg-(--color-neon-green-light) selection:text-black">
+        <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black text-(--color-text-main) selection:bg-(--color-neon-green-light) selection:text-black">
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
                 <motion.div
                     animate={{ rotate: 360 }}
@@ -55,7 +55,7 @@ export default function RegisterPage() {
                 initial={{ opacity: 0, scale: 0.9, y: 30 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="relative z-10 w-full max-w-md p-8 sm:p-12 mx-4 bg-white/5 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] rounded-[2rem]"
+                className="relative z-10 w-full max-w-md p-8 sm:p-12 mx-4 bg-(--color-text-main)/5 backdrop-blur-2xl border border-(--color-text-main)/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] rounded-[2rem]"
             >
                 <div className="flex flex-col items-center justify-center mb-8">
                     <motion.div
@@ -65,7 +65,7 @@ export default function RegisterPage() {
                         className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-indigo-500 rounded-2xl flex items-center justify-center p-0.5 shadow-lg mb-6"
                     >
                         <div className="w-full h-full bg-black/80 rounded-2xl flex items-center justify-center backdrop-blur-md">
-                            <Wallet className="w-8 h-8 text-white" />
+                            <Wallet className="w-8 h-8 text-(--color-text-main)" />
                         </div>
                     </motion.div>
                     <h1 className="text-3xl font-extrabold tracking-tight text-center bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
@@ -81,9 +81,9 @@ export default function RegisterPage() {
                         <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">Nome</label>
                         <div className="relative group">
                             <div className="relative flex items-center">
-                                <User className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-white transition-colors" />
+                                <User className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-(--color-text-main) transition-colors" />
                                 <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo"
-                                    className="w-full bg-black/50 backdrop-blur-sm border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-white placeholder-white/30 outline-none focus:border-white/30 transition-all font-medium" />
+                                    className="w-full bg-black/50 backdrop-blur-sm border border-(--color-text-main)/10 rounded-2xl py-3.5 pl-12 pr-4 text-(--color-text-main) placeholder-white/30 outline-none focus:border-(--color-text-main)/30 transition-all font-medium" />
                             </div>
                         </div>
                     </div>
@@ -92,9 +92,9 @@ export default function RegisterPage() {
                         <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">Email</label>
                         <div className="relative group">
                             <div className="relative flex items-center">
-                                <Mail className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-white transition-colors" />
+                                <Mail className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-(--color-text-main) transition-colors" />
                                 <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu.email@exemplo.com"
-                                    className="w-full bg-black/50 backdrop-blur-sm border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-white placeholder-white/30 outline-none focus:border-white/30 transition-all font-medium" />
+                                    className="w-full bg-black/50 backdrop-blur-sm border border-(--color-text-main)/10 rounded-2xl py-3.5 pl-12 pr-4 text-(--color-text-main) placeholder-white/30 outline-none focus:border-(--color-text-main)/30 transition-all font-medium" />
                             </div>
                         </div>
                     </div>
@@ -103,10 +103,10 @@ export default function RegisterPage() {
                         <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">Senha</label>
                         <div className="relative group">
                             <div className="relative flex items-center">
-                                <Lock className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-white transition-colors" />
+                                <Lock className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-(--color-text-main) transition-colors" />
                                 <input type={showPassword ? "text" : "password"} required minLength={4} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mínimo 4 caracteres"
-                                    className="w-full bg-black/50 backdrop-blur-sm border border-white/10 rounded-2xl py-3.5 pl-12 pr-12 text-white placeholder-white/30 outline-none focus:border-white/30 transition-all font-medium" />
-                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 text-(--color-text-muted) hover:text-white transition-colors">
+                                    className="w-full bg-black/50 backdrop-blur-sm border border-(--color-text-main)/10 rounded-2xl py-3.5 pl-12 pr-12 text-(--color-text-main) placeholder-white/30 outline-none focus:border-(--color-text-main)/30 transition-all font-medium" />
+                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 text-(--color-text-muted) hover:text-(--color-text-main) transition-colors">
                                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                 </button>
                             </div>
@@ -117,9 +117,9 @@ export default function RegisterPage() {
                         <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">Confirmar Senha</label>
                         <div className="relative group">
                             <div className="relative flex items-center">
-                                <Lock className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-white transition-colors" />
+                                <Lock className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-(--color-text-main) transition-colors" />
                                 <input type={showPassword ? "text" : "password"} required minLength={4} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repita a senha"
-                                    className="w-full bg-black/50 backdrop-blur-sm border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-white placeholder-white/30 outline-none focus:border-white/30 transition-all font-medium" />
+                                    className="w-full bg-black/50 backdrop-blur-sm border border-(--color-text-main)/10 rounded-2xl py-3.5 pl-12 pr-4 text-(--color-text-main) placeholder-white/30 outline-none focus:border-(--color-text-main)/30 transition-all font-medium" />
                             </div>
                         </div>
                     </div>

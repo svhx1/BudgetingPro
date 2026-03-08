@@ -23,8 +23,8 @@ export default function ThemeSelector() {
                         whileTap={{ scale: 0.97 }}
                         onClick={() => setThemeById(opt.id)}
                         className={`relative flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all duration-300 ${isActive
-                            ? "border-white/30 shadow-lg"
-                            : "border-white/5 hover:border-white/15"
+                            ? "border-(--color-text-main)/30 shadow-lg"
+                            : "border-(--color-text-main)/5 hover:border-(--color-text-main)/15"
                             }`}
                         style={{
                             backgroundColor: opt.bg,

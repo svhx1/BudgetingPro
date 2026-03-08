@@ -30,7 +30,7 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black text-white selection:bg-(--color-neon-green-light) selection:text-black">
+        <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black text-(--color-text-main) selection:bg-(--color-neon-green-light) selection:text-black">
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
                 <div
                     className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] rounded-full bg-gradient-to-br from-emerald-500/10 to-transparent blur-[80px]"
@@ -44,7 +44,7 @@ export default function LoginPage() {
                 initial={{ opacity: 0, scale: 0.9, y: 30 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="relative z-10 w-full max-w-md p-8 sm:p-12 mx-4 bg-white/5 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] rounded-[2rem]"
+                className="relative z-10 w-full max-w-md p-8 sm:p-12 mx-4 bg-(--color-text-main)/5 backdrop-blur-2xl border border-(--color-text-main)/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] rounded-[2rem]"
             >
                 <div className="flex flex-col items-center justify-center mb-8">
                     <motion.div
@@ -54,7 +54,7 @@ export default function LoginPage() {
                         className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-indigo-500 rounded-2xl flex items-center justify-center p-0.5 shadow-lg mb-6"
                     >
                         <div className="w-full h-full bg-black/80 rounded-2xl flex items-center justify-center backdrop-blur-md">
-                            <Wallet className="w-8 h-8 text-white" />
+                            <Wallet className="w-8 h-8 text-(--color-text-main)" />
                         </div>
                     </motion.div>
                     <h1 className="text-3xl font-extrabold tracking-tight text-center bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
@@ -70,9 +70,9 @@ export default function LoginPage() {
                         <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">Email</label>
                         <div className="relative group">
                             <div className="relative flex items-center">
-                                <Mail className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-white transition-colors" />
+                                <Mail className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-(--color-text-main) transition-colors" />
                                 <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu.email@exemplo.com"
-                                    className="w-full bg-black/50 backdrop-blur-sm border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/30 outline-none focus:border-white/30 transition-all font-medium" />
+                                    className="w-full bg-black/50 backdrop-blur-sm border border-(--color-text-main)/10 rounded-2xl py-4 pl-12 pr-4 text-(--color-text-main) placeholder-white/30 outline-none focus:border-(--color-text-main)/30 transition-all font-medium" />
                             </div>
                         </div>
                     </div>
@@ -81,10 +81,10 @@ export default function LoginPage() {
                         <label className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest pl-2">Senha</label>
                         <div className="relative group">
                             <div className="relative flex items-center">
-                                <Lock className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-white transition-colors" />
+                                <Lock className="absolute left-4 w-5 h-5 text-(--color-text-muted) group-focus-within:text-(--color-text-main) transition-colors" />
                                 <input type={showPassword ? "text" : "password"} required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••"
-                                    className="w-full bg-black/50 backdrop-blur-sm border border-white/10 rounded-2xl py-4 pl-12 pr-12 text-white placeholder-white/30 outline-none focus:border-white/30 transition-all font-medium" />
-                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 text-(--color-text-muted) hover:text-white transition-colors">
+                                    className="w-full bg-black/50 backdrop-blur-sm border border-(--color-text-main)/10 rounded-2xl py-4 pl-12 pr-12 text-(--color-text-main) placeholder-white/30 outline-none focus:border-(--color-text-main)/30 transition-all font-medium" />
+                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 text-(--color-text-muted) hover:text-(--color-text-main) transition-colors">
                                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                 </button>
                             </div>
@@ -95,8 +95,8 @@ export default function LoginPage() {
                         <div className="relative">
                             <input type="checkbox" checked={stayLoggedIn} onChange={(e) => setStayLoggedIn(e.target.checked)}
                                 className="sr-only peer" />
-                            <div className="w-10 h-6 bg-white/10 rounded-full peer-checked:bg-emerald-500/40 transition-colors border border-white/10 peer-checked:border-emerald-500/30" />
-                            <div className="absolute top-0.5 left-0.5 w-5 h-5 bg-white/70 rounded-full transition-all peer-checked:translate-x-4 peer-checked:bg-emerald-400" />
+                            <div className="w-10 h-6 bg-(--color-text-main)/10 rounded-full peer-checked:bg-emerald-500/40 transition-colors border border-(--color-text-main)/10 peer-checked:border-emerald-500/30" />
+                            <div className="absolute top-0.5 left-0.5 w-5 h-5 bg-(--color-text-main)/70 rounded-full transition-all peer-checked:translate-x-4 peer-checked:bg-emerald-400" />
                         </div>
                         <span className="text-sm text-(--color-text-muted)">Manter conectado</span>
                     </label>

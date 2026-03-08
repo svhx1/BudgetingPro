@@ -83,7 +83,7 @@ export default function GradientEditor() {
             <div
                 ref={canvasRef}
                 onClick={addPoint}
-                className="relative w-full aspect-square max-w-[320px] rounded-2xl border border-white/10 cursor-crosshair overflow-hidden select-none"
+                className="relative w-full aspect-square max-w-[320px] rounded-2xl border border-(--color-text-main)/10 cursor-crosshair overflow-hidden select-none"
                 style={{
                     backgroundColor: customTheme.baseBg,
                     backgroundImage: bgGradients,
@@ -119,7 +119,7 @@ export default function GradientEditor() {
                 const point = customTheme.points.find(p => p.id === selectedPoint);
                 if (!point) return null;
                 return (
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-(--color-text-main)/5 border border-(--color-text-main)/10">
                         <input
                             type="color"
                             value={point.color}

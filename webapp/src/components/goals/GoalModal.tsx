@@ -92,16 +92,16 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                        className="bg-[#111111] border border-white/10 rounded-3xl w-full max-w-lg shadow-[0_0_50px_rgba(0,0,0,0.5)] my-8 relative overflow-hidden flex flex-col max-h-[90vh]"
+                        className="bg-[#111111] border border-(--color-text-main)/10 rounded-3xl w-full max-w-lg shadow-[0_0_50px_rgba(0,0,0,0.5)] my-8 relative overflow-hidden flex flex-col max-h-[90vh]"
                     >
                         {/* Header */}
-                        <div className="p-6 border-b border-white/5 flex items-center justify-between shrink-0">
+                        <div className="p-6 border-b border-(--color-text-main)/5 flex items-center justify-between shrink-0">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-(--color-neon-blue)/10 rounded-xl">
                                     <Target className="w-6 h-6 text-(--color-neon-blue)" />
                                 </div>
                                 <div>
-                                    <h2 className="text-xl font-bold text-white">
+                                    <h2 className="text-xl font-bold text-(--color-text-main)">
                                         {goalToEdit ? "Editar Meta" : "Nova Meta"}
                                     </h2>
                                     <p className="text-xs text-(--color-text-muted)">Projete seu futuro financeiro.</p>
@@ -109,7 +109,7 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
                             </div>
                             <button
                                 onClick={onClose}
-                                className="p-2 rounded-full hover:bg-white/5 text-(--color-text-muted) transition-colors"
+                                className="p-2 rounded-full hover:bg-(--color-text-main)/5 text-(--color-text-muted) transition-colors"
                             >
                                 <X className="w-5 h-5" />
                             </button>
@@ -127,7 +127,7 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
                                         placeholder="Ex: Reserva de Emergência, Viagem..."
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white outline-none focus:border-white/30 transition-colors"
+                                        className="w-full bg-(--color-text-main)/5 border border-(--color-text-main)/10 rounded-xl py-3 px-4 text-(--color-text-main) outline-none focus:border-(--color-text-main)/30 transition-colors"
                                     />
                                 </div>
 
@@ -135,7 +135,7 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
                                     <div className="flex flex-col gap-2">
                                         <label className="text-sm font-medium text-(--color-text-muted) uppercase tracking-wider flex justify-between">
                                             <span>Valor Alvo</span>
-                                            <span className="text-white">🎯</span>
+                                            <span className="text-(--color-text-main)">🎯</span>
                                         </label>
                                         <div className="relative flex items-center">
                                             <span className="absolute left-4 text-(--color-text-muted) font-medium">R$</span>
@@ -146,7 +146,7 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
                                                 value={targetAmount}
                                                 onChange={(e) => setTargetAmount(e.target.value)}
                                                 placeholder="0,00"
-                                                className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white font-semibold outline-none focus:border-white/30 transition-colors"
+                                                className="w-full bg-(--color-text-main)/5 border border-(--color-text-main)/10 rounded-xl py-3 pl-10 pr-4 text-(--color-text-main) font-semibold outline-none focus:border-(--color-text-main)/30 transition-colors"
                                             />
                                         </div>
                                     </div>
@@ -154,7 +154,7 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
                                     <div className="flex flex-col gap-2">
                                         <label className="text-sm font-medium text-(--color-text-muted) uppercase tracking-wider flex justify-between">
                                             <span>Já guardado</span>
-                                            <span className="text-white">💰</span>
+                                            <span className="text-(--color-text-main)">💰</span>
                                         </label>
                                         <div className="relative flex items-center">
                                             <span className="absolute left-4 text-(--color-text-muted) font-medium">R$</span>
@@ -164,17 +164,17 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
                                                 value={currentAmount}
                                                 onChange={(e) => setCurrentAmount(e.target.value)}
                                                 placeholder="0,00"
-                                                className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white font-semibold outline-none focus:border-white/30 transition-colors"
+                                                className="w-full bg-(--color-text-main)/5 border border-(--color-text-main)/10 rounded-xl py-3 pl-10 pr-4 text-(--color-text-main) font-semibold outline-none focus:border-(--color-text-main)/30 transition-colors"
                                             />
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Projection Engine Box */}
-                                <div className="p-5 rounded-2xl bg-gradient-to-br from-blue-500/5 to-purple-500/5 border border-white/5">
+                                <div className="p-5 rounded-2xl bg-gradient-to-br from-blue-500/5 to-purple-500/5 border border-(--color-text-main)/5">
                                     <div className="flex items-center gap-2 mb-4">
                                         <Calculator className="w-5 h-5 text-(--color-neon-blue)" />
-                                        <h3 className="font-semibold text-white">Projeção Financeira</h3>
+                                        <h3 className="font-semibold text-(--color-text-main)">Projeção Financeira</h3>
                                     </div>
                                     <p className="text-xs text-(--color-text-muted) mb-4">
                                         Se preencher estes campos, o Budgeting calculará exatamente quando você atingirá sua meta usando juros compostos.
@@ -191,7 +191,7 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
                                                     value={monthlyDeposit}
                                                     onChange={(e) => setMonthlyDeposit(e.target.value)}
                                                     placeholder="0,00"
-                                                    className="w-full bg-[#111111] border border-white/10 rounded-lg py-2 pl-10 pr-3 text-sm text-white outline-none focus:border-white/30 transition-colors"
+                                                    className="w-full bg-[#111111] border border-(--color-text-main)/10 rounded-lg py-2 pl-10 pr-3 text-sm text-(--color-text-main) outline-none focus:border-(--color-text-main)/30 transition-colors"
                                                 />
                                             </div>
                                         </div>
@@ -204,7 +204,7 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
                                                     value={interestRate}
                                                     onChange={(e) => setInterestRate(e.target.value)}
                                                     placeholder="Ex: 0.8"
-                                                    className="w-full bg-[#111111] border border-white/10 rounded-lg py-2 px-3 text-sm text-white outline-none focus:border-white/30 transition-colors"
+                                                    className="w-full bg-[#111111] border border-(--color-text-main)/10 rounded-lg py-2 px-3 text-sm text-(--color-text-main) outline-none focus:border-(--color-text-main)/30 transition-colors"
                                                 />
                                                 <span className="absolute right-4 text-(--color-text-muted) text-sm">%</span>
                                             </div>
@@ -215,10 +215,10 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
                                 {/* Deadline (Optional) */}
                                 <div className="flex flex-col gap-3 pt-2">
                                     <label className="flex items-center gap-3 cursor-pointer group">
-                                        <div className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${hasDeadline ? 'bg-(--color-neon-blue) border-(--color-neon-blue)' : 'bg-transparent border-white/20 group-hover:border-white/40'}`}>
+                                        <div className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${hasDeadline ? 'bg-(--color-neon-blue) border-(--color-neon-blue)' : 'bg-transparent border-(--color-text-main)/20 group-hover:border-(--color-text-main)/40'}`}>
                                             {hasDeadline && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}><Plus className="w-3 h-3 text-black rotate-45" /></motion.div>}
                                         </div>
-                                        <span className="text-sm font-medium text-white select-none">Possui data limite?</span>
+                                        <span className="text-sm font-medium text-(--color-text-main) select-none">Possui data limite?</span>
                                     </label>
 
                                     <AnimatePresence>
@@ -235,7 +235,7 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
                                                     value={deadline}
                                                     onChange={(e) => setDeadline(e.target.value)}
                                                     min={new Date().toISOString().split("T")[0]}
-                                                    className="w-full mt-1 bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white outline-none focus:border-white/30 transition-colors"
+                                                    className="w-full mt-1 bg-(--color-text-main)/5 border border-(--color-text-main)/10 rounded-xl py-3 px-4 text-(--color-text-main) outline-none focus:border-(--color-text-main)/30 transition-colors"
                                                     style={{ colorScheme: 'dark' }}
                                                 />
                                             </motion.div>
@@ -247,12 +247,12 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
                         </div>
 
                         {/* Footer */}
-                        <div className="p-6 border-t border-white/5 shrink-0 bg-[#161616]">
+                        <div className="p-6 border-t border-(--color-text-main)/5 shrink-0 bg-[#161616]">
                             <button
                                 form="goal-form"
                                 type="submit"
                                 disabled={loading}
-                                className="w-full py-4 rounded-xl font-bold text-white shadow-lg bg-(--color-neon-blue) hover:bg-blue-400 shadow-blue-500/25 transition-all duration-300 hover:scale-[1.02] active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                                className="w-full py-4 rounded-xl font-bold text-(--color-text-main) shadow-lg bg-(--color-neon-blue) hover:bg-blue-400 shadow-blue-500/25 transition-all duration-300 hover:scale-[1.02] active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
                             >
                                 {loading ? (
                                     <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />

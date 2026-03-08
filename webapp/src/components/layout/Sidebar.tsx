@@ -51,26 +51,26 @@ export default function Sidebar() {
                     <div className="p-2 bg-(--color-neon-green)/10 rounded-xl">
                         <Wallet className="text-(--color-neon-green-light) w-6 h-6" />
                     </div>
-                    <span className="text-xl font-bold tracking-tight text-white">Budgeting</span>
+                    <span className="text-xl font-bold tracking-tight text-(--color-text-main)">Budgeting</span>
                 </div>
 
                 {/* Global Controls: Period & Privacy */}
                 <div className="flex flex-col gap-3 mb-8 pb-8 border-b border-(--color-glass-border)">
                     <div className="flex items-center justify-between px-2 text-sm">
-                        <button onClick={() => changeMonth(-1)} className="p-1 text-(--color-text-muted) hover:text-white transition-colors">
+                        <button onClick={() => changeMonth(-1)} className="p-1 text-(--color-text-muted) hover:text-(--color-text-main) transition-colors">
                             <ChevronLeft className="w-4 h-4" />
                         </button>
-                        <span className="font-semibold text-white tracking-widest uppercase text-xs">
+                        <span className="font-semibold text-(--color-text-main) tracking-widest uppercase text-xs">
                             {monthNames[currentPeriod.month]} {currentPeriod.year}
                         </span>
-                        <button onClick={() => changeMonth(1)} className="p-1 text-(--color-text-muted) hover:text-white transition-colors">
+                        <button onClick={() => changeMonth(1)} className="p-1 text-(--color-text-muted) hover:text-(--color-text-main) transition-colors">
                             <ChevronRight className="w-4 h-4" />
                         </button>
                     </div>
 
                     <button
                         onClick={togglePrivacyMode}
-                        className="flex items-center justify-center gap-3 px-4 py-2 mt-2 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition-colors text-sm text-(--color-text-muted) hover:text-white"
+                        className="flex items-center justify-center gap-3 px-4 py-2 mt-2 rounded-xl border border-(--color-text-main)/5 bg-(--color-text-main)/5 hover:bg-(--color-text-main)/10 transition-colors text-sm text-(--color-text-muted) hover:text-(--color-text-main)"
                     >
                         {isPrivacyMode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         <span>{isPrivacyMode ? "Mostrar Valores" : "Ocultar Valores"}</span>
@@ -86,7 +86,7 @@ export default function Sidebar() {
                             <Link key={item.name} href={item.href}>
                                 <div
                                     className={`flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 relative group
-                  ${isActive ? "text-white" : "text-(--color-text-muted) hover:text-white"}
+                  ${isActive ? "text-(--color-text-main)" : "text-(--color-text-muted) hover:text-(--color-text-main)"}
                 `}
                                 >
                                     {isActive && (
@@ -125,7 +125,7 @@ export default function Sidebar() {
                     <Link href="/settings" className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-(--color-glass) border border-(--color-glass-border) hover:bg-(--color-glass-hover) transition-colors">
                         <AvatarWithDecoration size={32} />
                         <div className="flex flex-col">
-                            <span className="text-sm font-medium text-white">{profileData.name || "Minha Conta"}</span>
+                            <span className="text-sm font-medium text-(--color-text-main)">{profileData.name || "Minha Conta"}</span>
                             <span className="text-xs text-(--color-text-muted)">Configurações</span>
                         </div>
                     </Link>
@@ -165,10 +165,10 @@ export default function Sidebar() {
                                         />
                                     )}
                                     <item.icon
-                                        className={`w-6 h-6 mb-1 z-10 transition-all ${isActive ? "text-white" : "text-(--color-text-muted) group-hover:text-white/70"}`}
+                                        className={`w-6 h-6 mb-1 z-10 transition-all ${isActive ? "text-(--color-text-main)" : "text-(--color-text-muted) group-hover:text-(--color-text-main)/70"}`}
                                         strokeWidth={isActive ? 2.5 : 2}
                                     />
-                                    <span className={`text-[10px] z-10 font-medium ${isActive ? "text-white" : "text-(--color-text-muted)"}`}>
+                                    <span className={`text-[10px] z-10 font-medium ${isActive ? "text-(--color-text-main)" : "text-(--color-text-muted)"}`}>
                                         {item.name}
                                     </span>
                                 </div>

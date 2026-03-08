@@ -134,7 +134,7 @@ export default function GlobalAddModal() {
                                         }
                                     </div>
                                     <div>
-                                        <h2 className="text-2xl font-bold tracking-tight text-white">
+                                        <h2 className="text-2xl font-bold tracking-tight text-(--color-text-main)">
                                             {isExpense ? "Nova Despesa" : "Nova Receita"}
                                         </h2>
                                         <p className="text-sm text-(--color-text-muted) font-light">
@@ -144,7 +144,7 @@ export default function GlobalAddModal() {
                                 </div>
                                 <button
                                     onClick={() => setAddModalOpen(false)}
-                                    className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-(--color-text-muted) hover:text-white transition-colors"
+                                    className="p-2 rounded-xl bg-(--color-text-main)/5 hover:bg-(--color-text-main)/10 text-(--color-text-muted) hover:text-(--color-text-main) transition-colors"
                                 >
                                     <X className="w-5 h-5" />
                                 </button>
@@ -166,7 +166,7 @@ export default function GlobalAddModal() {
                                             value={amount}
                                             onChange={(e) => setAmount(e.target.value)}
                                             placeholder="0,00"
-                                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-3xl font-bold text-white outline-none transition-colors"
+                                            className="w-full bg-(--color-text-main)/5 border border-(--color-text-main)/10 rounded-2xl py-4 pl-12 pr-4 text-3xl font-bold text-(--color-text-main) outline-none transition-colors"
                                         />
                                     </div>
                                 </div>
@@ -180,8 +180,8 @@ export default function GlobalAddModal() {
                                                 type="button"
                                                 onClick={() => setPaymentMethod("DEBIT")}
                                                 className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 transition-all duration-200 ${paymentMethod === "DEBIT"
-                                                    ? "bg-white/10 border-white/30 text-white"
-                                                    : "bg-transparent border-white/10 text-(--color-text-muted) hover:bg-white/5"
+                                                    ? "bg-(--color-text-main)/10 border-(--color-text-main)/30 text-(--color-text-main)"
+                                                    : "bg-transparent border-(--color-text-main)/10 text-(--color-text-muted) hover:bg-(--color-text-main)/5"
                                                     }`}
                                             >
                                                 <Banknote className="w-4 h-4" />
@@ -192,7 +192,7 @@ export default function GlobalAddModal() {
                                                 onClick={() => setPaymentMethod("CREDIT")}
                                                 className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 transition-all duration-200 ${paymentMethod === "CREDIT"
                                                     ? "bg-purple-500/15 border-purple-500/30 text-purple-300"
-                                                    : "bg-transparent border-white/10 text-(--color-text-muted) hover:bg-white/5"
+                                                    : "bg-transparent border-(--color-text-main)/10 text-(--color-text-muted) hover:bg-(--color-text-main)/5"
                                                     }`}
                                             >
                                                 <CreditCard className="w-4 h-4" />
@@ -214,7 +214,7 @@ export default function GlobalAddModal() {
                                             value={description}
                                             onChange={(e) => setDescription(e.target.value)}
                                             placeholder="Ex: Supermercado"
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white outline-none focus:border-white/30 transition-colors"
+                                            className="w-full bg-(--color-text-main)/5 border border-(--color-text-main)/10 rounded-xl py-3 px-4 text-(--color-text-main) outline-none focus:border-(--color-text-main)/30 transition-colors"
                                         />
                                     </div>
 
@@ -227,7 +227,7 @@ export default function GlobalAddModal() {
                                                 required
                                                 value={date}
                                                 onChange={(e) => setDate(e.target.value)}
-                                                className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white outline-none focus:border-white/30 transition-colors"
+                                                className="w-full bg-(--color-text-main)/5 border border-(--color-text-main)/10 rounded-xl py-3 pl-12 pr-4 text-(--color-text-main) outline-none focus:border-(--color-text-main)/30 transition-colors"
                                                 style={{ colorScheme: 'dark' }}
                                             />
                                         </div>
@@ -262,7 +262,7 @@ export default function GlobalAddModal() {
                                                         value={newCatName}
                                                         onChange={(e) => setNewCatName(e.target.value)}
                                                         placeholder="Nome da categoria"
-                                                        className="flex-1 bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-white text-sm outline-none focus:border-emerald-500/30 transition-colors"
+                                                        className="flex-1 bg-(--color-text-main)/5 border border-(--color-text-main)/10 rounded-xl py-2.5 px-4 text-(--color-text-main) text-sm outline-none focus:border-emerald-500/30 transition-colors"
                                                         onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleCreateCategory(); } }}
                                                         autoFocus
                                                     />
@@ -283,7 +283,7 @@ export default function GlobalAddModal() {
                                         required
                                         value={categoryId}
                                         onChange={(e) => setCategoryId(e.target.value)}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white outline-none focus:border-white/30 appearance-none"
+                                        className="w-full bg-(--color-text-main)/5 border border-(--color-text-main)/10 rounded-xl py-3 px-4 text-(--color-text-main) outline-none focus:border-(--color-text-main)/30 appearance-none"
                                     >
                                         {dbCategories.length === 0 && <option value="" disabled className="text-black">Nenhuma categoria criada</option>}
                                         {dbCategories.map(cat => (
@@ -293,7 +293,7 @@ export default function GlobalAddModal() {
                                 </div>
 
                                 {/* Recurrence Engine */}
-                                <div className="flex flex-col gap-4 pt-4 border-t border-white/10">
+                                <div className="flex flex-col gap-4 pt-4 border-t border-(--color-text-main)/10">
                                     <label className="text-sm font-medium text-(--color-text-muted) uppercase tracking-wider flex items-center gap-2">
                                         <RefreshCw className="w-4 h-4" />
                                         Motor de Recorrência
@@ -310,8 +310,8 @@ export default function GlobalAddModal() {
                                                 type="button"
                                                 onClick={() => setRecurrence(opt.id as any)}
                                                 className={`py-3 px-2 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all duration-300 ${recurrence === opt.id
-                                                    ? "bg-white/10 border-white/30 text-white"
-                                                    : "bg-transparent border-transparent text-(--color-text-muted) hover:bg-white/5"
+                                                    ? "bg-(--color-text-main)/10 border-(--color-text-main)/30 text-(--color-text-main)"
+                                                    : "bg-transparent border-transparent text-(--color-text-muted) hover:bg-(--color-text-main)/5"
                                                     }`}
                                             >
                                                 <opt.icon className="w-5 h-5" />
@@ -325,7 +325,7 @@ export default function GlobalAddModal() {
                                         <motion.div
                                             initial={{ height: 0, opacity: 0 }}
                                             animate={{ height: "auto", opacity: 1 }}
-                                            className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10 mt-2"
+                                            className="flex items-center justify-between p-4 bg-(--color-text-main)/5 rounded-xl border border-(--color-text-main)/10 mt-2"
                                         >
                                             <span className="text-sm text-(--color-text-muted)">Em quantas parcelas? (2x a 60x)</span>
                                             <div className="flex items-center gap-4">
@@ -335,7 +335,7 @@ export default function GlobalAddModal() {
                                                     onChange={(e) => setInstallments(Number(e.target.value))}
                                                     className="w-32 accent-(--color-neon-green-light)"
                                                 />
-                                                <span className="font-bold w-8 text-right text-white">{installments}x</span>
+                                                <span className="font-bold w-8 text-right text-(--color-text-main)">{installments}x</span>
                                             </div>
                                         </motion.div>
                                     )}
@@ -344,7 +344,7 @@ export default function GlobalAddModal() {
                                         <motion.div
                                             initial={{ height: 0, opacity: 0 }}
                                             animate={{ height: "auto", opacity: 1 }}
-                                            className="p-4 bg-white/5 rounded-xl border border-white/10 mt-2"
+                                            className="p-4 bg-(--color-text-main)/5 rounded-xl border border-(--color-text-main)/10 mt-2"
                                         >
                                             <p className="text-sm text-(--color-text-muted) text-center">
                                                 Este gasto será replicado automaticamente nos <b>próximos 12 meses</b>.
@@ -356,7 +356,7 @@ export default function GlobalAddModal() {
                                 {/* Submit Button */}
                                 <button
                                     type="submit"
-                                    className={`w-full py-4 mt-4 rounded-xl font-bold text-white shadow-lg transition-all duration-300 hover:scale-[1.02] active:scale-95 ${isExpense
+                                    className={`w-full py-4 mt-4 rounded-xl font-bold text-(--color-text-main) shadow-lg transition-all duration-300 hover:scale-[1.02] active:scale-95 ${isExpense
                                         ? "bg-red-500 hover:bg-red-400 shadow-red-500/25"
                                         : "bg-emerald-500 hover:bg-emerald-400 shadow-emerald-500/25"
                                         }`}

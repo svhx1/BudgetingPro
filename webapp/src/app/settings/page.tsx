@@ -160,7 +160,7 @@ export default function SettingsPage() {
     return (
         <div className="flex flex-col min-h-screen w-full pb-10">
             <header className="mb-10">
-                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-2">
+                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-(--color-text-main) mb-2">
                     Ajustes
                 </h1>
                 <p className="text-lg text-(--color-text-muted) font-light">
@@ -177,7 +177,7 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
                         <User className="w-5 h-5 text-(--color-neon-green-light)" />
-                        <h2 className="text-lg font-semibold text-white">Meu Perfil</h2>
+                        <h2 className="text-lg font-semibold text-(--color-text-main)">Meu Perfil</h2>
                     </div>
                     <button
                         onClick={async () => {
@@ -225,12 +225,12 @@ export default function SettingsPage() {
                                     className="w-20 h-20 rounded-2xl object-cover shadow-lg ring-2 ring-white/10 group-hover:ring-emerald-500/40 transition-all"
                                 />
                             ) : (
-                                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-400 to-indigo-500 flex items-center justify-center text-3xl font-bold text-white shadow-lg ring-2 ring-white/10 group-hover:ring-emerald-500/40 transition-all">
+                                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-400 to-indigo-500 flex items-center justify-center text-3xl font-bold text-(--color-text-main) shadow-lg ring-2 ring-white/10 group-hover:ring-emerald-500/40 transition-all">
                                     {profileName ? profileName.charAt(0).toUpperCase() : "?"}
                                 </div>
                             )}
                             <div className="absolute inset-0 rounded-2xl bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                <Camera className="w-6 h-6 text-white" />
+                                <Camera className="w-6 h-6 text-(--color-text-main)" />
                             </div>
                         </label>
                     </div>
@@ -241,7 +241,7 @@ export default function SettingsPage() {
                             <input
                                 value={profileName}
                                 onChange={(e) => { setProfileName(e.target.value); setProfileDirty(true); }}
-                                className="bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-white outline-none focus:border-white/25 transition-colors w-full md:max-w-sm"
+                                className="bg-(--color-text-main)/5 border border-(--color-text-main)/10 rounded-xl py-2.5 px-4 text-(--color-text-main) outline-none focus:border-(--color-text-main)/25 transition-colors w-full md:max-w-sm"
                                 placeholder="Seu nome"
                             />
                         </div>
@@ -273,9 +273,9 @@ export default function SettingsPage() {
                     initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
                     className="glass-panel p-6 md:p-8 rounded-3xl"
                 >
-                    <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
+                    <div className="flex items-center gap-3 mb-6 pb-4 border-b border-(--color-text-main)/10">
                         <div className="p-2 bg-violet-500/10 rounded-xl text-violet-400"><Paintbrush className="w-5 h-5" /></div>
-                        <h2 className="text-xl font-bold text-white">Tema Visual</h2>
+                        <h2 className="text-xl font-bold text-(--color-text-main)">Tema Visual</h2>
                     </div>
                     <ThemeSelector />
                     <div className="mt-6">
@@ -288,9 +288,9 @@ export default function SettingsPage() {
                     initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
                     className="glass-panel p-6 md:p-8 rounded-3xl"
                 >
-                    <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
+                    <div className="flex items-center gap-3 mb-6 pb-4 border-b border-(--color-text-main)/10">
                         <div className="p-2 bg-amber-500/10 rounded-xl text-amber-400"><Sparkles className="w-5 h-5" /></div>
-                        <h2 className="text-xl font-bold text-white">Decorações do Perfil</h2>
+                        <h2 className="text-xl font-bold text-(--color-text-main)">Decorações do Perfil</h2>
                     </div>
                     <DecorationPicker />
                 </motion.section>
@@ -303,19 +303,19 @@ export default function SettingsPage() {
                     initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
                     className="glass-panel p-6 md:p-8 rounded-3xl"
                 >
-                    <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
+                    <div className="flex items-center gap-3 mb-6 pb-4 border-b border-(--color-text-main)/10">
                         <div className="p-2 bg-indigo-500/10 rounded-xl text-indigo-400"><Tags className="w-5 h-5" /></div>
-                        <h2 className="text-xl font-bold text-white">Suas Categorias</h2>
+                        <h2 className="text-xl font-bold text-(--color-text-main)">Suas Categorias</h2>
                     </div>
 
                     <div className="space-y-4">
                         {loadingData ? (
                             <div className="text-sm text-(--color-text-muted)">Carregando...</div>
                         ) : categories.map(cat => (
-                            <div key={cat.id} className="flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-2xl group hover:bg-white/10 transition-colors">
+                            <div key={cat.id} className="flex items-center justify-between p-4 bg-(--color-text-main)/5 border border-(--color-text-main)/5 rounded-2xl group hover:bg-(--color-text-main)/10 transition-colors">
                                 <div className="flex items-center gap-3">
                                     <div className="w-4 h-4 rounded-full shadow-inner" style={{ backgroundColor: cat.color }} />
-                                    <span className="font-medium text-white">{cat.name}</span>
+                                    <span className="font-medium text-(--color-text-main)">{cat.name}</span>
                                 </div>
                                 <div className="flex items-center gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                                     <button onClick={() => handleDeleteCategory(cat.id)} className="p-2 text-(--color-text-muted) hover:text-red-400 transition-colors"><Trash2 className="w-4 h-4" /></button>
@@ -324,7 +324,7 @@ export default function SettingsPage() {
                         ))}
 
                         {isAddingCat ? (
-                            <div className="flex items-center gap-3 p-4 bg-white/10 border border-(--color-neon-green-light)/30 rounded-2xl animate-in fade-in zoom-in duration-300">
+                            <div className="flex items-center gap-3 p-4 bg-(--color-text-main)/10 border border-(--color-neon-green-light)/30 rounded-2xl animate-in fade-in zoom-in duration-300">
                                 <input type="color" value={newCatColor} onChange={(e) => setNewCatColor(e.target.value)} className="w-8 h-8 rounded-lg cursor-pointer bg-transparent" />
                                 <input
                                     autoFocus
@@ -332,15 +332,15 @@ export default function SettingsPage() {
                                     placeholder="Nome da Categoria"
                                     value={newCatName}
                                     onChange={(e) => setNewCatName(e.target.value)}
-                                    className="flex-1 bg-transparent border-none outline-none text-white placeholder-white/30 text-sm"
+                                    className="flex-1 bg-transparent border-none outline-none text-(--color-text-main) placeholder-white/30 text-sm"
                                 />
                                 <button onClick={handleAddCategory} className="p-2 bg-(--color-neon-green-light)/20 text-(--color-neon-green-light) rounded-lg hover:bg-(--color-neon-green-light)/40">
                                     <Check className="w-4 h-4" />
                                 </button>
-                                <button onClick={() => setIsAddingCat(false)} className="p-2 text-(--color-text-muted) hover:text-white">✕</button>
+                                <button onClick={() => setIsAddingCat(false)} className="p-2 text-(--color-text-muted) hover:text-(--color-text-main)">✕</button>
                             </div>
                         ) : (
-                            <button onClick={() => setIsAddingCat(true)} className="w-full py-3 mt-2 rounded-xl border border-dashed border-white/20 text-(--color-text-muted) hover:text-white hover:border-white/50 transition-all font-medium text-sm">
+                            <button onClick={() => setIsAddingCat(true)} className="w-full py-3 mt-2 rounded-xl border border-dashed border-(--color-text-main)/20 text-(--color-text-muted) hover:text-(--color-text-main) hover:border-(--color-text-main)/50 transition-all font-medium text-sm">
                                 + Nova Categoria
                             </button>
                         )}
@@ -352,9 +352,9 @@ export default function SettingsPage() {
                     initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
                     className="glass-panel p-6 md:p-8 rounded-3xl"
                 >
-                    <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
+                    <div className="flex items-center gap-3 mb-6 pb-4 border-b border-(--color-text-main)/10">
                         <div className="p-2 bg-emerald-500/10 rounded-xl text-emerald-400"><Target className="w-5 h-5" /></div>
-                        <h2 className="text-xl font-bold text-white">Teto de Gastos</h2>
+                        <h2 className="text-xl font-bold text-(--color-text-main)">Teto de Gastos</h2>
                     </div>
 
                     <p className="text-sm text-(--color-text-muted) mb-6">
@@ -365,19 +365,19 @@ export default function SettingsPage() {
                         {loadingData ? (
                             <div className="text-sm text-(--color-text-muted)">Carregando...</div>
                         ) : limits.map(lim => (
-                            <div key={lim.id} className="flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-2xl group hover:bg-white/10 transition-colors">
+                            <div key={lim.id} className="flex items-center justify-between p-4 bg-(--color-text-main)/5 border border-(--color-text-main)/5 rounded-2xl group hover:bg-(--color-text-main)/10 transition-colors">
                                 <div className="flex flex-col">
-                                    <span className="font-medium text-white">{lim.categoryName}</span>
+                                    <span className="font-medium text-(--color-text-main)">{lim.categoryName}</span>
                                     <span className="text-xs text-emerald-400 font-semibold mt-1">Ativo: R$ {lim.limitAmount.toFixed(2)}</span>
                                 </div>
-                                <button className="text-sm font-medium px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-white">Editar</button>
+                                <button className="text-sm font-medium px-4 py-2 bg-(--color-text-main)/10 rounded-lg hover:bg-(--color-text-main)/20 transition-colors text-(--color-text-main)">Editar</button>
                             </div>
                         ))}
 
                         {isAddingLimit ? (
-                            <div className="flex flex-col gap-3 p-4 bg-white/10 border border-(--color-neon-green-light)/30 rounded-2xl animate-in fade-in zoom-in duration-300">
+                            <div className="flex flex-col gap-3 p-4 bg-(--color-text-main)/10 border border-(--color-neon-green-light)/30 rounded-2xl animate-in fade-in zoom-in duration-300">
                                 <select
-                                    className="w-full bg-black/30 border border-white/10 rounded-xl p-3 text-white text-sm outline-none"
+                                    className="w-full bg-black/30 border border-(--color-text-main)/10 rounded-xl p-3 text-(--color-text-main) text-sm outline-none"
                                     value={limitCategoryId}
                                     onChange={(e) => setLimitCategoryId(e.target.value)}
                                 >
@@ -394,17 +394,17 @@ export default function SettingsPage() {
                                             placeholder="Gasto Máximo Mensal"
                                             value={limitAmount}
                                             onChange={(e) => setLimitAmount(e.target.value)}
-                                            className="w-full bg-black/30 border border-white/10 rounded-xl p-3 pl-12 text-white outline-none text-sm font-medium"
+                                            className="w-full bg-black/30 border border-(--color-text-main)/10 rounded-xl p-3 pl-12 text-(--color-text-main) outline-none text-sm font-medium"
                                         />
                                     </div>
                                     <button onClick={handleSaveLimit} className="p-3 bg-(--color-neon-green-light) text-black rounded-xl hover:bg-white transition-colors">
                                         <Check className="w-5 h-5" />
                                     </button>
                                 </div>
-                                <button onClick={() => setIsAddingLimit(false)} className="text-xs text-(--color-text-muted) hover:text-white mt-1">Cancelar</button>
+                                <button onClick={() => setIsAddingLimit(false)} className="text-xs text-(--color-text-muted) hover:text-(--color-text-main) mt-1">Cancelar</button>
                             </div>
                         ) : (
-                            <button onClick={() => setIsAddingLimit(true)} className="w-full py-3 mt-2 rounded-xl border border-dashed border-white/20 text-(--color-text-muted) hover:text-white hover:border-white/50 transition-all font-medium text-sm">
+                            <button onClick={() => setIsAddingLimit(true)} className="w-full py-3 mt-2 rounded-xl border border-dashed border-(--color-text-main)/20 text-(--color-text-muted) hover:text-(--color-text-main) hover:border-(--color-text-main)/50 transition-all font-medium text-sm">
                                 + Novo Limite de Categoria
                             </button>
                         )}
@@ -418,14 +418,14 @@ export default function SettingsPage() {
                 >
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500/0 via-red-500/50 to-red-500/0" />
 
-                    <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
+                    <div className="flex items-center gap-3 mb-6 pb-4 border-b border-(--color-text-main)/10">
                         <div className="p-2 bg-red-500/10 rounded-xl text-red-500"><ShieldAlert className="w-5 h-5" /></div>
-                        <h2 className="text-xl font-bold text-white">Developer Tools</h2>
+                        <h2 className="text-xl font-bold text-(--color-text-main)">Developer Tools</h2>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="flex flex-col gap-2">
-                            <h3 className="font-medium text-white">Popular Banco de Dados</h3>
+                            <h3 className="font-medium text-(--color-text-main)">Popular Banco de Dados</h3>
                             <p className="text-sm text-(--color-text-muted) mb-2">Gera 50 lançamentos aleatórios nos últimos 3 meses para testar a interface e paginadores.</p>
                             <button
                                 onClick={handleMockDB}
@@ -443,7 +443,7 @@ export default function SettingsPage() {
                             <button
                                 onClick={handleResetDB}
                                 disabled={resetLoading}
-                                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all duration-300 font-semibold shadow-[0_0_15px_rgba(239,68,68,0.0)] hover:shadow-[0_0_15px_rgba(239,68,68,0.2)] disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-(--color-text-main) transition-all duration-300 font-semibold shadow-[0_0_15px_rgba(239,68,68,0.0)] hover:shadow-[0_0_15px_rgba(239,68,68,0.2)] disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <Trash2 className="w-4 h-4" />
                                 {resetLoading ? "Limpando Banco..." : "Resetar Database"}

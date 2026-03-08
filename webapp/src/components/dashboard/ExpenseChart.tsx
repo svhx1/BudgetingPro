@@ -10,8 +10,8 @@ import { useCachedData } from "@/hooks/useCachedData";
 const CustomTooltip = ({ active, payload, isPrivacyMode }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-[#1a1a1a]/95 backdrop-blur-xl p-3 border border-white/10 rounded-xl shadow-xl">
-                <p className="text-white font-medium mb-1">{payload[0].name}</p>
+            <div className="bg-[#1a1a1a]/95 backdrop-blur-xl p-3 border border-(--color-text-main)/10 rounded-xl shadow-xl">
+                <p className="text-(--color-text-main) font-medium mb-1">{payload[0].name}</p>
                 <p className="text-sm" style={{ color: payload[0].payload.color }}>
                     {isPrivacyMode ? "R$ ••••" : `R$ ${payload[0].value.toFixed(2)}`}
                 </p>
@@ -69,13 +69,13 @@ export default function ExpenseChart() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="glass-panel p-6 flex flex-col relative"
         >
-            <h3 className="text-lg font-semibold text-white mb-4">Despesas por Categoria</h3>
+            <h3 className="text-lg font-semibold text-(--color-text-main) mb-4">Despesas por Categoria</h3>
 
             {/* Gráfico — altura fixa, centralizado */}
             <div className="relative w-full h-[240px] flex-shrink-0">
                 {loading ? (
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-36 h-36 rounded-full border-8 border-white/5 border-t-white/20 animate-spin" />
+                        <div className="w-36 h-36 rounded-full border-8 border-(--color-text-main)/5 border-t-white/20 animate-spin" />
                     </div>
                 ) : chartData.length > 0 ? (
                     <ResponsiveContainer width="100%" height="100%">
@@ -118,7 +118,7 @@ export default function ExpenseChart() {
                 {/* Center label */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                     <span className="text-xs text-(--color-text-muted)">Total Mês</span>
-                    <span className="text-lg font-bold text-white mt-0.5">
+                    <span className="text-lg font-bold text-(--color-text-main) mt-0.5">
                         {isPrivacyMode ? "R$ ••••" : formatCurrency(totalExpenses)}
                     </span>
                 </div>
@@ -130,10 +130,10 @@ export default function ExpenseChart() {
                     <div key={idx} className="flex flex-col">
                         <button
                             onClick={() => setSelectedCategory(selectedCategory === entry.name ? null : entry.name)}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all text-left text-sm ${selectedCategory === entry.name ? "bg-white/10 ring-1 ring-white/15" : "hover:bg-white/5"}`}
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all text-left text-sm ${selectedCategory === entry.name ? "bg-(--color-text-main)/10 ring-1 ring-white/15" : "hover:bg-(--color-text-main)/5"}`}
                         >
                             <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: entry.color }} />
-                            <span className="text-white/80 font-medium">{entry.name}</span>
+                            <span className="text-(--color-text-main)/80 font-medium">{entry.name}</span>
                             <span className="text-xs text-(--color-text-muted)">
                                 {isPrivacyMode ? "••••" : formatCurrency(entry.value)}
                             </span>
@@ -152,14 +152,14 @@ export default function ExpenseChart() {
                         transition={{ duration: 0.25 }}
                         className="overflow-hidden"
                     >
-                        <div className="mt-3 pt-3 border-t border-white/5 space-y-1.5">
+                        <div className="mt-3 pt-3 border-t border-(--color-text-main)/5 space-y-1.5">
                             <p className="text-xs text-(--color-text-muted) uppercase tracking-wider font-semibold mb-2">
                                 Transações em {selectedCategory}
                             </p>
                             {selectedTxs.map((tx: any) => (
-                                <div key={tx.id} className="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-white/5 transition-colors">
-                                    <span className="text-xs text-white/70">{tx.description}</span>
-                                    <span className="text-xs text-white/50">
+                                <div key={tx.id} className="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-(--color-text-main)/5 transition-colors">
+                                    <span className="text-xs text-(--color-text-main)/70">{tx.description}</span>
+                                    <span className="text-xs text-(--color-text-main)/50">
                                         {isPrivacyMode ? "••••" : `R$ ${Math.abs(tx.amount).toFixed(2).replace(".", ",")}`}
                                     </span>
                                 </div>

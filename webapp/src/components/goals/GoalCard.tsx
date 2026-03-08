@@ -21,7 +21,7 @@ export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             whileHover={{ y: -4 }}
-            className="bg-[#111111] border border-white/5 rounded-3xl p-6 relative overflow-hidden group shadow-xl hover:shadow-[0_10px_40px_rgba(59,130,246,0.15)] transition-all duration-300"
+            className="bg-[#111111] border border-(--color-text-main)/5 rounded-3xl p-6 relative overflow-hidden group shadow-xl hover:shadow-[0_10px_40px_rgba(59,130,246,0.15)] transition-all duration-300"
         >
             {/* Glow Effect */}
             <div className={`absolute top-0 right-0 w-64 h-64 bg-gradient-to-br ${goal.isReached ? 'from-emerald-500/10' : 'from-(--color-neon-blue)/10'} to-transparent rounded-bl-full opacity-50 pointer-events-none`} />
@@ -33,9 +33,9 @@ export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
                         {goal.isReached ? <CheckCircle2 className="w-7 h-7" /> : <Target className="w-7 h-7" />}
                     </div>
                     <div>
-                        <h3 className="text-xl font-bold text-white mb-1 group-hover:text-(--color-neon-blue) transition-colors">{goal.name}</h3>
+                        <h3 className="text-xl font-bold text-(--color-text-main) mb-1 group-hover:text-(--color-neon-blue) transition-colors">{goal.name}</h3>
                         <div className="flex items-center gap-2 text-sm text-(--color-text-muted)">
-                            <span className="font-semibold text-white">{formatBRL(goal.currentAmount)}</span>
+                            <span className="font-semibold text-(--color-text-main)">{formatBRL(goal.currentAmount)}</span>
                             <span>de</span>
                             <span>{formatBRL(goal.targetAmount)}</span>
                         </div>
@@ -43,10 +43,10 @@ export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
                 </div>
 
                 <div className="flex opacity-0 group-hover:opacity-100 transition-opacity gap-2">
-                    <button onClick={() => onEdit(goal)} className="p-2 text-(--color-text-muted) hover:text-(--color-neon-blue) bg-white/5 hover:bg-white/10 rounded-lg transition-colors">
+                    <button onClick={() => onEdit(goal)} className="p-2 text-(--color-text-muted) hover:text-(--color-neon-blue) bg-(--color-text-main)/5 hover:bg-(--color-text-main)/10 rounded-lg transition-colors">
                         <Edit2 className="w-4 h-4" />
                     </button>
-                    <button onClick={() => onDelete(goal.id)} className="p-2 text-(--color-text-muted) hover:text-red-400 bg-white/5 hover:bg-white/10 rounded-lg transition-colors">
+                    <button onClick={() => onDelete(goal.id)} className="p-2 text-(--color-text-muted) hover:text-red-400 bg-(--color-text-main)/5 hover:bg-(--color-text-main)/10 rounded-lg transition-colors">
                         <Trash2 className="w-4 h-4" />
                     </button>
                 </div>
@@ -62,7 +62,7 @@ export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
                         Falta: {formatBRL(goal.targetAmount - goal.currentAmount)}
                     </span>
                 </div>
-                <div className="w-full bg-white/5 rounded-full h-3 overflow-hidden">
+                <div className="w-full bg-(--color-text-main)/5 rounded-full h-3 overflow-hidden">
                     <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${goal.progress}%` }}
@@ -78,25 +78,25 @@ export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
 
             {/* Projection Engine Results */}
             {!goal.isReached && goal.monthlyDeposit > 0 && (
-                <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-white/5 relative z-10">
+                <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-(--color-text-main)/5 relative z-10">
                     <div className="flex items-start gap-3">
-                        <div className="p-2 rounded-lg bg-white/5">
+                        <div className="p-2 rounded-lg bg-(--color-text-main)/5">
                             <TrendingUp className="w-4 h-4 text-(--color-text-muted)" />
                         </div>
                         <div>
                             <p className="text-[10px] uppercase font-bold text-(--color-text-muted) tracking-wider mb-0.5">Aporte + Rendimento</p>
-                            <p className="text-sm font-semibold text-white">{formatBRL(goal.monthlyDeposit)} <span className="text-xs font-normal text-(--color-text-muted)">/mês</span> a {goal.interestRate}%</p>
+                            <p className="text-sm font-semibold text-(--color-text-main)">{formatBRL(goal.monthlyDeposit)} <span className="text-xs font-normal text-(--color-text-muted)">/mês</span> a {goal.interestRate}%</p>
                         </div>
                     </div>
 
                     {goal.projectedDate && (
                         <div className="flex items-start gap-3">
-                            <div className="p-2 rounded-lg bg-white/5">
+                            <div className="p-2 rounded-lg bg-(--color-text-main)/5">
                                 <Calendar className="w-4 h-4 text-(--color-text-muted)" />
                             </div>
                             <div>
                                 <p className="text-[10px] uppercase font-bold text-(--color-text-muted) tracking-wider mb-0.5">Previsão Fim</p>
-                                <p className="text-sm font-semibold text-white capitalize">{format(new Date(goal.projectedDate), "MMM yyyy", { locale: ptBR })}</p>
+                                <p className="text-sm font-semibold text-(--color-text-main) capitalize">{format(new Date(goal.projectedDate), "MMM yyyy", { locale: ptBR })}</p>
                                 <p className="text-[10px] text-(--color-neon-blue) font-medium mt-0.5">
                                     Em ~{goal.projectedMonths} meses
                                 </p>
@@ -107,13 +107,13 @@ export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
             )}
 
             {!goal.isReached && goal.monthlyDeposit === 0 && (
-                <div className="mt-4 pt-4 border-t border-white/5 relative z-10 text-center">
+                <div className="mt-4 pt-4 border-t border-(--color-text-main)/5 relative z-10 text-center">
                     <p className="text-sm text-(--color-text-muted)">Defina um aporte mensal para ver a projeção exata do fim.</p>
                 </div>
             )}
 
             {goal.isReached && (
-                <div className="mt-4 pt-4 border-t border-white/5 relative z-10 flex items-center justify-center gap-2">
+                <div className="mt-4 pt-4 border-t border-(--color-text-main)/5 relative z-10 flex items-center justify-center gap-2">
                     <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                     <span className="text-sm font-bold text-emerald-400 tracking-wide uppercase">Objetivo Concluído!</span>
                 </div>

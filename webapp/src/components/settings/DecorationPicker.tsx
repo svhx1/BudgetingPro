@@ -17,7 +17,7 @@ export default function DecorationPicker() {
     return (
         <div className="space-y-6">
             {/* Live Preview */}
-            <div className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-white/5 border border-white/10">
+            <div className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-(--color-text-main)/5 border border-(--color-text-main)/10">
                 <AvatarWithDecoration size={80} />
                 <p className="text-sm text-(--color-text-muted)">Preview ao vivo</p>
                 {(decorationId || hatId) && (
@@ -34,7 +34,7 @@ export default function DecorationPicker() {
             {categories.map(cat => (
                 <div key={cat.key}>
                     <div className="mb-3">
-                        <h4 className="text-xs font-semibold text-white uppercase tracking-wider">{cat.label}</h4>
+                        <h4 className="text-xs font-semibold text-(--color-text-main) uppercase tracking-wider">{cat.label}</h4>
                         <p className="text-[10px] text-(--color-text-muted)">{cat.desc}</p>
                     </div>
                     <div className="grid grid-cols-5 sm:grid-cols-5 gap-2">
@@ -46,8 +46,8 @@ export default function DecorationPicker() {
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => setDecorationId(isActive ? null : dec.id)}
                                     className={`flex flex-col items-center gap-1 p-2 rounded-xl border text-center transition-all ${isActive
-                                        ? "border-white/30 bg-white/10"
-                                        : "border-white/5 hover:border-white/15 hover:bg-white/5"
+                                        ? "border-(--color-text-main)/30 bg-(--color-text-main)/10"
+                                        : "border-(--color-text-main)/5 hover:border-(--color-text-main)/15 hover:bg-(--color-text-main)/5"
                                         }`}
                                     title={dec.name}
                                 >
@@ -84,7 +84,7 @@ export default function DecorationPicker() {
             {/* Hats */}
             <div>
                 <div className="mb-3">
-                    <h4 className="text-xs font-semibold text-white uppercase tracking-wider">Chapéus & Acessórios</h4>
+                    <h4 className="text-xs font-semibold text-(--color-text-main) uppercase tracking-wider">Chapéus & Acessórios</h4>
                     <p className="text-[10px] text-(--color-text-muted)">Posicionados sobre a foto</p>
                 </div>
                 <div className="grid grid-cols-5 sm:grid-cols-5 gap-2">
@@ -96,8 +96,8 @@ export default function DecorationPicker() {
                                 whileTap={{ scale: 0.9 }}
                                 onClick={() => setHatId(isActive ? null : hat.id)}
                                 className={`flex flex-col items-center gap-1 p-2 rounded-xl border transition-all ${isActive
-                                    ? "border-white/30 bg-white/10"
-                                    : "border-white/5 hover:border-white/15 hover:bg-white/5"
+                                    ? "border-(--color-text-main)/30 bg-(--color-text-main)/10"
+                                    : "border-(--color-text-main)/5 hover:border-(--color-text-main)/15 hover:bg-(--color-text-main)/5"
                                     }`}
                                 title={hat.name}
                             >

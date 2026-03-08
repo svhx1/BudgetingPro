@@ -13,8 +13,8 @@ type ViewMode = "expense" | "income" | "balance" | "compare";
 const CustomTooltip = ({ active, payload, label, isPrivacyMode }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-[#0d0d15]/95 backdrop-blur-2xl border border-white/10 rounded-xl px-4 py-3 shadow-2xl">
-                <p className="text-white/60 text-xs mb-1.5 font-medium">{label}</p>
+            <div className="bg-[#0d0d15]/95 backdrop-blur-2xl border border-(--color-text-main)/10 rounded-xl px-4 py-3 shadow-2xl">
+                <p className="text-(--color-text-main)/60 text-xs mb-1.5 font-medium">{label}</p>
                 {payload.map((p: any, i: number) => (
                     <p key={i} className="text-sm font-semibold" style={{ color: p.fill || p.color }}>
                         {p.name === "income" ? "Receita: " : p.name === "expense" ? "Despesa: " : ""}
@@ -75,22 +75,22 @@ export default function CashflowChart() {
             {/* Header */}
             <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <div className="flex items-center gap-3">
-                    <h3 className="text-lg font-semibold text-white">Cashflow</h3>
-                    <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-white/60">
+                    <h3 className="text-lg font-semibold text-(--color-text-main)">Cashflow</h3>
+                    <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-(--color-text-main)/5 border border-(--color-text-main)/10 text-xs text-(--color-text-main)/60">
                         <CalendarDays className="w-3.5 h-3.5" />
                         <span>{currentPeriod.year}</span>
                     </div>
                 </div>
 
                 {/* Period filter */}
-                <div className="flex items-center gap-1 bg-white/5 rounded-full p-1 border border-white/5">
+                <div className="flex items-center gap-1 bg-(--color-text-main)/5 rounded-full p-1 border border-(--color-text-main)/5">
                     {periodOptions.map(opt => (
                         <button
                             key={opt.value}
                             onClick={() => setPeriod(opt.value)}
                             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${period === opt.value
-                                ? "bg-white/10 text-white shadow-sm"
-                                : "text-white/40 hover:text-white/70"
+                                ? "bg-(--color-text-main)/10 text-(--color-text-main) shadow-sm"
+                                : "text-(--color-text-main)/40 hover:text-(--color-text-main)/70"
                                 }`}
                         >
                             {opt.label}
@@ -109,8 +109,8 @@ export default function CashflowChart() {
                             if (opt.value === "compare") setPeriod("month");
                         }}
                         className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all ${viewMode === opt.value
-                            ? "text-white"
-                            : "text-white/30 hover:text-white/60"
+                            ? "text-(--color-text-main)"
+                            : "text-(--color-text-main)/30 hover:text-(--color-text-main)/60"
                             }`}
                         style={viewMode === opt.value ? {
                             backgroundColor: `${opt.color}20`,
@@ -128,7 +128,7 @@ export default function CashflowChart() {
             <div className="relative z-10 w-full h-[280px]">
                 {loading ? (
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-8 h-8 border-2 border-white/10 border-t-white/40 rounded-full animate-spin" />
+                        <div className="w-8 h-8 border-2 border-(--color-text-main)/10 border-t-white/40 rounded-full animate-spin" />
                     </div>
                 ) : viewMode === "compare" ? (
                     /* Comparative mode: two bars side by side */

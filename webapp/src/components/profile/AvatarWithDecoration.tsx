@@ -56,7 +56,7 @@ export default function AvatarWithDecoration({ size = 40, className = "" }: Avat
                     />
                 ) : (
                     <div
-                        className="w-full h-full bg-gradient-to-br from-emerald-400 to-indigo-500 flex items-center justify-center text-white font-bold"
+                        className="w-full h-full bg-gradient-to-br from-emerald-400 to-indigo-500 flex items-center justify-center text-(--color-text-main) font-bold"
                         style={{ fontSize: size * 0.4 }}
                     >
                         {(profileData.name || "U")[0].toUpperCase()}
