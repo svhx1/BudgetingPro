@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Sidebar from "@/components/layout/Sidebar";
 import GlobalAddModal from "@/components/layout/GlobalAddModal";
+import GlobalEditModal from "@/components/layout/GlobalEditModal";
 import FloatingActionButton from "@/components/layout/FloatingActionButton";
 import AvatarWithDecoration from "@/components/profile/AvatarWithDecoration";
 import AlertsManager from "@/components/layout/AlertsManager";
@@ -67,6 +68,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 </div>
             </main>
             <GlobalAddModal />
+            <GlobalEditModal />
             <FloatingActionButton />
             <AlertsManager />
         </div>

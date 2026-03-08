@@ -5,12 +5,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useGlobal } from "@/contexts/GlobalContext";
 import { getDashboardSummary } from "@/actions/dashboard";
 import { deleteTransaction, deleteTransactionGroup } from "@/actions/transactions";
-import { Trash2, Coffee, ArrowUpRight, ArrowDownRight, Layers, ShieldAlert, ChevronLeft, ChevronRight } from "lucide-react";
-
+import { Trash2, Coffee, ArrowUpRight, ArrowDownRight, Layers, ShieldAlert, ChevronLeft, ChevronRight, MoreVertical, Edit2 } from "lucide-react";
 import { useCachedData } from "@/hooks/useCachedData";
 
 export default function HistoryPage() {
-    const { isPrivacyMode, refreshTrigger, triggerRefresh, addToast } = useGlobal();
+    const { isPrivacyMode, refreshTrigger, triggerRefresh, addToast, setEditModalOpen, setEditTxData } = useGlobal();
 
     // Local month selector for history
     const now = new Date();
@@ -19,6 +18,9 @@ export default function HistoryPage() {
 
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedTx, setSelectedTx] = useState<any>(null);
+
+    // Dropdown state
+    const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 
     const { data: summaryData, loading } = useCachedData(
         `history-extrato-${year}-${month}`,
@@ -44,8 +46,15 @@ export default function HistoryPage() {
     };
 
     const handleDeleteClick = (tx: any) => {
+        setOpenDropdownId(null);
         setSelectedTx(tx);
         setModalOpen(true);
+    };
+
+    const handleEditClick = (tx: any) => {
+        setOpenDropdownId(null);
+        setEditTxData(tx);
+        setEditModalOpen(true);
     };
 
     const confirmDelete = async (deleteSeries: boolean) => {
@@ -72,9 +81,15 @@ export default function HistoryPage() {
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
 
-        if (d.toDateString() === today.toDateString()) return `Hoje, ${d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
-        if (d.toDateString() === yesterday.toDateString()) return `Ontem, ${d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
-        return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
+        // Extracting only DD/MM/YYYY for comparison to avoid timezone shifting
+        const dString = d.toISOString().split("T")[0];
+        const todayString = today.toISOString().split("T")[0];
+        const yesterdayString = yesterday.toISOString().split("T")[0];
+
+        if (dString === todayString) return "Hoje";
+        if (dString === yesterdayString) return "Ontem";
+
+        return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "long" });
     };
 
     return (
@@ -175,13 +190,50 @@ export default function HistoryPage() {
                                                 {isIncome ? '+' : '-'} {isPrivacyMode ? "R$ ••••" : `R$ ${Math.abs(t.amount).toFixed(2).replace('.', ',')}`}
                                             </div>
 
-                                            <button
-                                                onClick={() => handleDeleteClick({ ...t, isSeries })}
-                                                className="p-2 rounded-lg text-(--color-text-muted) hover:text-red-400 hover:bg-red-500/10 transition-colors"
-                                                title="Apagar Lançamento"
-                                            >
-                                                <Trash2 className="w-5 h-5" />
-                                            </button>
+                                            {/* Options Dropdown */}
+                                            <div className="relative">
+                                                <button
+                                                    onClick={() => setOpenDropdownId(openDropdownId === t.id ? null : t.id)}
+                                                    className="p-2 rounded-xl text-(--color-text-muted) hover:text-(--color-text-main) hover:bg-(--color-text-main)/5 transition-colors"
+                                                >
+                                                    <MoreVertical className="w-5 h-5" />
+                                                </button>
+
+                                                <AnimatePresence>
+                                                    {openDropdownId === t.id && (
+                                                        <>
+                                                            {/* Invisible backdrop to catch clicks outside */}
+                                                            <div
+                                                                className="fixed inset-0 z-10"
+                                                                onClick={() => setOpenDropdownId(null)}
+                                                            />
+                                                            <motion.div
+                                                                initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                                                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                                                exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                                                                transition={{ duration: 0.15 }}
+                                                                className="absolute right-0 top-full mt-2 w-48 bg-(--color-base-bg) border border-(--color-text-main)/10 rounded-2xl shadow-xl z-20 overflow-hidden flex flex-col"
+                                                            >
+                                                                <button
+                                                                    onClick={() => handleEditClick(t)}
+                                                                    className="w-full text-left px-4 py-3 text-sm font-medium text-(--color-text-main) hover:bg-(--color-text-main)/5 flex items-center gap-3 transition-colors"
+                                                                >
+                                                                    <Edit2 className="w-4 h-4 text-emerald-400" />
+                                                                    Editar
+                                                                </button>
+                                                                <div className="h-px bg-(--color-text-main)/10 w-full" />
+                                                                <button
+                                                                    onClick={() => handleDeleteClick({ ...t, isSeries })}
+                                                                    className="w-full text-left px-4 py-3 text-sm font-medium text-red-500 hover:bg-red-500/10 flex items-center gap-3 transition-colors"
+                                                                >
+                                                                    <Trash2 className="w-4 h-4 text-red-400" />
+                                                                    Excluir
+                                                                </button>
+                                                            </motion.div>
+                                                        </>
+                                                    )}
+                                                </AnimatePresence>
+                                            </div>
                                         </div>
                                     </motion.div>
                                 );

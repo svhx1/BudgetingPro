@@ -32,7 +32,20 @@ export default function RecurringView() {
     };
 
     const formatDate = (date: Date) => {
-        return new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short' }).format(date);
+        const d = date; // 'date' is already a Date object from the mapping above
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+
+        // Extracting only DD/MM/YYYY for comparison
+        const dString = d.toISOString().split("T")[0];
+        const todayString = today.toISOString().split("T")[0];
+        const yesterdayString = yesterday.toISOString().split("T")[0];
+
+        if (dString === todayString) return "Hoje";
+        if (dString === yesterdayString) return "Ontem";
+
+        return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "long" });
     };
 
     // Colorir o card percentual com base num alarme de estresse orçamentário (> 30% das Receitas é arriscado para Fixos visando Regra 50/30/20)

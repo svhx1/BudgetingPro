@@ -3,13 +3,13 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PlusCircle, RefreshCw, Layers, CalendarDays, X, Plus, CreditCard, Banknote } from "lucide-react";
-import { createTransaction } from "@/actions/transactions";
+import { updateTransaction } from "@/actions/transactions";
 import { getCategories, createCategory } from "@/actions/categories";
 import { useGlobal } from "@/contexts/GlobalContext";
 import { DatePicker } from "@/components/ui/DatePicker";
 
-export default function GlobalAddModal() {
-    const { isAddModalOpen, setAddModalOpen, triggerRefresh, refreshTrigger, addToast, categories, setCategories } = useGlobal();
+export default function GlobalEditModal() {
+    const { isEditModalOpen, setEditModalOpen, editTxData, triggerRefresh, addToast, categories, setCategories } = useGlobal();
 
     const [type, setType] = useState<"EXPENSE" | "INCOME">("EXPENSE");
     const [recurrence, setRecurrence] = useState<"unico" | "parcelado" | "fixo">("unico");
@@ -26,22 +26,40 @@ export default function GlobalAddModal() {
     const [newCatName, setNewCatName] = useState("");
     const [creatingCat, setCreatingCat] = useState(false);
 
+    // Control if we are editing the whole series or just this one
+    const [updateSeries, setUpdateSeries] = useState(false);
+
     useEffect(() => {
-        if (isAddModalOpen) {
-            // Pick up type from FAB bubbles
-            if (window.__budgeting_tx_type) {
-                // eslint-disable-next-line react-hooks/set-state-in-effect
-                setType(window.__budgeting_tx_type);
-                delete window.__budgeting_tx_type;
+        if (isEditModalOpen && editTxData) {
+            setType(editTxData.type);
+            setAmount((Math.abs(editTxData.amount) * 100).toString());
+            setDescription(editTxData.description);
+            setDate(editTxData.date ? new Date(editTxData.date).toISOString().split("T")[0] : new Date().toISOString().split("T")[0]);
+            setCategoryId(editTxData.categoryId || (categories.length > 0 ? categories[0].id : ""));
+            setPaymentMethod(editTxData.paymentMethod || (editTxData.type === "EXPENSE" ? "DEBIT" : ""));
+
+            // Reconstruct recurrence data
+            if (editTxData.installment && editTxData.installment.length > 0) {
+                if (editTxData.installment === "Fixo") {
+                    setRecurrence("fixo");
+                    setUpdateSeries(true);
+                } else if (editTxData.installment.includes("/")) {
+                    setRecurrence("parcelado");
+                    const [, totalInstalls] = editTxData.installment.split("/");
+                    setInstallments(Number(totalInstalls) || 2);
+                    // Usually we edit the whole series, so default to TOTAL amount projection
+                    setInstallmentMode("TOTAL");
+                    setUpdateSeries(false);
+                }
+            } else {
+                setRecurrence("unico");
+                setUpdateSeries(false);
             }
-            // Auto-select first category if available
-            if (categories.length > 0 && !categoryId) {
-                setCategoryId(categories[0].id);
-            }
+
             setShowNewCat(false);
             setNewCatName("");
         }
-    }, [isAddModalOpen, categories]);
+    }, [isEditModalOpen, editTxData, categories]);
 
     const handleCreateCategory = async () => {
         if (!newCatName.trim()) return;
@@ -79,7 +97,7 @@ export default function GlobalAddModal() {
 
         setLoading(true);
 
-        const res = await createTransaction({
+        const res = await updateTransaction(editTxData.id, updateSeries, {
             description,
             amount: numericAmount,
             type,
@@ -91,14 +109,11 @@ export default function GlobalAddModal() {
         });
 
         if (res?.success) {
-            setAmount("");
-            setDescription("");
-            setDate(new Date().toISOString().split("T")[0]);
-            setAddModalOpen(false);
-            addToast("Sua transação já está no banco e no Dashboard!", "success");
+            setEditModalOpen(false);
+            addToast("Transação atualizada com sucesso!", "success");
             triggerRefresh();
         } else {
-            addToast("Erro ao registrar no banco de dados.", "error");
+            addToast("Erro ao atualizar no banco de dados.", "error");
         }
 
         setLoading(false);
@@ -111,7 +126,7 @@ export default function GlobalAddModal() {
 
     return (
         <AnimatePresence>
-            {isAddModalOpen && (
+            {isEditModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center px-4 overflow-y-auto w-full h-screen">
                     {/* Backdrop */}
                     <motion.div
@@ -119,7 +134,7 @@ export default function GlobalAddModal() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.15 }}
-                        onClick={() => setAddModalOpen(false)}
+                        onClick={() => setEditModalOpen(false)}
                         className="fixed inset-0 bg-black/60 backdrop-blur-sm"
                     />
 
@@ -149,20 +164,41 @@ export default function GlobalAddModal() {
                                     </div>
                                     <div>
                                         <h2 className="text-2xl font-bold tracking-tight text-(--color-text-main)">
-                                            {isExpense ? "Nova Despesa" : "Nova Receita"}
+                                            Editar Transação
                                         </h2>
                                         <p className="text-sm text-(--color-text-muted) font-light">
-                                            {isExpense ? "Registrar uma saída" : "Registrar uma entrada"}
+                                            {isExpense ? "Modificar saída" : "Modificar entrada"}
                                         </p>
                                     </div>
                                 </div>
                                 <button
-                                    onClick={() => setAddModalOpen(false)}
+                                    onClick={() => setEditModalOpen(false)}
                                     className="p-2 rounded-xl bg-(--color-text-main)/5 hover:bg-(--color-text-main)/10 text-(--color-text-muted) hover:text-(--color-text-main) transition-colors"
                                 >
                                     <X className="w-5 h-5" />
                                 </button>
                             </div>
+
+                            {editTxData.groupId && editTxData.installment === "Fixo" && (
+                                <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl flex items-start gap-3 mb-2">
+                                    <Layers className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                                    <div className="flex flex-col gap-1 w-full">
+                                        <p className="text-sm font-semibold text-amber-500">Transação Mensal Fixa</p>
+                                        <label className="flex items-center gap-2 cursor-pointer mt-1">
+                                            <input
+                                                type="checkbox"
+                                                checked={updateSeries}
+                                                onChange={(e) => setUpdateSeries(e.target.checked)}
+                                                className="w-4 h-4 rounded appearance-none checked:bg-amber-500 ring-1 ring-amber-500/50 outline-none flex items-center justify-center relative
+                                                checked:after:content-['✓'] checked:after:text-white checked:after:font-bold checked:after:text-xs"
+                                            />
+                                            <span className="text-xs font-medium text-(--color-text-main)">
+                                                Modificar todas as ocorrências futuras (Criará uma nova série nos próximos 12 meses)
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            )}
 
                             <form onSubmit={handleSave} className="flex flex-col gap-6">
 
@@ -407,7 +443,7 @@ export default function GlobalAddModal() {
                                         : "bg-emerald-500/90 hover:bg-emerald-400 text-white"
                                         }`}
                                 >
-                                    Salvar {isExpense ? "Saída" : "Entrada"}
+                                    Salvar Alterações
                                 </button>
 
                             </form>

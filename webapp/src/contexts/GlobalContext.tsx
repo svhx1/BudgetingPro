@@ -3,6 +3,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { ThemeConfig, CustomTheme, BUILT_IN_THEMES, DEFAULT_CUSTOM_THEME, applyTheme, applyCustomTheme } from "@/lib/themes";
 import { getCategories } from "@/actions/categories";
+import { getDashboardSummary } from "@/actions/dashboard";
+import { setCacheData } from "@/hooks/useCachedData";
 
 type Period = {
     month: number;
@@ -29,6 +31,10 @@ interface GlobalContextProps {
     setCurrentPeriod: (period: Period) => void;
     isAddModalOpen: boolean;
     setAddModalOpen: (isOpen: boolean) => void;
+    isEditModalOpen: boolean;
+    setEditModalOpen: (isOpen: boolean) => void;
+    editTxData: any;
+    setEditTxData: (tx: any) => void;
     refreshTrigger: number;
     triggerRefresh: () => void;
     addToast: (message: string, type?: ToastType) => void;
@@ -54,6 +60,8 @@ const GlobalContext = createContext<GlobalContextProps | undefined>(undefined);
 export function GlobalProvider({ children }: { children: ReactNode }) {
     const [isPrivacyMode, setIsPrivacyMode] = useState(false);
     const [isAddModalOpen, setAddModalOpen] = useState(false);
+    const [isEditModalOpen, setEditModalOpen] = useState(false);
+    const [editTxData, setEditTxData] = useState<any>(null);
     const [currentPeriod, setCurrentPeriod] = useState<Period>({
         month: new Date().getMonth(),
         year: new Date().getFullYear(),
@@ -106,16 +114,33 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
         if (savedHat) setHatIdState(savedHat);
     }, []);
 
-    // Background Fetch for Categories
+    // Background Fetch for Categories & Pre-Caching (Current and Last Month)
     useEffect(() => {
-        async function fetchCats() {
+        async function fetchBackground() {
+            // 1. Categories
             const res = await getCategories();
             if (res.success && res.data) {
                 setCategories(res.data);
             }
+
+            // 2. Pre-cache Current Month
+            const currRes = await getDashboardSummary(currentPeriod.month, currentPeriod.year);
+            if (currRes.success && currRes.data) {
+                setCacheData(`dashboard-summary-${currentPeriod.year}-${currentPeriod.month}`, currRes.data);
+                setCacheData(`history-extrato-${currentPeriod.year}-${currentPeriod.month}`, currRes.data);
+            }
+
+            // 3. Pre-cache Previous Month
+            const prevMonth = currentPeriod.month === 0 ? 11 : currentPeriod.month - 1;
+            const prevYear = currentPeriod.month === 0 ? currentPeriod.year - 1 : currentPeriod.year;
+            const prevRes = await getDashboardSummary(prevMonth, prevYear);
+            if (prevRes.success && prevRes.data) {
+                setCacheData(`dashboard-summary-${prevYear}-${prevMonth}`, prevRes.data);
+                setCacheData(`history-extrato-${prevYear}-${prevMonth}`, prevRes.data);
+            }
         }
-        fetchCats();
-    }, [refreshTrigger]);
+        fetchBackground();
+    }, [refreshTrigger, currentPeriod]);
 
     // Apply theme whenever it changes
     useEffect(() => {
@@ -179,6 +204,10 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
                 setCurrentPeriod,
                 isAddModalOpen,
                 setAddModalOpen,
+                isEditModalOpen,
+                setEditModalOpen,
+                editTxData,
+                setEditTxData,
                 refreshTrigger,
                 triggerRefresh,
                 addToast,

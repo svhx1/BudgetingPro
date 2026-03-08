@@ -60,13 +60,16 @@ export async function createTransaction(data: TransactionInput) {
 
         // Ancorar a data ao Meio-Dia UTC (12h) para imune a qualquer fuso horário mundial (-11 a +12)
         const dateStringSafe = date.includes("T") ? date.split("T")[0] : date;
-        const baseDate = new Date(`${dateStringSafe}T12:00:00.000Z`);
-        const originalDay = baseDate.getUTCDate();
+        const [year, month, day] = dateStringSafe.split("-").map(Number);
+
+        // Criar a data base com TimeZone zero (Meio Dia UTC)
+        const baseDate = new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0));
+        const originalDay = day;
 
         // Advance month preserving end-of-month logic UTC safe
-        function advanceMonth(base: Date, months: number): Date {
+        function advanceMonth(base: Date, monthsAdd: number): Date {
             const d = new Date(base.getTime());
-            const targetMonth = d.getUTCMonth() + months;
+            const targetMonth = d.getUTCMonth() + monthsAdd;
             d.setUTCMonth(targetMonth, 1);
             const lastDayOfMonth = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
             d.setUTCDate(Math.min(originalDay, lastDayOfMonth));
@@ -89,31 +92,21 @@ export async function createTransaction(data: TransactionInput) {
         }
 
         else if (recurrence === "parcelado" && installments) {
-            const groupId = crypto.randomUUID();
-            const installmentAmount = amount / installments;
-
-            const transactions = Array.from({ length: installments }).map((_, i) => {
-                const nextDate = advanceMonth(baseDate, i);
-                return {
-                    description: `${description} (${i + 1}/${installments})`,
-                    amount: parseFloat(installmentAmount.toFixed(2)),
-                    type: type,
-                    date: nextDate,
+            // Comportamento atualizado a pedido do user: registrar o valor integral 
+            // no mês corrente para ritmo de gastos global, sem transbordo futuro.
+            await (prisma as any).transaction.create({
+                data: {
+                    description: `${description} (${installments}x)`,
+                    amount,
+                    type,
+                    date: baseDate,
                     categoryId,
                     userId,
-                    groupId,
-                    installment: `${i + 1}/${installments}`,
-                    paymentMethod: type === "EXPENSE" ? (paymentMethod || "DEBIT") : null,
-                };
+                    installment: `1/${installments}`,
+                    paymentMethod: type === "EXPENSE" ? (paymentMethod || "CREDIT") : null,
+                },
             });
-
-            // 1) Insere as transações em lote
-            await prisma.transaction.createMany({ data: transactions as any });
-
-            // 2) Sincroniza a Rollup Table Mês a Mês
-            await Promise.all(transactions.map(tx =>
-                updateMonthlySummary(tx.userId, tx.date, tx.type as "INCOME" | "EXPENSE", tx.amount, tx.paymentMethod)
-            ));
+            await updateMonthlySummary(userId, baseDate, type, amount, paymentMethod || "CREDIT");
         }
 
         else if (recurrence === "fixo") {
@@ -149,6 +142,29 @@ export async function createTransaction(data: TransactionInput) {
     } catch (error) {
         console.error("Erro ao criar transação:", error);
         return { success: false, error: "Falha ao registrar lançamento" };
+    }
+}
+
+export async function updateTransaction(id: string, updateSeries: boolean, data: TransactionInput) {
+    try {
+        const tx = await prisma.transaction.findUnique({ where: { id } });
+        if (!tx) return { success: false, error: "Transação não encontrada" };
+
+        // 1. Destructive Phase
+        if (updateSeries && tx.groupId) {
+            await deleteTransactionGroup(tx.groupId);
+        } else {
+            // Delete just this specific one
+            await deleteTransaction(id);
+        }
+
+        // 2. Recreate Phase
+        await createTransaction(data);
+
+        return { success: true };
+    } catch (error) {
+        console.error("Erro ao atualizar transação:", error);
+        return { success: false, error: "Falha ao atualizar transação" };
     }
 }
 

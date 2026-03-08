@@ -81,3 +81,7 @@ export function clearCache(prefix?: string) {
         globalCache.clear();
     }
 }
+
+export function setCacheData(key: string, data: any) {
+    globalCache.set(key, data);
+}
