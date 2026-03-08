@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGlobal } from "@/contexts/GlobalContext";
 import { getDashboardSummary } from "@/actions/dashboard";
-import { deleteTransaction } from "@/actions/transactions";
+import { deleteTransaction, deleteTransactionGroup } from "@/actions/transactions";
 import { Trash2, Coffee, ArrowUpRight, ArrowDownRight, Layers, ShieldAlert, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { useCachedData } from "@/hooks/useCachedData";
@@ -52,17 +52,13 @@ export default function HistoryPage() {
         if (!selectedTx) return;
 
         if (deleteSeries && selectedTx.groupId) {
-            const groupTxs = transactions.filter(t => t.groupId === selectedTx.groupId);
-            addToast(`Deletando ${groupTxs.length} transações da série...`, "info");
-            for (const tx of groupTxs) {
-                await deleteTransaction(tx.id);
-            }
+            await deleteTransactionGroup(selectedTx.groupId);
+            addToast("Parcelas excluídas", "success");
         } else {
-            addToast("Deletando transação...", "info");
             await deleteTransaction(selectedTx.id);
+            addToast("Transação removida com sucesso!", "success");
         }
 
-        addToast("Transação removida com sucesso!", "success");
         triggerRefresh();
         setModalOpen(false);
         setSelectedTx(null);
@@ -232,7 +228,7 @@ export default function HistoryPage() {
                                         onClick={() => confirmDelete(true)}
                                         className="w-full py-3 rounded-xl bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-(--color-text-main) transition-all font-semibold shadow-[0_0_15px_rgba(239,68,68,0.1)]"
                                     >
-                                        Excluir Série Completa
+                                        Excluir Parcelas
                                     </button>
                                 )}
                                 <button

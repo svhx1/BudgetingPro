@@ -171,3 +171,32 @@ export async function deleteTransaction(id: string) {
         return { success: false, error: "Falha ao deletar transação" };
     }
 }
+
+export async function deleteTransactionGroup(groupId: string) {
+    try {
+        const userId = await getCurrentUserId();
+
+        // Find all txs in the group to update summaries properly
+        const txs = await prisma.transaction.findMany({
+            where: { groupId, userId }
+        });
+
+        if (txs.length === 0) return { success: false, error: "Transações não encontradas" };
+
+        await prisma.transaction.deleteMany({
+            where: { groupId, userId }
+        });
+
+        // Revert all related monthly summaries
+        await Promise.all(txs.map(tx =>
+            updateMonthlySummary(tx.userId, tx.date, tx.type as "INCOME" | "EXPENSE", tx.amount, (tx as any).paymentMethod, true)
+        ));
+
+        revalidatePath("/history");
+        revalidatePath("/");
+        return { success: true };
+    } catch (error) {
+        console.error("Erro ao deletar grupo de transações:", error);
+        return { success: false, error: "Falha ao deletar grupo" };
+    }
+}
