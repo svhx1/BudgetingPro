@@ -4,47 +4,56 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/session";
 
 async function fetchDashboardSummary(userId: string, month: number, year: number) {
-    const startDate = new Date(year, month, 1);
-    const endDate = new Date(year, month + 1, 0, 23, 59, 59);
+    // Datas seguras em UTC Zero para ignorar fuso horário local
+    const monthStr = (month + 1).toString().padStart(2, '0'); // Mês vem 0-11 do frontend
+    const startDate = new Date(`${year}-${monthStr}-01T00:00:00.000Z`);
 
-    // Current month transactions (for entradas/saidas display)
+    const endDateObj = new Date(year, month + 1, 0);
+    const endDayStr = endDateObj.getDate().toString().padStart(2, '0');
+    const endDate = new Date(`${year}-${monthStr}-${endDayStr}T23:59:59.999Z`);
+
+    // Busca apenas as transações do Mês Atual (necessárias pro Array Visual)
     const transactions = await prisma.transaction.findMany({
         where: {
             userId,
-            date: {
-                gte: startDate,
-                lte: endDate,
-            },
+            date: { gte: startDate, lte: endDate },
         },
         include: { category: true },
         orderBy: { date: 'desc' }
     });
 
-    const incomes = transactions.filter((t: any) => t.type === "INCOME").reduce((acc: number, t: any) => acc + t.amount, 0);
-    const expenses = transactions.filter((t: any) => t.type === "EXPENSE").reduce((acc: number, t: any) => acc + t.amount, 0);
+    let incomes = 0;
+    let expenses = 0;
+    let creditUsed = 0;
 
-    // Credit used this month
-    const creditUsed = transactions
-        .filter((t: any) => t.type === "EXPENSE" && t.paymentMethod === "CREDIT")
-        .reduce((acc: number, t: any) => acc + t.amount, 0);
+    // Cálculo em memória O(N) apenas do micro-lote mensal
+    for (const t of transactions) {
+        if (t.type === "INCOME") incomes += t.amount;
+        if (t.type === "EXPENSE") {
+            expenses += t.amount;
+            if ((t as any).paymentMethod === "CREDIT") creditUsed += t.amount;
+        }
+    }
 
-    // Month net balance (just this month)
     const monthBalance = incomes - expenses;
 
-    // ACCUMULATED BALANCE: all transactions from all time up to today
+    // SALDO HISTÓRICO GLOBAL (Otimizado via _sum DB-Side)
     const today = new Date();
-    today.setHours(23, 59, 59, 999);
 
-    const allPastTransactions = await prisma.transaction.findMany({
-        where: {
-            userId,
-            date: { lte: today },
-        },
-        select: { type: true, amount: true },
+    // Agregação massiva de Entradas
+    const pastIncomesAgg = await prisma.transaction.aggregate({
+        where: { userId, type: "INCOME", date: { lte: today } },
+        _sum: { amount: true }
     });
 
-    const totalIncomes = allPastTransactions.filter((t: any) => t.type === "INCOME").reduce((acc: number, t: any) => acc + t.amount, 0);
-    const totalExpenses = allPastTransactions.filter((t: any) => t.type === "EXPENSE").reduce((acc: number, t: any) => acc + t.amount, 0);
+    // Agregação massiva de Saídas
+    const pastExpensesAgg = await prisma.transaction.aggregate({
+        where: { userId, type: "EXPENSE", date: { lte: today } },
+        _sum: { amount: true }
+    });
+
+    const totalIncomes = pastIncomesAgg._sum.amount || 0;
+    const totalExpenses = pastExpensesAgg._sum.amount || 0;
     const balance = totalIncomes - totalExpenses;
 
     return { incomes, expenses, balance, creditUsed, monthBalance, transactions };

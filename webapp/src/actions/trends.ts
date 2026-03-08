@@ -36,9 +36,16 @@ export async function getTrendData(month: number, year: number, type: Transactio
         }
 
         // Determinar as datas do Mês Atual (selecionado no App)
-        const currentStartDate = new Date(year, month - 1, 1);
-        const currentEndDate = new Date(year, month, 0, 23, 59, 59, 999);
-        const currentDaysInMonth = currentEndDate.getDate();
+        // Usar formato UTC literal para evitar drift de Fuso Horário no Servidor (Ex: 01 de Março virar 28 de Fev as 21:00)
+        const currentMonthStr = month.toString().padStart(2, '0');
+        const currentStartDate = new Date(`${year}-${currentMonthStr}-01T00:00:00.000Z`);
+
+        // Final do mês atual
+        const currentEndDateObj = new Date(year, month, 0); // Ex: 31 de março
+        const currentEndDayStr = currentEndDateObj.getDate().toString().padStart(2, '0');
+        const currentEndDate = new Date(`${year}-${currentMonthStr}-${currentEndDayStr}T23:59:59.999Z`);
+
+        const currentDaysInMonth = currentEndDateObj.getDate();
 
         // Determinar as datas do Mês Anterior
         let lastMonth = month - 1;
@@ -47,8 +54,13 @@ export async function getTrendData(month: number, year: number, type: Transactio
             lastMonth = 12;
             lastYear--;
         }
-        const lastStartDate = new Date(lastYear, lastMonth - 1, 1);
-        const lastEndDate = new Date(lastYear, lastMonth, 0, 23, 59, 59, 999);
+        const lastMonthStr = lastMonth.toString().padStart(2, '0');
+        const lastStartDate = new Date(`${lastYear}-${lastMonthStr}-01T00:00:00.000Z`);
+
+        // Final do Mês Anterior
+        const lastEndDateObj = new Date(lastYear, lastMonth, 0);
+        const lastEndDayStr = lastEndDateObj.getDate().toString().padStart(2, '0');
+        const lastEndDate = new Date(`${lastYear}-${lastMonthStr}-${lastEndDayStr}T23:59:59.999Z`);
 
         // Se quisermos mapear até o dia 31, usamos o maior número de dias entre os dois meses
         const maxDays = Math.max(currentDaysInMonth, lastEndDate.getDate());

@@ -28,8 +28,12 @@ export async function getRecurringData(month: number, year: number) {
             return { success: false, error: "Não autorizado" };
         }
 
-        const startDate = new Date(year, month - 1, 1);
-        const endDate = new Date(year, month, 0, 23, 59, 59, 999);
+        const monthStr = month.toString().padStart(2, '0');
+        const startDate = new Date(`${year}-${monthStr}-01T00:00:00.000Z`);
+
+        const endDateObj = new Date(year, month, 0);
+        const endDayStr = endDateObj.getDate().toString().padStart(2, '0');
+        const endDate = new Date(`${year}-${monthStr}-${endDayStr}T23:59:59.999Z`);
 
         // 1. Busca TODAS as entradas do mês para base de cálculo de %
         const incomes = await prisma.transaction.aggregate({
