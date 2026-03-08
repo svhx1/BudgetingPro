@@ -111,18 +111,25 @@ export default function GlobalAddModal() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
                         onClick={() => setAddModalOpen(false)}
                         className="fixed inset-0 bg-black/60 backdrop-blur-sm"
                     />
 
-                    {/* Modal Content */}
+                    {/* Modal Content - Quick Spring "Shake" Effect */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        initial={{ opacity: 0, scale: 0.95, y: 30 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 20, transition: { duration: 0.15 } }}
+                        transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 25,
+                            mass: 0.8
+                        }}
                         className="relative w-full max-w-2xl my-auto flex flex-col items-center justify-center z-10 max-h-[90vh]"
                     >
-                        <div className={`glass-panel p-6 md:p-8 flex flex-col gap-6 transition-all duration-500 w-full overflow-y-auto rounded-3xl hide-scrollbar ${glowColor}`}>
+                        <div className={`glass-panel p-6 md:p-8 flex flex-col gap-6 w-full overflow-y-auto rounded-3xl hide-scrollbar ${glowColor}`}>
 
                             {/* Header with type indicator */}
                             <div className="flex items-center justify-between mb-2">

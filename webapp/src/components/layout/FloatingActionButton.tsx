@@ -28,12 +28,12 @@ export default function FloatingActionButton() {
         setAddModalOpen(true);
     };
 
-    // iOS-style: snap rápido com leve tremidinha (bouncy, mas rápido)
+    // iOS-style: snap acelerado com impacto (shake veloz)
     const bubbleTransition = {
         type: "spring" as const,
-        stiffness: 900, // Maior stiffness = mais rápido e firme
-        damping: 10,    // Menor damping = vibração (overshoot/tremidinha) um pouco além de parar no exato zero
-        mass: 0.3,      // Massa menor = menos letargia
+        stiffness: 1200,
+        damping: 12,
+        mass: 0.2,
     };
 
     // Calculate explosion positions based on screen size
