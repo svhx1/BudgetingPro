@@ -55,104 +55,79 @@ export default function SummaryCards() {
             variants={container}
             initial="hidden"
             animate="show"
-            className="flex flex-col gap-4 mb-8"
+            className="flex flex-col gap-4 w-full h-full"
         >
             {/* Balance - Prominent & Centered */}
             <motion.div
                 variants={item}
-                className="glass-panel p-6 md:p-8 flex flex-col items-center justify-center text-center relative group cursor-default"
+                className="glass-panel p-6 flex flex-col items-center justify-center text-center relative group cursor-default h-full"
             >
                 <span className="text-sm font-medium text-(--color-text-muted) mb-2">Saldo Disponível</span>
                 {loading ? (
                     <div className="h-10 w-40 bg-(--color-text-main)/5 rounded-lg animate-pulse" />
                 ) : (
-                    <h2 className={`text-3xl md:text-4xl font-extrabold tracking-tight animate-in fade-in duration-500 ${summary.balance < 0 && !isPrivacyMode ? 'text-red-400' : 'text-(--color-text-main)'}`}>
+                    <h2 className={`text-3xl font-extrabold tracking-tight animate-in fade-in duration-500 ${summary.balance < 0 && !isPrivacyMode ? 'text-red-400' : 'text-(--color-text-main)'}`}>
                         {isPrivacyMode ? "R$ ••••" : formatCurrency(summary.balance)}
                     </h2>
                 )}
 
                 <div
-                    className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full opacity-0 group-hover:opacity-40 transition-opacity duration-[800ms] pointer-events-none"
+                    className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-32 h-32 rounded-full opacity-0 group-hover:opacity-40 transition-opacity duration-[800ms] pointer-events-none"
                     style={{ background: `radial-gradient(circle, ${summary.balance >= 0 ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'} 0%, transparent 70%)` }}
                 />
             </motion.div>
 
-            {/* Income & Expenses Side by Side */}
-            <div className="grid grid-cols-2 gap-4">
-                <motion.div
-                    variants={item}
-                    whileHover={{ y: -3 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                    className="glass-panel p-5 flex flex-col relative group cursor-default hover:border-emerald-500/20"
-                >
-                    <div className="flex items-center justify-between mb-3">
-                        <span className="text-xs font-medium text-(--color-text-muted) uppercase tracking-wider">Entradas</span>
-                        <div className="p-1.5 rounded-lg bg-emerald-500/10">
-                            <ArrowUpRight className="w-4 h-4 text-emerald-400" />
-                        </div>
+            {/* Incomes Container */}
+            <motion.div
+                variants={item}
+                whileHover={{ y: -3 }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                className="glass-panel p-6 flex flex-col relative group cursor-default hover:border-emerald-500/20 h-full justify-center"
+            >
+                <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold text-(--color-text-muted) uppercase tracking-wider">Entradas</span>
+                    <div className="p-1.5 rounded-lg bg-emerald-500/10">
+                        <ArrowUpRight className="w-4 h-4 text-emerald-400" />
                     </div>
-                    {loading ? (
-                        <div className="h-8 w-24 bg-(--color-text-main)/5 rounded-lg animate-pulse" />
-                    ) : (
-                        <h3 className="text-xl md:text-2xl font-bold tracking-tight text-(--color-text-main) animate-in fade-in duration-500">
-                            {isPrivacyMode ? "R$ ••••" : formatCurrency(summary.incomes)}
+                </div>
+                {loading ? (
+                    <div className="h-8 w-24 bg-(--color-text-main)/5 rounded-lg animate-pulse" />
+                ) : (
+                    <h3 className="text-2xl font-bold tracking-tight text-(--color-text-main) animate-in fade-in duration-500">
+                        {isPrivacyMode ? "R$ ••••" : formatCurrency(summary.incomes)}
+                    </h3>
+                )}
+            </motion.div>
+
+            {/* Expenses Container */}
+            <motion.div
+                variants={item}
+                whileHover={{ y: -3 }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                className="glass-panel p-6 flex flex-col relative group cursor-default hover:border-red-500/20 h-full justify-center"
+            >
+                <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold text-(--color-text-muted) uppercase tracking-wider">Saídas</span>
+                    <div className="p-1.5 rounded-lg bg-red-500/10">
+                        <ArrowDownRight className="w-4 h-4 text-red-400" />
+                    </div>
+                </div>
+                {loading ? (
+                    <div className="h-8 w-24 bg-(--color-text-main)/5 rounded-lg animate-pulse mb-6" />
+                ) : (
+                    <div className="flex flex-col gap-3">
+                        <h3 className="text-2xl font-bold tracking-tight text-(--color-text-main) animate-in fade-in duration-500">
+                            {isPrivacyMode ? "R$ ••••" : formatCurrency(summary.expenses)}
                         </h3>
-                    )}
-                    <div
-                        className="absolute -bottom-12 -right-12 w-32 h-32 rounded-full opacity-0 group-hover:opacity-50 transition-opacity duration-[800ms] pointer-events-none"
-                        style={{ background: "radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 70%)" }}
-                    />
-                </motion.div>
 
-                <motion.div
-                    variants={item}
-                    whileHover={{ y: -3 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                    className="glass-panel p-5 flex flex-col relative group cursor-default hover:border-red-500/20"
-                >
-                    <div className="flex items-center justify-between mb-3">
-                        <span className="text-xs font-medium text-(--color-text-muted) uppercase tracking-wider">Saídas</span>
-                        <div className="p-1.5 rounded-lg bg-red-500/10">
-                            <ArrowDownRight className="w-4 h-4 text-red-400" />
+                        {/* Breakdown Debit/Credit Simplificado */}
+                        <div className="flex items-center gap-2 text-xs">
+                            <span className="font-medium text-(--color-text-muted)">D: {isPrivacyMode ? "••••" : formatCurrency(summary.expenses - summary.creditUsed)}</span>
+                            <span className="font-medium text-purple-400">C: {isPrivacyMode ? "••••" : formatCurrency(summary.creditUsed)}</span>
                         </div>
                     </div>
-                    {loading ? (
-                        <div className="h-8 w-24 bg-(--color-text-main)/5 rounded-lg animate-pulse mb-6" />
-                    ) : (
-                        <div className="flex flex-col gap-3">
-                            <h3 className="text-xl md:text-2xl font-bold tracking-tight text-(--color-text-main) animate-in fade-in duration-500">
-                                {isPrivacyMode ? "R$ ••••" : formatCurrency(summary.expenses)}
-                            </h3>
-
-                            {/* Breakdown Debit/Credit */}
-                            <div className="flex flex-col gap-1.5">
-                                <div className="flex items-center justify-between text-xs bg-(--color-text-main)/5 rounded-md px-2 py-1">
-                                    <div className="flex items-center gap-1.5 text-(--color-text-muted)">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-                                        <span className="text-[10px] uppercase font-bold">Débito</span>
-                                    </div>
-                                    <span className="text-xs font-medium text-(--color-text-main)">
-                                        {isPrivacyMode ? "••••" : formatCurrency(summary.expenses - summary.creditUsed)}
-                                    </span>
-                                </div>
-                                <div className="flex items-center justify-between text-xs bg-purple-500/10 rounded-md px-2 py-1">
-                                    <div className="flex items-center gap-1.5 text-purple-300">
-                                        <CreditCard className="w-2.5 h-2.5" />
-                                        <span className="text-[10px] uppercase font-bold">Crédito</span>
-                                    </div>
-                                    <span className="text-xs font-medium text-purple-200">
-                                        {isPrivacyMode ? "••••" : formatCurrency(summary.creditUsed)}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                    <div
-                        className="absolute -bottom-12 -right-12 w-32 h-32 rounded-full opacity-0 group-hover:opacity-50 transition-opacity duration-[800ms] pointer-events-none"
-                        style={{ background: "radial-gradient(circle, rgba(239,68,68,0.1) 0%, transparent 70%)" }}
-                    />
-                </motion.div>
-            </div>
+                )}
+            </motion.div>
         </motion.div>
     );
 }

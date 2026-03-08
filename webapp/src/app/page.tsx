@@ -3,15 +3,21 @@ import ExpenseChart from "@/components/dashboard/ExpenseChart";
 import TransactionList from "@/components/dashboard/TransactionList";
 import BudgetLimits from "@/components/dashboard/BudgetLimits";
 import CashflowChart from "@/components/dashboard/CashflowChart";
+import TrendChart from "@/components/dashboard/TrendChart";
 
 export default function Dashboard() {
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1 w-full space-y-8 pb-10 mt-4 md:mt-0">
 
-        {/* Top Cards Section */}
-        <section>
-          <SummaryCards />
+        {/* Top Intelligence Section (Ritmo + Cards) */}
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <TrendChart />
+          </div>
+          <div className="lg:col-span-1">
+            <SummaryCards />
+          </div>
         </section>
 
         {/* Row 1: Limits + Transactions */}
