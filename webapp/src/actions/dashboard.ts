@@ -24,17 +24,17 @@ async function fetchDashboardSummary(userId: string, month: number, year: number
 
     // 2. SALDO HISTÓRICO GLOBAL TOTAL (Continuamos usando _sum mas sem trazer Array pra Memória)
     const today = new Date();
-    const pastIncomesAgg = await prisma.transaction.aggregate({
-        where: { userId, type: "INCOME", date: { lte: today } },
+    const pastIncomesAgg = await (prisma as any).transaction.aggregate({
+        where: { userId, type: "INCOME", date: { lte: today }, isGhost: false },
         _sum: { amount: true }
     });
-    const pastExpensesAgg = await prisma.transaction.aggregate({
-        where: { userId, type: "EXPENSE", date: { lte: today } },
+    const pastExpensesAgg = await (prisma as any).transaction.aggregate({
+        where: { userId, type: "EXPENSE", date: { lte: today }, isGhost: false },
         _sum: { amount: true }
     });
 
-    const totalIncomes = pastIncomesAgg._sum.amount || 0;
-    const totalExpenses = pastExpensesAgg._sum.amount || 0;
+    const totalIncomes = pastIncomesAgg?._sum?.amount || 0;
+    const totalExpenses = pastExpensesAgg?._sum?.amount || 0;
     const balance = totalIncomes - totalExpenses;
 
     // 3. RECUPERAÇÃO LEVE GASTOS RECENTES (Apenas para Listagem Visual na Sidebar)
@@ -81,6 +81,8 @@ export async function syncHistoricalBalances() {
         const groupedMap = new Map<string, { incomes: number; expenses: number; credit: number }>();
 
         for (const tx of allTransactions) {
+            if ((tx as any).isGhost) continue; // Ignora parcelas phantom do calculo financeiro
+
             const m = tx.date.getUTCMonth() + 1;
             const y = tx.date.getUTCFullYear();
             const slotKey = `${y}-${m}`;

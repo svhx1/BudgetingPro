@@ -92,21 +92,45 @@ export async function createTransaction(data: TransactionInput) {
         }
 
         else if (recurrence === "parcelado" && installments) {
-            // Comportamento atualizado a pedido do user: registrar o valor integral 
-            // no mês corrente para ritmo de gastos global, sem transbordo futuro.
+            const groupId = crypto.randomUUID();
+
+            // 1. O lançamento principal (Afeta os caixas no momento da compra, com valor integral)
             await (prisma as any).transaction.create({
                 data: {
-                    description: `${description} (${installments}x)`,
+                    description: `${description} (1/${installments})`,
                     amount,
                     type,
                     date: baseDate,
                     categoryId,
                     userId,
+                    groupId,
                     installment: `1/${installments}`,
                     paymentMethod: type === "EXPENSE" ? (paymentMethod || "CREDIT") : null,
+                    isGhost: false
                 },
             });
             await updateMonthlySummary(userId, baseDate, type, amount, paymentMethod || "CREDIT");
+
+            // 2. Os "Fantasmas" (Lançamentos passivos futuros, apenas para visualização de extrato)
+            const installmentAmount = amount / installments;
+            if (installments > 1) {
+                const ghostTransactions = Array.from({ length: installments - 1 }).map((_, i) => {
+                    const nextDate = advanceMonth(baseDate, i + 1);
+                    return {
+                        description: `${description} (${i + 2}/${installments})`,
+                        amount: parseFloat(installmentAmount.toFixed(2)),
+                        type,
+                        date: nextDate,
+                        categoryId,
+                        userId,
+                        groupId,
+                        installment: `${i + 2}/${installments}`,
+                        paymentMethod: type === "EXPENSE" ? (paymentMethod || "CREDIT") : null,
+                        isGhost: true
+                    };
+                });
+                await prisma.transaction.createMany({ data: ghostTransactions as any });
+            }
         }
 
         else if (recurrence === "fixo") {
@@ -177,7 +201,9 @@ export async function deleteTransaction(id: string) {
             where: { id }
         });
 
-        await updateMonthlySummary(tx.userId, tx.date, tx.type as "INCOME" | "EXPENSE", tx.amount, (tx as any).paymentMethod, true);
+        if (!(tx as any).isGhost) {
+            await updateMonthlySummary(tx.userId, tx.date, tx.type as "INCOME" | "EXPENSE", tx.amount, (tx as any).paymentMethod, true);
+        }
 
         revalidatePath("/history");
         revalidatePath("/");
@@ -204,9 +230,12 @@ export async function deleteTransactionGroup(groupId: string) {
         });
 
         // Revert all related monthly summaries
-        await Promise.all(txs.map(tx =>
-            updateMonthlySummary(tx.userId, tx.date, tx.type as "INCOME" | "EXPENSE", tx.amount, (tx as any).paymentMethod, true)
-        ));
+        await Promise.all(txs.map(tx => {
+            if (!(tx as any).isGhost) {
+                return updateMonthlySummary(tx.userId, tx.date, tx.type as "INCOME" | "EXPENSE", tx.amount, (tx as any).paymentMethod, true);
+            }
+            return Promise.resolve();
+        }));
 
         revalidatePath("/history");
         revalidatePath("/");
