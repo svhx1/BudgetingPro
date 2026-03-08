@@ -6,26 +6,24 @@ import { useGlobal } from "@/contexts/GlobalContext";
 import { AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
 import { getDashboardLimits } from "@/actions/limits";
 import { getDashboardSummary } from "@/actions/dashboard";
+import { useCachedData } from "@/hooks/useCachedData";
 
 export default function BudgetLimits() {
     const { isPrivacyMode, currentPeriod, refreshTrigger } = useGlobal();
-    const [limits, setLimits] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [expandedTxs, setExpandedTxs] = useState<any[]>([]);
     const [txLoading, setTxLoading] = useState(false);
 
-    useEffect(() => {
-        async function fetchLimits() {
-            setLoading(true);
+    const { data: limitsData, loading } = useCachedData(
+        `dashboard-limits-${currentPeriod.year}-${currentPeriod.month}`,
+        async () => {
             const res = await getDashboardLimits(currentPeriod.month, currentPeriod.year);
-            if (res.success && res.data) {
-                setLimits(res.data);
-            }
-            setLoading(false);
-        }
-        fetchLimits();
-    }, [currentPeriod.month, currentPeriod.year, refreshTrigger]);
+            return res.success && res.data ? { success: true, data: res.data } : { success: false };
+        },
+        [currentPeriod.month, currentPeriod.year, refreshTrigger]
+    );
+
+    const limits = limitsData || [];
 
     const toggleExpand = async (item: any) => {
         if (expandedId === item.id) {

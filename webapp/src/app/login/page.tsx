@@ -32,15 +32,11 @@ export default function LoginPage() {
     return (
         <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black text-white selection:bg-(--color-neon-green-light) selection:text-black">
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ repeat: Infinity, duration: 50, ease: "linear" }}
-                    className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] rounded-full bg-gradient-to-br from-emerald-500/20 to-transparent blur-[100px]"
+                <div
+                    className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] rounded-full bg-gradient-to-br from-emerald-500/10 to-transparent blur-[80px]"
                 />
-                <motion.div
-                    animate={{ rotate: -360 }}
-                    transition={{ repeat: Infinity, duration: 40, ease: "linear" }}
-                    className="absolute top-[40%] -right-[20%] w-[60vw] h-[60vw] rounded-full bg-gradient-to-bl from-indigo-500/20 to-transparent blur-[120px]"
+                <div
+                    className="absolute top-[40%] -right-[20%] w-[60vw] h-[60vw] rounded-full bg-gradient-to-bl from-indigo-500/10 to-transparent blur-[80px]"
                 />
             </div>
 

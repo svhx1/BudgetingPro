@@ -27,6 +27,7 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
     useEffect(() => {
         if (isOpen) {
             if (goalToEdit) {
+                // eslint-disable-next-line react-hooks/set-state-in-effect
                 setName(goalToEdit.name);
                 setTargetAmount(goalToEdit.targetAmount.toString());
                 setCurrentAmount(goalToEdit.currentAmount.toString());

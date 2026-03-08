@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGlobal } from "@/contexts/GlobalContext";
 import { getDashboardSummary } from "@/actions/dashboard";
+import { useCachedData } from "@/hooks/useCachedData";
 
 const CustomTooltip = ({ active, payload, isPrivacyMode }: any) => {
     if (active && payload && payload.length) {
@@ -22,43 +23,36 @@ const CustomTooltip = ({ active, payload, isPrivacyMode }: any) => {
 
 export default function ExpenseChart() {
     const { isPrivacyMode, currentPeriod, refreshTrigger } = useGlobal();
-    const [chartData, setChartData] = useState<any[]>([]);
-    const [allTransactions, setAllTransactions] = useState<any[]>([]);
-    const [totalExpenses, setTotalExpenses] = useState(0);
-    const [loading, setLoading] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
     const fallbackColors = ['#f59e0b', '#ec4899', '#8b5cf6', '#3b82f6', '#10b981', '#ef4444'];
 
-    useEffect(() => {
-        async function fetchChartData() {
-            setLoading(true);
+    const { data: rawData, loading } = useCachedData(
+        `dashboard-expensechart-${currentPeriod.year}-${currentPeriod.month}`,
+        async () => {
             const res = await getDashboardSummary(currentPeriod.month, currentPeriod.year);
-            if (res.success && res.data) {
-                const expenses = res.data.transactions.filter((t: any) => t.type === 'EXPENSE');
-                setTotalExpenses(res.data.expenses);
-                setAllTransactions(expenses);
+            return res.success && res.data ? { success: true, data: res.data } : { success: false };
+        },
+        [currentPeriod.month, currentPeriod.year, refreshTrigger]
+    );
 
-                const grouped = expenses.reduce((acc: any, curr: any) => {
-                    const catName = curr.category?.name || "Sem Categoria";
-                    if (!acc[catName]) {
-                        acc[catName] = { name: catName, value: 0, color: curr.category?.color };
-                    }
-                    acc[catName].value += Math.abs(curr.amount);
-                    return acc;
-                }, {});
+    // Derivações reativas
+    const allTransactions = rawData ? rawData.transactions.filter((t: any) => t.type === 'EXPENSE') : [];
+    const totalExpenses = rawData ? rawData.expenses : 0;
 
-                const dataArray = Object.values(grouped).map((item: any, index: number) => ({
-                    ...item,
-                    color: item.color || fallbackColors[index % fallbackColors.length]
-                }));
-
-                setChartData(dataArray.sort((a: any, b: any) => b.value - a.value));
-            }
-            setLoading(false);
+    const grouped = allTransactions.reduce((acc: any, curr: any) => {
+        const catName = curr.category?.name || "Sem Categoria";
+        if (!acc[catName]) {
+            acc[catName] = { name: catName, value: 0, color: curr.category?.color };
         }
-        fetchChartData();
-    }, [currentPeriod.month, currentPeriod.year, refreshTrigger]);
+        acc[catName].value += Math.abs(curr.amount);
+        return acc;
+    }, {});
+
+    const chartData = Object.values(grouped).sort((a: any, b: any) => b.value - a.value).map((item: any, idx: number) => ({
+        ...item,
+        color: item.color || fallbackColors[idx % fallbackColors.length]
+    }));
 
     const formatCurrency = (value: number) => {
         return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);

@@ -5,31 +5,33 @@ import { motion, Variants } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight, DollarSign, CreditCard } from "lucide-react";
 import { useGlobal } from "@/contexts/GlobalContext";
 import { getDashboardSummary } from "@/actions/dashboard";
+import { useCachedData } from "@/hooks/useCachedData";
 
 export default function SummaryCards() {
     const { isPrivacyMode, currentPeriod, refreshTrigger } = useGlobal();
 
-    const [summary, setSummary] = useState({ incomes: 0, expenses: 0, balance: 0, creditUsed: 0, monthBalance: 0 });
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        async function loadSummary() {
-            setLoading(true);
+    const { data: summaryData, loading } = useCachedData(
+        `dashboard-summary-${currentPeriod.year}-${currentPeriod.month}`,
+        async () => {
             const response = await getDashboardSummary(currentPeriod.month, currentPeriod.year);
             if (response.success && response.data) {
-                setSummary({
-                    incomes: response.data.incomes,
-                    expenses: response.data.expenses,
-                    balance: response.data.balance,
-                    creditUsed: response.data.creditUsed || 0,
-                    monthBalance: response.data.monthBalance || 0,
-                });
+                return {
+                    success: true,
+                    data: {
+                        incomes: response.data.incomes,
+                        expenses: response.data.expenses,
+                        balance: response.data.balance,
+                        creditUsed: response.data.creditUsed || 0,
+                        monthBalance: response.data.monthBalance || 0,
+                    }
+                };
             }
-            setLoading(false);
-        }
+            return { success: false };
+        },
+        [currentPeriod.month, currentPeriod.year, refreshTrigger]
+    );
 
-        loadSummary();
-    }, [currentPeriod.month, currentPeriod.year, refreshTrigger]);
+    const summary = summaryData || { incomes: 0, expenses: 0, balance: 0, creditUsed: 0, monthBalance: 0 };
 
     const formatCurrency = (value: number) => {
         return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);

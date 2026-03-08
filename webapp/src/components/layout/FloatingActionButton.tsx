@@ -10,6 +10,14 @@ export default function FloatingActionButton() {
     const { isAddModalOpen, setAddModalOpen } = useGlobal();
     const pathname = usePathname();
     const [isExpanded, setIsExpanded] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener("resize", checkMobile);
+        return () => window.removeEventListener("resize", checkMobile);
+    }, []);
 
     const authPages = ["/login", "/register"];
     if (authPages.includes(pathname)) return null;
@@ -19,15 +27,6 @@ export default function FloatingActionButton() {
         window.__budgeting_tx_type = type;
         setAddModalOpen(true);
     };
-
-    const [isMobile, setIsMobile] = useState(false);
-
-    useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 768);
-        checkMobile();
-        window.addEventListener("resize", checkMobile);
-        return () => window.removeEventListener("resize", checkMobile);
-    }, []);
 
     // iOS-style: snap rápido com leve tremidinha (bouncy, mas rápido)
     const bubbleTransition = {

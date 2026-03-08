@@ -6,30 +6,29 @@ import { Coffee, Home, Car, ShoppingBag, ArrowDownRight, ArrowUpRight, Edit3, Tr
 import { useGlobal } from "@/contexts/GlobalContext";
 import { getDashboardSummary } from "@/actions/dashboard";
 import { deleteTransaction } from "@/actions/transactions";
+import { useCachedData } from "@/hooks/useCachedData";
 import Link from "next/link";
 
 export default function TransactionList() {
     const { isPrivacyMode, currentPeriod, refreshTrigger, triggerRefresh, addToast } = useGlobal();
-    const [transactions, setTransactions] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
 
     // Inline edit state
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editDesc, setEditDesc] = useState("");
     const [editAmount, setEditAmount] = useState("");
 
-    useEffect(() => {
-        async function fetchTransactions() {
-            setLoading(true);
+    const { data: rawData, loading } = useCachedData(
+        `dashboard-summary-${currentPeriod.year}-${currentPeriod.month}`,
+        async () => {
             const res = await getDashboardSummary(currentPeriod.month, currentPeriod.year);
-            if (res.success && res.data) {
-                const sorted = res.data.transactions.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
-                setTransactions(sorted.slice(0, 5));
-            }
-            setLoading(false);
-        }
-        fetchTransactions();
-    }, [currentPeriod.month, currentPeriod.year, refreshTrigger]);
+            return res.success && res.data ? { success: true, data: res.data } : { success: false };
+        },
+        [currentPeriod.month, currentPeriod.year, refreshTrigger]
+    );
+
+    const transactions = rawData && rawData.transactions
+        ? [...rawData.transactions].sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5)
+        : [];
 
     const getIcon = (type: string, categoryName: string) => {
         if (type === "INCOME") return ArrowUpRight;

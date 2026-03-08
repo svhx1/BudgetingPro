@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useGlobal } from "@/contexts/GlobalContext";
 import { getCashflowData, CashflowPeriod } from "@/actions/cashflow";
 import { CalendarDays } from "lucide-react";
+import { useCachedData } from "@/hooks/useCachedData";
 
 type ViewMode = "expense" | "income" | "balance" | "compare";
 
@@ -28,22 +29,18 @@ const CustomTooltip = ({ active, payload, label, isPrivacyMode }: any) => {
 
 export default function CashflowChart() {
     const { isPrivacyMode, currentPeriod, refreshTrigger } = useGlobal();
-    const [data, setData] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
     const [period, setPeriod] = useState<CashflowPeriod>("month");
     const [viewMode, setViewMode] = useState<ViewMode>("expense");
-
-    useEffect(() => {
-        async function fetch() {
-            setLoading(true);
+    const { data: cachedData, loading } = useCachedData(
+        `dashboard-cashflow-${period}-${currentPeriod.year}`,
+        async () => {
             const res = await getCashflowData(period, currentPeriod.year);
-            if (res.success && res.data) {
-                setData(res.data);
-            }
-            setLoading(false);
-        }
-        fetch();
-    }, [period, currentPeriod.year, refreshTrigger]);
+            return res.success && res.data ? { success: true, data: res.data } : { success: false };
+        },
+        [period, currentPeriod.year, refreshTrigger]
+    );
+
+    const data = cachedData || [];
 
     const periodOptions: { label: string; value: CashflowPeriod }[] = [
         { label: "15 dias", value: "15d" },
