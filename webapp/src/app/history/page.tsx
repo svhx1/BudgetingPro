@@ -216,7 +216,7 @@ export default function HistoryPage() {
                             initial={{ scale: 0.9, y: 20 }}
                             animate={{ scale: 1, y: 0 }}
                             exit={{ scale: 0.9, y: 20 }}
-                            className="bg-[#111111] border border-(--color-text-main)/10 p-6 md:p-8 rounded-3xl max-w-md w-full shadow-2xl relative overflow-hidden"
+                            className="glass-panel border border-(--color-text-main)/10 p-6 md:p-8 rounded-3xl max-w-md w-full shadow-2xl relative overflow-hidden"
                         >
                             <div className="absolute top-0 left-0 w-full h-1 bg-red-500" />
                             <ShieldAlert className="w-12 h-12 text-red-500 mb-4" />

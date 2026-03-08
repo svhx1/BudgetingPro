@@ -21,7 +21,7 @@ export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             whileHover={{ y: -4 }}
-            className="bg-[#111111] border border-(--color-text-main)/5 rounded-3xl p-6 relative overflow-hidden group shadow-xl hover:shadow-[0_10px_40px_rgba(59,130,246,0.15)] transition-all duration-300"
+            className="glass-panel border border-(--color-text-main)/5 rounded-3xl p-6 relative overflow-hidden group shadow-xl hover:shadow-[0_10px_40px_rgba(59,130,246,0.15)] transition-all duration-300"
         >
             {/* Glow Effect */}
             <div className={`absolute top-0 right-0 w-64 h-64 bg-gradient-to-br ${goal.isReached ? 'from-emerald-500/10' : 'from-(--color-neon-blue)/10'} to-transparent rounded-bl-full opacity-50 pointer-events-none`} />

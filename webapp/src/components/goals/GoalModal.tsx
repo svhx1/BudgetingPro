@@ -92,10 +92,10 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                        className="bg-[#111111] border border-(--color-text-main)/10 rounded-3xl w-full max-w-lg shadow-[0_0_50px_rgba(0,0,0,0.5)] my-8 relative overflow-hidden flex flex-col max-h-[90vh]"
+                        className="glass-panel border border-(--color-text-main)/10 rounded-3xl w-full max-w-lg shadow-[0_0_50px_rgba(0,0,0,0.5)] my-8 relative overflow-hidden flex flex-col max-h-[90vh]"
                     >
                         {/* Header */}
-                        <div className="p-6 border-b border-(--color-text-main)/5 flex items-center justify-between shrink-0">
+                        <div className="p-6 border-b border-(--color-text-main)/10 flex items-center justify-between shrink-0">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-(--color-neon-blue)/10 rounded-xl">
                                     <Target className="w-6 h-6 text-(--color-neon-blue)" />
@@ -191,7 +191,7 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
                                                     value={monthlyDeposit}
                                                     onChange={(e) => setMonthlyDeposit(e.target.value)}
                                                     placeholder="0,00"
-                                                    className="w-full bg-[#111111] border border-(--color-text-main)/10 rounded-lg py-2 pl-10 pr-3 text-sm text-(--color-text-main) outline-none focus:border-(--color-text-main)/30 transition-colors"
+                                                    className="w-full bg-(--color-text-main)/5 border border-(--color-text-main)/10 rounded-lg py-2 pl-10 pr-3 text-sm text-(--color-text-main) outline-none focus:border-(--color-text-main)/30 transition-colors"
                                                 />
                                             </div>
                                         </div>
@@ -204,7 +204,7 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
                                                     value={interestRate}
                                                     onChange={(e) => setInterestRate(e.target.value)}
                                                     placeholder="Ex: 0.8"
-                                                    className="w-full bg-[#111111] border border-(--color-text-main)/10 rounded-lg py-2 px-3 text-sm text-(--color-text-main) outline-none focus:border-(--color-text-main)/30 transition-colors"
+                                                    className="w-full bg-(--color-text-main)/5 border border-(--color-text-main)/10 rounded-lg py-2 px-3 text-sm text-(--color-text-main) outline-none focus:border-(--color-text-main)/30 transition-colors"
                                                 />
                                                 <span className="absolute right-4 text-(--color-text-muted) text-sm">%</span>
                                             </div>
@@ -247,7 +247,7 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
                         </div>
 
                         {/* Footer */}
-                        <div className="p-6 border-t border-(--color-text-main)/5 shrink-0 bg-[#161616]">
+                        <div className="p-6 border-t border-(--color-text-main)/10 shrink-0 bg-(--color-text-main)/5">
                             <button
                                 form="goal-form"
                                 type="submit"

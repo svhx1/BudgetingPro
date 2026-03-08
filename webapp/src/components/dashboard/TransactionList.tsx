@@ -205,7 +205,7 @@ export default function TransactionList() {
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
-                        className="fixed z-50 w-48 bg-[#1B1D22]/95 backdrop-blur-xl border border-(--color-text-main)/10 rounded-2xl shadow-2xl overflow-hidden"
+                        className="fixed z-50 w-48 glass-panel border border-(--color-text-main)/10 rounded-2xl shadow-2xl overflow-hidden"
                         style={{ top: contextMenu.y, left: contextMenu.x }}
                         onClick={(e) => e.stopPropagation()}
                     >

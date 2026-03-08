@@ -97,14 +97,14 @@ export default function BudgetAllocator() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className={`p-6 md:p-8 rounded-3xl border relative overflow-hidden transition-colors duration-500 ${isZeroBasedDone ? 'bg-emerald-500/10 border-emerald-500/30' :
-                        isOverAllocated ? 'bg-red-500/10 border-red-500/30' :
-                            'bg-(--color-neon-blue)/10 border-(--color-neon-blue)/30'
+                    isOverAllocated ? 'bg-red-500/10 border-red-500/30' :
+                        'bg-(--color-neon-blue)/10 border-(--color-neon-blue)/30'
                     }`}
             >
                 {/* Glow effect matches the state */}
                 <div className={`absolute top-0 right-0 w-64 h-64 rounded-bl-full opacity-50 pointer-events-none bg-gradient-to-br transition-colors duration-500 ${isZeroBasedDone ? 'from-emerald-500/20' :
-                        isOverAllocated ? 'from-red-500/20' :
-                            'from-(--color-neon-blue)/20'
+                    isOverAllocated ? 'from-red-500/20' :
+                        'from-(--color-neon-blue)/20'
                     } to-transparent`} />
 
                 <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
@@ -122,8 +122,8 @@ export default function BudgetAllocator() {
                         </div>
 
                         <h3 className={`text-4xl md:text-5xl font-extrabold tracking-tight ${isZeroBasedDone ? "text-emerald-400" :
-                                isOverAllocated ? "text-red-400" :
-                                    "text-(--color-neon-blue)"
+                            isOverAllocated ? "text-red-400" :
+                                "text-(--color-neon-blue)"
                             }`}>
                             {isPrivacyMode ? "R$ ••••" : formatBRL(Math.abs(unallocated))}
                         </h3>
@@ -168,7 +168,7 @@ export default function BudgetAllocator() {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: idx * 0.05 }}
-                                className={`p-5 rounded-2xl border transition-all duration-300 ${isOverBudget ? 'bg-red-500/5 border-red-500/20' : 'bg-[#111111] border-(--color-text-main)/5 hover:border-(--color-text-main)/10'
+                                className={`p-5 rounded-2xl border transition-all duration-300 ${isOverBudget ? 'bg-red-500/5 border-red-500/20' : 'bg-(--color-text-main)/5 border-(--color-text-main)/5 hover:bg-(--color-text-main)/10'
                                     }`}
                             >
                                 <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
