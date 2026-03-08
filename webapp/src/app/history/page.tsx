@@ -7,12 +7,10 @@ import { getDashboardSummary } from "@/actions/dashboard";
 import { deleteTransaction } from "@/actions/transactions";
 import { Trash2, Coffee, ArrowUpRight, ArrowDownRight, Layers, ShieldAlert, ChevronLeft, ChevronRight } from "lucide-react";
 
+import { useCachedData } from "@/hooks/useCachedData";
+
 export default function HistoryPage() {
     const { isPrivacyMode, refreshTrigger, triggerRefresh, addToast } = useGlobal();
-    const [transactions, setTransactions] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [totalMoved, setTotalMoved] = useState(0);
-    const [monthBalance, setMonthBalance] = useState(0);
 
     // Local month selector for history
     const now = new Date();
@@ -22,19 +20,18 @@ export default function HistoryPage() {
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedTx, setSelectedTx] = useState<any>(null);
 
-    useEffect(() => {
-        async function fetch() {
-            setLoading(true);
+    const { data: summaryData, loading } = useCachedData(
+        `history-extrato-${year}-${month}`,
+        async () => {
             const res = await getDashboardSummary(month, year);
-            if (res.success && res.data) {
-                setTransactions(res.data.transactions);
-                setTotalMoved(res.data.incomes + res.data.expenses);
-                setMonthBalance(res.data.monthBalance || 0);
-            }
-            setLoading(false);
-        }
-        fetch();
-    }, [month, year, refreshTrigger]);
+            return res.success && res.data ? { success: true, data: res.data } : { success: false };
+        },
+        [month, year, refreshTrigger]
+    );
+
+    const transactions = summaryData?.transactions || [];
+    const totalMoved = (summaryData?.incomes || 0) + (summaryData?.expenses || 0);
+    const monthBalance = summaryData?.monthBalance || 0;
 
     const prevMonth = () => {
         if (month === 0) { setMonth(11); setYear(year - 1); }
