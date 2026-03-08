@@ -9,7 +9,7 @@ import { useGlobal } from "@/contexts/GlobalContext";
 import { DatePicker } from "@/components/ui/DatePicker";
 
 export default function GlobalAddModal() {
-    const { isAddModalOpen, setAddModalOpen, triggerRefresh, refreshTrigger, addToast } = useGlobal();
+    const { isAddModalOpen, setAddModalOpen, triggerRefresh, refreshTrigger, addToast, categories, setCategories } = useGlobal();
 
     const [type, setType] = useState<"EXPENSE" | "INCOME">("EXPENSE");
     const [recurrence, setRecurrence] = useState<"unico" | "parcelado" | "fixo">("unico");
@@ -22,21 +22,11 @@ export default function GlobalAddModal() {
     const [loading, setLoading] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState<"DEBIT" | "CREDIT">("DEBIT");
 
-    const [dbCategories, setDbCategories] = useState<any[]>([]);
     const [showNewCat, setShowNewCat] = useState(false);
     const [newCatName, setNewCatName] = useState("");
     const [creatingCat, setCreatingCat] = useState(false);
 
     useEffect(() => {
-        async function fetchCats() {
-            const res = await getCategories();
-            if (res.success && res.data) {
-                setDbCategories(res.data);
-                if (res.data.length > 0 && !categoryId) {
-                    setCategoryId(res.data[0].id);
-                }
-            }
-        }
         if (isAddModalOpen) {
             // Pick up type from FAB bubbles
             if (window.__budgeting_tx_type) {
@@ -44,11 +34,14 @@ export default function GlobalAddModal() {
                 setType(window.__budgeting_tx_type);
                 delete window.__budgeting_tx_type;
             }
-            fetchCats();
+            // Auto-select first category if available
+            if (categories.length > 0 && !categoryId) {
+                setCategoryId(categories[0].id);
+            }
             setShowNewCat(false);
             setNewCatName("");
         }
-    }, [isAddModalOpen, refreshTrigger]);
+    }, [isAddModalOpen, categories]);
 
     const handleCreateCategory = async () => {
         if (!newCatName.trim()) return;
@@ -57,7 +50,7 @@ export default function GlobalAddModal() {
         const randomColor = colors[Math.floor(Math.random() * colors.length)];
         const res = await createCategory(newCatName.trim(), randomColor);
         if (res.success && res.data) {
-            setDbCategories(prev => [...prev, res.data]);
+            setCategories([...categories, res.data]);
             setCategoryId(res.data.id);
             setNewCatName("");
             setShowNewCat(false);
@@ -295,8 +288,8 @@ export default function GlobalAddModal() {
                                         onChange={(e) => setCategoryId(e.target.value)}
                                         className="w-full bg-(--color-text-main)/5 border border-(--color-text-main)/10 rounded-xl py-3 px-4 text-(--color-text-main) outline-none focus:border-(--color-text-main)/30 appearance-none"
                                     >
-                                        {dbCategories.length === 0 && <option value="" disabled className="text-black">Nenhuma categoria criada</option>}
-                                        {dbCategories.map(cat => (
+                                        {categories.length === 0 && <option value="" disabled className="text-black">Nenhuma categoria criada</option>}
+                                        {categories.map(cat => (
                                             <option key={cat.id} value={cat.id} className="text-black">{cat.name}</option>
                                         ))}
                                     </select>

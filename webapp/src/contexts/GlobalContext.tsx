@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { ThemeConfig, CustomTheme, BUILT_IN_THEMES, DEFAULT_CUSTOM_THEME, applyTheme, applyCustomTheme } from "@/lib/themes";
+import { getCategories } from "@/actions/categories";
 
 type Period = {
     month: number;
@@ -43,6 +44,9 @@ interface GlobalContextProps {
     setDecorationId: (id: string | null) => void;
     hatId: string | null;
     setHatId: (id: string | null) => void;
+    // Categories Cache
+    categories: any[];
+    setCategories: (cats: any[]) => void;
 }
 
 const GlobalContext = createContext<GlobalContextProps | undefined>(undefined);
@@ -57,6 +61,8 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
 
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const triggerRefresh = () => setRefreshTrigger(prev => prev + 1);
+
+    const [categories, setCategories] = useState<any[]>([]);
 
     const [profileData, setProfileDataState] = useState<ProfileData>({
         name: "",
@@ -99,6 +105,17 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
         const savedHat = localStorage.getItem("budgeting_hat");
         if (savedHat) setHatIdState(savedHat);
     }, []);
+
+    // Background Fetch for Categories
+    useEffect(() => {
+        async function fetchCats() {
+            const res = await getCategories();
+            if (res.success && res.data) {
+                setCategories(res.data);
+            }
+        }
+        fetchCats();
+    }, [refreshTrigger]);
 
     // Apply theme whenever it changes
     useEffect(() => {
@@ -175,6 +192,8 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
                 setDecorationId,
                 hatId,
                 setHatId,
+                categories,
+                setCategories,
             }}
         >
             {children}
