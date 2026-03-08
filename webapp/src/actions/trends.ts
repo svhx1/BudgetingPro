@@ -69,23 +69,29 @@ export async function getTrendData(jsMonth: number, year: number, type: Transact
         const maxDays = Math.max(currentDaysInMonth, lastEndDate.getDate());
 
         // Buscar todas as transações do Mês Atual filtradas por tipo
-        const currentTxs = await prisma.transaction.findMany({
+        const currentTxs = await (prisma as any).transaction.findMany({
             where: {
                 userId,
-                date: { gte: currentStartDate, lte: currentEndDate },
-                type: type
+                type: type,
+                OR: [
+                    { originalDate: { gte: currentStartDate, lte: currentEndDate } },
+                    { originalDate: null, date: { gte: currentStartDate, lte: currentEndDate } }
+                ]
             },
-            select: { amount: true, date: true }
+            select: { amount: true, date: true, originalDate: true }
         });
 
         // Buscar todas as transações do Mês Anterior filtradas por tipo
-        const lastTxs = await prisma.transaction.findMany({
+        const lastTxs = await (prisma as any).transaction.findMany({
             where: {
                 userId,
-                date: { gte: lastStartDate, lte: lastEndDate },
-                type: type
+                type: type,
+                OR: [
+                    { originalDate: { gte: lastStartDate, lte: lastEndDate } },
+                    { originalDate: null, date: { gte: lastStartDate, lte: lastEndDate } }
+                ]
             },
-            select: { amount: true, date: true }
+            select: { amount: true, date: true, originalDate: true }
         });
 
         // Inicializar array de suporte para cada dia do mês (1 a maxDays)
@@ -102,16 +108,18 @@ export async function getTrendData(jsMonth: number, year: number, type: Transact
         }));
 
         // Popular ocorrências diárias (Mês Atual)
-        currentTxs.forEach(tx => {
-            const dayIdx = tx.date.getUTCDate() - 1;
+        currentTxs.forEach((tx: any) => {
+            const actualDate = (tx as any).originalDate || tx.date;
+            const dayIdx = actualDate.getUTCDate() - 1;
             const absAmount = Math.abs(tx.amount);
             if (type === "EXPENSE") dailyData[dayIdx].currentMonthExpense += absAmount;
             if (type === "INCOME") dailyData[dayIdx].currentMonthIncome += absAmount;
         });
 
         // Popular ocorrências diárias (Mês Passado)
-        lastTxs.forEach(tx => {
-            const dayIdx = tx.date.getUTCDate() - 1;
+        lastTxs.forEach((tx: any) => {
+            const actualDate = (tx as any).originalDate || tx.date;
+            const dayIdx = actualDate.getUTCDate() - 1;
             const absAmount = Math.abs(tx.amount);
             if (type === "EXPENSE") dailyData[dayIdx].lastMonthExpense += absAmount;
             if (type === "INCOME") dailyData[dayIdx].lastMonthIncome += absAmount;
@@ -184,5 +192,44 @@ export async function getTrendData(jsMonth: number, year: number, type: Transact
     } catch (error) {
         console.error("Failed to fetch trend data", error);
         return { success: false, error: "Falha ao buscar ritmo de gastos" };
+    }
+}
+
+export async function getTrendTransactionsByDay(day: number, jsMonth: number, year: number) {
+    try {
+        const userId = await getLoggedUserId();
+        if (!userId) return { success: false, error: "Não autorizado" };
+
+        const month = jsMonth + 1;
+        const currentMonthStr = month.toString().padStart(2, '0');
+        const currentStartDate = new Date(`${year}-${currentMonthStr}-01T00:00:00.000Z`);
+        const currentEndDateObj = new Date(year, month, 0);
+        const currentEndDayStr = currentEndDateObj.getDate().toString().padStart(2, '0');
+        const currentEndDate = new Date(`${year}-${currentMonthStr}-${currentEndDayStr}T23:59:59.999Z`);
+
+        const monthTxs = await (prisma as any).transaction.findMany({
+            where: {
+                userId,
+                type: "EXPENSE",
+                OR: [
+                    { originalDate: { gte: currentStartDate, lte: currentEndDate } },
+                    { originalDate: null, date: { gte: currentStartDate, lte: currentEndDate } }
+                ]
+            },
+            include: { category: true }
+        });
+
+        const dayTxs = monthTxs.filter((tx: any) => {
+            const actualDate = tx.originalDate || tx.date;
+            return actualDate.getUTCDate() === day;
+        });
+
+        // Ordenar do maior para o menor valor
+        dayTxs.sort((a: any, b: any) => Math.abs(b.amount) - Math.abs(a.amount));
+
+        return { success: true, data: dayTxs };
+    } catch (e) {
+        console.error("Erro getTrendTransactionsByDay:", e);
+        return { success: false, error: "Erro ao buscar transações do dia" };
     }
 }

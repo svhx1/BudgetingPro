@@ -93,44 +93,31 @@ export async function createTransaction(data: TransactionInput) {
 
         else if (recurrence === "parcelado" && installments) {
             const groupId = crypto.randomUUID();
+            const installmentAmount = amount / installments;
 
-            // 1. O lançamento principal (Afeta os caixas no momento da compra, com valor integral)
-            await (prisma as any).transaction.create({
-                data: {
-                    description: `${description} (1/${installments})`,
-                    amount,
-                    type,
-                    date: baseDate,
+            const transactions = Array.from({ length: installments }).map((_, i) => {
+                const nextDate = advanceMonth(baseDate, i);
+                return {
+                    description: `${description} (${i + 1}/${installments})`,
+                    amount: parseFloat(installmentAmount.toFixed(2)),
+                    type: type,
+                    date: nextDate,
                     categoryId,
                     userId,
                     groupId,
-                    installment: `1/${installments}`,
+                    installment: `${i + 1}/${installments}`,
                     paymentMethod: type === "EXPENSE" ? (paymentMethod || "CREDIT") : null,
-                    isGhost: false
-                },
+                    originalDate: baseDate,
+                };
             });
-            await updateMonthlySummary(userId, baseDate, type, amount, paymentMethod || "CREDIT");
 
-            // 2. Os "Fantasmas" (Lançamentos passivos futuros, apenas para visualização de extrato)
-            const installmentAmount = amount / installments;
-            if (installments > 1) {
-                const ghostTransactions = Array.from({ length: installments - 1 }).map((_, i) => {
-                    const nextDate = advanceMonth(baseDate, i + 1);
-                    return {
-                        description: `${description} (${i + 2}/${installments})`,
-                        amount: parseFloat(installmentAmount.toFixed(2)),
-                        type,
-                        date: nextDate,
-                        categoryId,
-                        userId,
-                        groupId,
-                        installment: `${i + 2}/${installments}`,
-                        paymentMethod: type === "EXPENSE" ? (paymentMethod || "CREDIT") : null,
-                        isGhost: true
-                    };
-                });
-                await prisma.transaction.createMany({ data: ghostTransactions as any });
-            }
+            // 1) Insere as transações em lote
+            await prisma.transaction.createMany({ data: transactions as any });
+
+            // 2) Sincroniza a Rollup Table Mês a Mês (As faturas futuras caem no mês certo do Dash de Saídas)
+            await Promise.all(transactions.map(tx =>
+                updateMonthlySummary(tx.userId, tx.date, tx.type as "INCOME" | "EXPENSE", tx.amount, tx.paymentMethod)
+            ));
         }
 
         else if (recurrence === "fixo") {
@@ -201,9 +188,7 @@ export async function deleteTransaction(id: string) {
             where: { id }
         });
 
-        if (!(tx as any).isGhost) {
-            await updateMonthlySummary(tx.userId, tx.date, tx.type as "INCOME" | "EXPENSE", tx.amount, (tx as any).paymentMethod, true);
-        }
+        await updateMonthlySummary(tx.userId, tx.date, tx.type as "INCOME" | "EXPENSE", tx.amount, (tx as any).paymentMethod, true);
 
         revalidatePath("/history");
         revalidatePath("/");
@@ -230,12 +215,9 @@ export async function deleteTransactionGroup(groupId: string) {
         });
 
         // Revert all related monthly summaries
-        await Promise.all(txs.map(tx => {
-            if (!(tx as any).isGhost) {
-                return updateMonthlySummary(tx.userId, tx.date, tx.type as "INCOME" | "EXPENSE", tx.amount, (tx as any).paymentMethod, true);
-            }
-            return Promise.resolve();
-        }));
+        await Promise.all(txs.map(tx =>
+            updateMonthlySummary(tx.userId, tx.date, tx.type as "INCOME" | "EXPENSE", tx.amount, (tx as any).paymentMethod, true)
+        ));
 
         revalidatePath("/history");
         revalidatePath("/");

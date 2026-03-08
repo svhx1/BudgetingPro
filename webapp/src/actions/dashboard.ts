@@ -24,17 +24,17 @@ async function fetchDashboardSummary(userId: string, month: number, year: number
 
     // 2. SALDO HISTÓRICO GLOBAL TOTAL (Continuamos usando _sum mas sem trazer Array pra Memória)
     const today = new Date();
-    const pastIncomesAgg = await (prisma as any).transaction.aggregate({
-        where: { userId, type: "INCOME", date: { lte: today }, isGhost: false },
+    const pastIncomesAgg = await prisma.transaction.aggregate({
+        where: { userId, type: "INCOME", date: { lte: today } },
         _sum: { amount: true }
     });
-    const pastExpensesAgg = await (prisma as any).transaction.aggregate({
-        where: { userId, type: "EXPENSE", date: { lte: today }, isGhost: false },
+    const pastExpensesAgg = await prisma.transaction.aggregate({
+        where: { userId, type: "EXPENSE", date: { lte: today } },
         _sum: { amount: true }
     });
 
-    const totalIncomes = pastIncomesAgg?._sum?.amount || 0;
-    const totalExpenses = pastExpensesAgg?._sum?.amount || 0;
+    const totalIncomes = pastIncomesAgg._sum.amount || 0;
+    const totalExpenses = pastExpensesAgg._sum.amount || 0;
     const balance = totalIncomes - totalExpenses;
 
     // 3. RECUPERAÇÃO LEVE GASTOS RECENTES (Apenas para Listagem Visual na Sidebar)

@@ -1,11 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { useGlobal } from "@/contexts/GlobalContext";
 import { useCachedData } from "@/hooks/useCachedData";
-import { getTrendData } from "@/actions/trends";
+import { getTrendData, getTrendTransactionsByDay } from "@/actions/trends";
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
-import { motion } from "framer-motion";
-import { ArrowDownRight, ArrowUpRight, TrendingDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowDownRight, ArrowUpRight, TrendingDown, Layers, X, Coffee } from "lucide-react";
 
 const CustomTooltip = ({ active, payload, label, isPrivacyMode }: any) => {
     if (active && payload && payload.length) {
@@ -44,6 +45,28 @@ export default function TrendChart() {
 
     const data = trendPayload?.data || [];
     const metrics = trendPayload?.metrics || { totalExpenseCurrent: 0, totalExpenseLast: 0, percentageChangeExpense: 0 };
+
+    const [clickedDay, setClickedDay] = useState<number | null>(null);
+    const [isDayModalOpen, setIsDayModalOpen] = useState(false);
+    const [loadingDayTx, setLoadingDayTx] = useState(false);
+    const [dayTransactions, setDayTransactions] = useState<any[]>([]);
+
+    const handleChartClick = async (state: any) => {
+        if (state && state.activePayload && state.activePayload.length > 0) {
+            const payload = state.activePayload[0].payload;
+            if (!payload || payload.day === undefined) return;
+
+            setClickedDay(payload.day);
+            setIsDayModalOpen(true);
+            setLoadingDayTx(true);
+
+            const res = await getTrendTransactionsByDay(payload.day, currentPeriod.month, currentPeriod.year);
+            if (res.success && res.data) {
+                setDayTransactions(res.data);
+            }
+            setLoadingDayTx(false);
+        }
+    };
 
     const isGoodTrend = metrics.percentageChangeExpense <= 0;
 
@@ -104,7 +127,7 @@ export default function TrendChart() {
                     </div>
                 ) : (
                     <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={data} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
+                        <AreaChart onClick={handleChartClick} data={data} margin={{ top: 10, right: 0, left: -20, bottom: 0 }} className="cursor-pointer">
                             <defs>
                                 <linearGradient id="colorCurrentExp" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8} />
@@ -182,6 +205,71 @@ export default function TrendChart() {
                     <span>Mês passado</span>
                 </div>
             </div>
+
+            {/* Modal de Transações do Dia */}
+            <AnimatePresence>
+                {isDayModalOpen && clickedDay !== null && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm"
+                            onClick={() => setIsDayModalOpen(false)}
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                            className="fixed z-[70] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md bg-[var(--color-base-bg)] border border-[var(--color-text-main)]/10 rounded-3xl p-6 shadow-2xl flex flex-col max-h-[80vh]"
+                        >
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-xl font-bold text-(--color-text-main)">
+                                    Gastos do Dia {clickedDay}
+                                </h3>
+                                <button onClick={() => setIsDayModalOpen(false)} className="p-2 rounded-xl hover:bg-(--color-text-main)/5 text-(--color-text-muted) transition-colors">
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+
+                            <div className="flex-1 overflow-y-auto pr-2 flex flex-col gap-3">
+                                {loadingDayTx ? (
+                                    <div className="py-10 text-center text-(--color-text-muted) animate-pulse">Carregando compras do dia...</div>
+                                ) : dayTransactions.length === 0 ? (
+                                    <div className="py-10 flex flex-col items-center justify-center text-center opacity-60">
+                                        <Coffee className="w-12 h-12 mb-3 text-(--color-text-muted)" />
+                                        <p className="text-sm">Nenhum gasto impulsionou o Ritmo neste dia.</p>
+                                    </div>
+                                ) : (
+                                    dayTransactions.map((tx: any) => (
+                                        <div key={tx.id} className="p-4 rounded-2xl bg-(--color-text-main)/5 border border-(--color-text-main)/5 flex flex-col gap-2">
+                                            <div className="flex justify-between items-start gap-2">
+                                                <span className="font-semibold text-(--color-text-main) break-words text-sm">{tx.description || "Sem descrição"}</span>
+                                                <span className="font-bold text-red-400 shrink-0 text-right">
+                                                    {isPrivacyMode ? "R$ ••••" : `- R$ ${Math.abs(tx.amount).toFixed(2).replace('.', ',')}`}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center gap-2 text-xs text-(--color-text-muted)">
+                                                <span className="px-2 py-0.5 rounded-md bg-(--color-text-main)/5 border border-(--color-text-main)/10">
+                                                    {tx.category?.name || "Sem Categ"}
+                                                </span>
+                                                {tx.installment && (
+                                                    <span className="flex items-center gap-1 font-bold">
+                                                        <Layers className="w-3 h-3" /> {tx.installment}
+                                                    </span>
+                                                )}
+                                                {tx.paymentMethod === "CREDIT" && (
+                                                    <span className="text-fuchsia-500 font-bold uppercase tracking-wider text-[10px]">Crédito</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
 
             {/* Glow Ambiental */}
             <div className="absolute top-1/2 left-0 w-64 h-64 rounded-full pointer-events-none -translate-y-1/2 -translate-x-1/2 opacity-70" style={{ background: `radial-gradient(circle, rgba(245,158,11,0.05) 0%, transparent 70%)` }} />

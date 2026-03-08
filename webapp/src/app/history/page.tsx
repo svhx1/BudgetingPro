@@ -181,6 +181,12 @@ export default function HistoryPage() {
                                                     <span className="px-2 py-[2px] rounded-md bg-(--color-text-main)/5 border border-(--color-text-main)/10">{t.category?.name || "Sem categoria"}</span>
                                                     <span>•</span>
                                                     <span>{formatDate(t.date)}</span>
+                                                    {t.originalDate && new Date(t.originalDate).getUTCMonth() !== new Date(t.date).getUTCMonth() && (
+                                                        <>
+                                                            <span>•</span>
+                                                            <span className="text-amber-500/80">Comprado em {formatDate(t.originalDate)}</span>
+                                                        </>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

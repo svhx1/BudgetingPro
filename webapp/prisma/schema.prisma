@@ -70,7 +70,7 @@ model Transaction {
   // Recorrência e Parcelamentos (UUID único por grupo de transações vinculadas)
   groupId      String?
   installment  String?  // Ex: "1/12"
-  isGhost      Boolean  @default(false) // Ignora em Dashboards de Ritmo de Gasto, apenas para Extrato.
+  originalDate DateTime? // Usado em parcelamentos para alocar todo o montante no gráfico de ritmo no dia da compra
   
   categoryId   String
   category     Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)

@@ -217,18 +217,64 @@ export default function SettingsPage() {
                             onChange={async (e) => {
                                 const file = e.target.files?.[0];
                                 if (!file) return;
-                                if (file.size > 2 * 1024 * 1024) {
-                                    return addToast("Imagem deve ter no máximo 2MB", "error");
-                                }
-                                addToast("Enviando foto...", "info");
-                                const fd = new FormData();
-                                fd.append("avatar", file);
-                                const res = await uploadAvatar(fd);
-                                if (res.success && res.url) {
-                                    setProfileData({ ...profileData, avatarUrl: res.url });
-                                    addToast("Foto atualizada!", "success");
-                                } else {
-                                    addToast(res.error || "Erro no upload", "error");
+
+                                addToast("Processando e otimizando foto...", "info");
+
+                                // Client-side Image Downscaler function
+                                const downscaleImage = (imgFile: File, maxWidth = 400, maxHeight = 400): Promise<File> => {
+                                    return new Promise((resolve, reject) => {
+                                        const img = new Image();
+                                        img.src = URL.createObjectURL(imgFile);
+                                        img.onload = () => {
+                                            URL.revokeObjectURL(img.src);
+                                            let w = img.width;
+                                            let h = img.height;
+                                            if (w > maxWidth || h > maxHeight) {
+                                                const ratio = Math.min(maxWidth / w, maxHeight / h);
+                                                w *= ratio;
+                                                h *= ratio;
+                                            }
+
+                                            const canvas = document.createElement("canvas");
+                                            canvas.width = w;
+                                            canvas.height = h;
+                                            const ctx = canvas.getContext("2d");
+                                            if (!ctx) return reject("Failed to get canvas context");
+                                            ctx.drawImage(img, 0, 0, w, h);
+
+                                            canvas.toBlob((blob) => {
+                                                if (!blob) return reject("Canvas empty");
+                                                const newFile = new File([blob], imgFile.name.replace(/\.[^/.]+$/, "") + ".jpeg", {
+                                                    type: "image/jpeg",
+                                                    lastModified: Date.now(),
+                                                });
+                                                resolve(newFile);
+                                            }, "image/jpeg", 0.8); // 80% quality JPEG
+                                        };
+                                        img.onerror = reject;
+                                    });
+                                };
+
+                                try {
+                                    const processedFile = await downscaleImage(file);
+                                    if (processedFile.size > 2 * 1024 * 1024) {
+                                        return addToast("Imagem continua muito grande após compressão.", "error");
+                                    }
+
+                                    addToast("Enviando foto...", "info");
+                                    const fd = new FormData();
+                                    fd.append("avatar", processedFile);
+                                    const res = await uploadAvatar(fd);
+
+                                    if (res.success && res.url) {
+                                        setProfileData({ ...profileData, avatarUrl: res.url });
+                                        addToast("Foto atualizada!", "success");
+                                    } else {
+                                        addToast(res.error || "Erro no upload", "error");
+                                    }
+                                } catch (err) {
+                                    console.error(err);
+                                    addToast("Falha ao processar a imagem localmente.", "error");
                                 }
                             }}
                         />
