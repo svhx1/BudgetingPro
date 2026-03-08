@@ -81,8 +81,8 @@ export async function syncHistoricalBalances() {
         const groupedMap = new Map<string, { incomes: number; expenses: number; credit: number }>();
 
         for (const tx of allTransactions) {
-            const m = tx.date.getMonth() + 1;
-            const y = tx.date.getFullYear();
+            const m = tx.date.getUTCMonth() + 1;
+            const y = tx.date.getUTCFullYear();
             const slotKey = `${y}-${m}`;
 
             if (!groupedMap.has(slotKey)) {

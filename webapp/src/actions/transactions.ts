@@ -21,8 +21,8 @@ type PrismaMonthlySummaryClient = any;
 
 // HELPER: Sincroniza a tabela de Alta Performance (O(1) Rollup)
 async function updateMonthlySummary(userId: string, date: Date, type: "INCOME" | "EXPENSE", amount: number, paymentMethod: string | null | undefined, isDelete = false) {
-    const month = date.getMonth() + 1; // 1 to 12
-    const year = date.getFullYear();
+    const month = date.getUTCMonth() + 1; // 1 to 12
+    const year = date.getUTCFullYear();
 
     const signal = isDelete ? -1 : 1;
     const value = amount * signal;
@@ -31,7 +31,7 @@ async function updateMonthlySummary(userId: string, date: Date, type: "INCOME" |
     const expenseDelta = type === "EXPENSE" ? value : 0;
     const creditDelta = (type === "EXPENSE" && paymentMethod === "CREDIT") ? value : 0;
 
-    await prisma.monthlySummary.upsert({
+    await (prisma as any).monthlySummary.upsert({
         where: {
             userId_month_year: { userId, month, year }
         },
@@ -58,17 +58,18 @@ export async function createTransaction(data: TransactionInput) {
             description, amount, type, date, categoryId, recurrence, installments, paymentMethod
         } = data;
 
-        const baseDate = new Date(date);
-        const originalDay = baseDate.getDate();
+        // Ancorar a data ao Meio-Dia UTC (12h) para imune a qualquer fuso horário mundial (-11 a +12)
+        const dateStringSafe = date.includes("T") ? date.split("T")[0] : date;
+        const baseDate = new Date(`${dateStringSafe}T12:00:00.000Z`);
+        const originalDay = baseDate.getUTCDate();
 
-        // Advance month preserving end-of-month logic:
-        // If original day is 31 but target month has 30 days, use day 30, etc.
+        // Advance month preserving end-of-month logic UTC safe
         function advanceMonth(base: Date, months: number): Date {
-            const d = new Date(base);
-            const targetMonth = d.getMonth() + months;
-            d.setMonth(targetMonth, 1); // go to day 1 of target month
-            const lastDayOfMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
-            d.setDate(Math.min(originalDay, lastDayOfMonth));
+            const d = new Date(base.getTime());
+            const targetMonth = d.getUTCMonth() + months;
+            d.setUTCMonth(targetMonth, 1);
+            const lastDayOfMonth = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
+            d.setUTCDate(Math.min(originalDay, lastDayOfMonth));
             return d;
         }
 

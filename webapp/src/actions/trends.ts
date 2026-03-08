@@ -100,7 +100,7 @@ export async function getTrendData(month: number, year: number, type: Transactio
 
         // Popular ocorrências diárias (Mês Atual)
         currentTxs.forEach(tx => {
-            const dayIdx = tx.date.getDate() - 1;
+            const dayIdx = tx.date.getUTCDate() - 1;
             const absAmount = Math.abs(tx.amount);
             if (type === "EXPENSE") dailyData[dayIdx].currentMonthExpense += absAmount;
             if (type === "INCOME") dailyData[dayIdx].currentMonthIncome += absAmount;
@@ -108,7 +108,7 @@ export async function getTrendData(month: number, year: number, type: Transactio
 
         // Popular ocorrências diárias (Mês Passado)
         lastTxs.forEach(tx => {
-            const dayIdx = tx.date.getDate() - 1;
+            const dayIdx = tx.date.getUTCDate() - 1;
             const absAmount = Math.abs(tx.amount);
             if (type === "EXPENSE") dailyData[dayIdx].lastMonthExpense += absAmount;
             if (type === "INCOME") dailyData[dayIdx].lastMonthIncome += absAmount;
