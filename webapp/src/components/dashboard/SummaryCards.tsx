@@ -115,39 +115,39 @@ export default function SummaryCards() {
                         </div>
                     </div>
                     {loading ? (
-                        <div className="h-8 w-24 bg-white/5 rounded-lg animate-pulse" />
+                        <div className="h-8 w-24 bg-white/5 rounded-lg animate-pulse mb-6" />
                     ) : (
-                        <h3 className="text-xl md:text-2xl font-bold tracking-tight text-white animate-in fade-in duration-500">
-                            {isPrivacyMode ? "R$ ••••" : formatCurrency(summary.expenses)}
-                        </h3>
+                        <div className="flex flex-col gap-3">
+                            <h3 className="text-xl md:text-2xl font-bold tracking-tight text-white animate-in fade-in duration-500">
+                                {isPrivacyMode ? "R$ ••••" : formatCurrency(summary.expenses)}
+                            </h3>
+
+                            {/* Breakdown Debit/Credit */}
+                            <div className="flex flex-col gap-1.5">
+                                <div className="flex items-center justify-between text-xs bg-white/5 rounded-md px-2 py-1">
+                                    <div className="flex items-center gap-1.5 text-(--color-text-muted)">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                                        <span className="text-[10px] uppercase font-bold">Débito</span>
+                                    </div>
+                                    <span className="text-xs font-medium text-white">
+                                        {isPrivacyMode ? "••••" : formatCurrency(summary.expenses - summary.creditUsed)}
+                                    </span>
+                                </div>
+                                <div className="flex items-center justify-between text-xs bg-purple-500/10 rounded-md px-2 py-1">
+                                    <div className="flex items-center gap-1.5 text-purple-300">
+                                        <CreditCard className="w-2.5 h-2.5" />
+                                        <span className="text-[10px] uppercase font-bold">Crédito</span>
+                                    </div>
+                                    <span className="text-xs font-medium text-purple-200">
+                                        {isPrivacyMode ? "••••" : formatCurrency(summary.creditUsed)}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                     )}
                     <div
                         className="absolute -bottom-12 -right-12 w-32 h-32 rounded-full opacity-0 group-hover:opacity-50 transition-opacity duration-[800ms] pointer-events-none"
                         style={{ background: "radial-gradient(circle, rgba(239,68,68,0.1) 0%, transparent 70%)" }}
-                    />
-                </motion.div>
-                <motion.div
-                    variants={item}
-                    whileHover={{ y: -3 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                    className="glass-panel p-5 flex flex-col relative group cursor-default hover:border-purple-500/20 col-span-2 md:col-span-1"
-                >
-                    <div className="flex items-center justify-between mb-3">
-                        <span className="text-xs font-medium text-(--color-text-muted) uppercase tracking-wider">Crédito Utilizado</span>
-                        <div className="p-1.5 rounded-lg bg-purple-500/10">
-                            <CreditCard className="w-4 h-4 text-purple-400" />
-                        </div>
-                    </div>
-                    {loading ? (
-                        <div className="h-8 w-24 bg-white/5 rounded-lg animate-pulse" />
-                    ) : (
-                        <h3 className="text-xl md:text-2xl font-bold tracking-tight text-white animate-in fade-in duration-500">
-                            {isPrivacyMode ? "R$ ••••" : formatCurrency(summary.creditUsed)}
-                        </h3>
-                    )}
-                    <div
-                        className="absolute -bottom-12 -right-12 w-32 h-32 rounded-full opacity-0 group-hover:opacity-50 transition-opacity duration-[800ms] pointer-events-none"
-                        style={{ background: "radial-gradient(circle, rgba(168,85,247,0.1) 0%, transparent 70%)" }}
                     />
                 </motion.div>
             </div>
