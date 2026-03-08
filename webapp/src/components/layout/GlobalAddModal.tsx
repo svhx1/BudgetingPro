@@ -13,6 +13,7 @@ export default function GlobalAddModal() {
     const [type, setType] = useState<"EXPENSE" | "INCOME">("EXPENSE");
     const [recurrence, setRecurrence] = useState<"unico" | "parcelado" | "fixo">("unico");
     const [installments, setInstallments] = useState<number>(2);
+    const [installmentMode, setInstallmentMode] = useState<"TOTAL" | "PARCELA">("TOTAL");
     const [amount, setAmount] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [date, setDate] = useState<string>(new Date().toISOString().split("T")[0]);
@@ -75,8 +76,12 @@ export default function GlobalAddModal() {
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
-        const numericAmount = Number(amount) / 100;
+        let numericAmount = Number(amount) / 100;
         if (!amount || numericAmount <= 0) return addToast("Insira um valor numérico válido.", "error");
+
+        if (recurrence === "parcelado" && installmentMode === "PARCELA") {
+            numericAmount = numericAmount * installments;
+        }
 
         setLoading(true);
 
@@ -343,20 +348,57 @@ export default function GlobalAddModal() {
                                         <motion.div
                                             initial={{ height: 0, opacity: 0 }}
                                             animate={{ height: "auto", opacity: 1 }}
-                                            className="flex items-center justify-between p-4 bg-(--color-text-main)/5 rounded-xl border border-(--color-text-main)/10 mt-2"
+                                            className="flex flex-col gap-4 p-4 bg-(--color-text-main)/5 rounded-xl border border-(--color-text-main)/10 mt-2"
                                         >
-                                            <span className="text-sm font-medium text-(--color-text-muted)">Em quantas parcelas?</span>
-                                            <div className="flex items-center gap-2">
-                                                <input
-                                                    type="number"
-                                                    min="2"
-                                                    max="999"
-                                                    value={installments}
-                                                    onChange={(e) => setInstallments(Number(e.target.value))}
-                                                    onFocus={(e) => e.target.select()}
-                                                    className="w-20 bg-(--color-text-main)/5 hover:bg-(--color-text-main)/10 border border-(--color-text-main)/10 rounded-lg py-2 px-3 text-center text-lg font-bold text-(--color-text-main) outline-none focus:border-(--color-text-main)/30 transition-all appearance-none"
-                                                />
-                                                <span className="font-bold text-(--color-text-muted)">vezes</span>
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm font-medium text-(--color-text-muted)">Em quantas vezes?</span>
+                                                <div className="flex items-center gap-2">
+                                                    <input
+                                                        type="number"
+                                                        min="2"
+                                                        max="999"
+                                                        value={installments}
+                                                        onChange={(e) => setInstallments(Number(e.target.value))}
+                                                        onFocus={(e) => e.target.select()}
+                                                        className="w-20 bg-(--color-text-main)/5 hover:bg-(--color-text-main)/10 border border-(--color-text-main)/10 rounded-lg py-2 px-3 text-center text-lg font-bold text-(--color-text-main) outline-none focus:border-(--color-text-main)/30 transition-all appearance-none"
+                                                    />
+                                                    <span className="font-bold text-(--color-text-muted)">vezes</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Toggle Total vs Parcela */}
+                                            <div className="flex flex-col gap-2 pt-3 border-t border-(--color-text-main)/10">
+                                                <span className="text-xs font-semibold text-(--color-text-muted) uppercase">O valor digitado lá em cima é:</span>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setInstallmentMode("TOTAL")}
+                                                        className={`py-2 px-3 rounded-lg text-sm font-semibold transition-all border ${installmentMode === "TOTAL"
+                                                            ? "bg-(--color-text-main)/10 border-(--color-text-main)/30 text-(--color-text-main)"
+                                                            : "bg-transparent border-transparent text-(--color-text-muted) hover:bg-(--color-text-main)/5"
+                                                            }`}
+                                                    >
+                                                        O Total da Compra
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setInstallmentMode("PARCELA")}
+                                                        className={`py-2 px-3 rounded-lg text-sm font-semibold transition-all border ${installmentMode === "PARCELA"
+                                                            ? "bg-(--color-text-main)/10 border-(--color-text-main)/30 text-(--color-text-main)"
+                                                            : "bg-transparent border-transparent text-(--color-text-muted) hover:bg-(--color-text-main)/5"
+                                                            }`}
+                                                    >
+                                                        O Valor de 1 Parcela
+                                                    </button>
+                                                </div>
+                                                {amount && Number(amount) > 0 && (
+                                                    <p className="text-[11px] text-(--color-text-muted) text-center mt-2 bg-(--color-text-main)/5 py-1.5 px-2 rounded-md font-medium">
+                                                        {installmentMode === "TOTAL"
+                                                            ? `Irá gerar ${installments}x parcelas de ${((Number(amount) / 100) / installments).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}.`
+                                                            : `Irá gerar R$ ${((Number(amount) / 100) * installments).toLocaleString("pt-BR", { minimumFractionDigits: 2 })} no Banco de Dados em ${installments}x.`
+                                                        }
+                                                    </p>
+                                                )}
                                             </div>
                                         </motion.div>
                                     )}
