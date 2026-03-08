@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { motion, Variants } from "framer-motion";
-import { ArrowDownRight, ArrowUpRight, DollarSign, CreditCard } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, DollarSign, CreditCard, X, Coffee, Layers } from "lucide-react";
 import { useGlobal } from "@/contexts/GlobalContext";
 import { getDashboardSummary } from "@/actions/dashboard";
 import { useCachedData } from "@/hooks/useCachedData";
+import { AnimatePresence } from "framer-motion";
 
 export default function SummaryCards() {
     const { isPrivacyMode, currentPeriod, refreshTrigger } = useGlobal();
@@ -23,6 +24,7 @@ export default function SummaryCards() {
                         balance: response.data.balance,
                         creditUsed: response.data.creditUsed || 0,
                         monthBalance: response.data.monthBalance || 0,
+                        transactions: response.data.transactions || [],
                     }
                 };
             }
@@ -31,10 +33,20 @@ export default function SummaryCards() {
         [currentPeriod.month, currentPeriod.year, refreshTrigger]
     );
 
-    const summary = summaryData || { incomes: 0, expenses: 0, balance: 0, creditUsed: 0, monthBalance: 0 };
+    const summary = summaryData || { incomes: 0, expenses: 0, balance: 0, creditUsed: 0, monthBalance: 0, transactions: [] };
+    const transactions = summaryData?.transactions || [];
+
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalType, setModalType] = useState<"INCOME" | "EXPENSE">("INCOME");
 
     const formatCurrency = (value: number) => {
         return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+    };
+
+    const handleOpenModal = (type: "INCOME" | "EXPENSE") => {
+        if (!transactions.length) return;
+        setModalType(type);
+        setModalOpen(true);
     };
 
     const container: Variants = {
@@ -82,7 +94,8 @@ export default function SummaryCards() {
                 variants={item}
                 whileHover={{ y: -3 }}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                className="glass-panel p-6 flex flex-col relative group cursor-default hover:border-emerald-500/20 h-full justify-center"
+                onClick={() => handleOpenModal("INCOME")}
+                className="glass-panel p-6 flex flex-col relative group cursor-pointer hover:border-emerald-500/20 h-full justify-center"
             >
                 <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-bold text-(--color-text-muted) uppercase tracking-wider">Entradas</span>
@@ -104,7 +117,8 @@ export default function SummaryCards() {
                 variants={item}
                 whileHover={{ y: -3 }}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                className="glass-panel p-6 flex flex-col relative group cursor-default hover:border-red-500/20 h-full justify-center"
+                onClick={() => handleOpenModal("EXPENSE")}
+                className="glass-panel p-6 flex flex-col relative group cursor-pointer hover:border-red-500/20 h-full justify-center"
             >
                 <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-bold text-(--color-text-muted) uppercase tracking-wider">Saídas</span>
@@ -128,6 +142,75 @@ export default function SummaryCards() {
                     </div>
                 )}
             </motion.div>
+
+            {/* Modal de Transações (Interatividade no Dashboard) */}
+            <AnimatePresence>
+                {modalOpen && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm"
+                            onClick={() => setModalOpen(false)}
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                            className="fixed z-[70] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md bg-[var(--color-base-bg)] border border-[var(--color-text-main)]/10 rounded-3xl p-6 shadow-2xl flex flex-col max-h-[80vh]"
+                        >
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-xl font-bold flex items-center gap-2 text-(--color-text-main)">
+                                    {modalType === "INCOME" ? (
+                                        <><ArrowUpRight className="w-5 h-5 text-emerald-400" /> Entradas do Mês</>
+                                    ) : (
+                                        <><ArrowDownRight className="w-5 h-5 text-red-400" /> Saídas do Mês</>
+                                    )}
+                                </h3>
+                                <button onClick={() => setModalOpen(false)} className="p-2 rounded-xl hover:bg-(--color-text-main)/5 text-(--color-text-muted) transition-colors">
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+
+                            <div className="flex-1 overflow-y-auto pr-2 flex flex-col gap-3">
+                                {transactions.filter((tx: any) => tx.type === modalType).length === 0 ? (
+                                    <div className="py-10 flex flex-col items-center justify-center text-center opacity-60">
+                                        <Coffee className="w-12 h-12 mb-3 text-(--color-text-muted)" />
+                                        <p className="text-sm">Nenhum lançamento fechado deste mês consta aqui ainda.</p>
+                                    </div>
+                                ) : (
+                                    transactions.filter((tx: any) => tx.type === modalType).map((tx: any) => (
+                                        <div key={tx.id} className="p-4 rounded-2xl bg-(--color-text-main)/5 border border-(--color-text-main)/5 flex flex-col gap-2">
+                                            <div className="flex justify-between items-start gap-2">
+                                                <span className="font-semibold text-(--color-text-main) break-words text-sm">{tx.description || "Sem descrição"}</span>
+                                                <span className={`font-bold shrink-0 text-right ${modalType === "INCOME" ? "text-emerald-400" : "text-red-400"}`}>
+                                                    {isPrivacyMode ? "R$ ••••" : `${modalType === "INCOME" ? '+' : '-'} R$ ${Math.abs(tx.amount).toFixed(2).replace('.', ',')}`}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center gap-2 text-xs text-(--color-text-muted)">
+                                                <span>{new Date(tx.date).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}</span>
+                                                <span>•</span>
+                                                <span className="px-2 py-0.5 rounded-md bg-(--color-text-main)/5 border border-(--color-text-main)/10">
+                                                    {tx.category?.name || "Sem Categ"}
+                                                </span>
+                                                {tx.installment && (
+                                                    <span className="flex items-center gap-1 font-bold">
+                                                        <Layers className="w-3 h-3" /> {tx.installment}
+                                                    </span>
+                                                )}
+                                                {tx.paymentMethod === "CREDIT" && (
+                                                    <span className="text-fuchsia-500 font-bold uppercase tracking-wider text-[10px]">Crédito</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </motion.div>
     );
 }
