@@ -45,7 +45,7 @@ export default function Sidebar() {
     return (
         <>
             {/* Desktop Sidebar */}
-            <aside className="fixed top-0 left-0 hidden md:flex flex-col w-64 h-screen p-6 border-r z-10" style={{ backgroundColor: "var(--color-base-bg)", borderColor: "var(--color-glass-border)", backdropFilter: "blur(20px)" }}>
+            <aside className="fixed top-4 bottom-4 left-4 hidden md:flex flex-col w-64 h-[calc(100vh-2rem)] rounded-2xl p-6 border-r z-10 glass-panel overflow-hidden shadow-2xl">
                 {/* Logo */}
                 <div className="flex items-center gap-3 mb-10">
                     <div className="p-2 bg-(--color-neon-green)/10 rounded-xl">

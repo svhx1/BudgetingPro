@@ -65,7 +65,7 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
     });
 
     // Theme state
-    const [currentThemeId, setCurrentThemeId] = useState("midnight");
+    const [currentThemeId, setCurrentThemeId] = useState("ocean");
     const [customTheme, setCustomThemeState] = useState<CustomTheme>(DEFAULT_CUSTOM_THEME);
 
     // Decoration state
