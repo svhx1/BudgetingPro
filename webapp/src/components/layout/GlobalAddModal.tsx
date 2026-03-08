@@ -147,9 +147,9 @@ export default function GlobalAddModal() {
                             {/* Header with type indicator */}
                             <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center gap-3">
-                                    <div className={`p-2 rounded-xl ${isExpense ? "bg-red-500/10" : "bg-emerald-500/10"}`}>
+                                    <div className={`p-2 rounded-xl ${isExpense ? "bg-rose-500/10" : "bg-emerald-500/10"}`}>
                                         {isExpense
-                                            ? <PlusCircle className="w-5 h-5 text-red-400" />
+                                            ? <PlusCircle className="w-5 h-5 text-rose-400" />
                                             : <PlusCircle className="w-5 h-5 text-emerald-400" />
                                         }
                                     </div>
@@ -176,7 +176,7 @@ export default function GlobalAddModal() {
                                 <div className="flex flex-col gap-2">
                                     <label className="text-sm font-medium text-(--color-text-muted) uppercase tracking-wider">Valor Monetário</label>
                                     <div className="relative flex items-center">
-                                        <span className={`absolute left-4 text-xl font-bold ${isExpense ? "text-red-400" : "text-emerald-400"}`}>
+                                        <span className={`absolute left-4 text-xl font-bold ${isExpense ? "text-rose-400" : "text-emerald-400"}`}>
                                             R$
                                         </span>
                                         <input
@@ -211,7 +211,7 @@ export default function GlobalAddModal() {
                                                 type="button"
                                                 onClick={() => setPaymentMethod("CREDIT")}
                                                 className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 transition-all duration-200 ${paymentMethod === "CREDIT"
-                                                    ? "bg-purple-500/15 border-purple-500/30 text-purple-300"
+                                                    ? "bg-(--color-text-main)/10 border-(--color-text-main)/30 text-(--color-text-main)"
                                                     : "bg-transparent border-(--color-text-main)/10 text-(--color-text-muted) hover:bg-(--color-text-main)/5"
                                                     }`}
                                             >
@@ -227,7 +227,6 @@ export default function GlobalAddModal() {
                                     <div className="flex flex-col gap-2">
                                         <label className="text-sm font-medium text-(--color-text-muted) uppercase tracking-wider flex justify-between">
                                             <span>Descrição</span>
-                                            <span className="text-[10px] text-orange-400 capitalize bg-orange-500/10 px-2 py-0.5 rounded-md">Opcional</span>
                                         </label>
                                         <input
                                             type="text"
@@ -419,9 +418,9 @@ export default function GlobalAddModal() {
                                 {/* Submit Button */}
                                 <button
                                     type="submit"
-                                    className={`w-full py-4 mt-4 rounded-xl font-bold text-(--color-text-main) shadow-lg transition-all duration-300 hover:scale-[1.02] active:scale-95 ${isExpense
-                                        ? "bg-red-500 hover:bg-red-400 shadow-red-500/25"
-                                        : "bg-emerald-500 hover:bg-emerald-400 shadow-emerald-500/25"
+                                    className={`w-full py-4 mt-4 rounded-xl font-bold transition-all duration-300 hover:scale-[1.02] active:scale-95 ${isExpense
+                                        ? "bg-rose-500/90 hover:bg-rose-400 text-white"
+                                        : "bg-emerald-500/90 hover:bg-emerald-400 text-white"
                                         }`}
                                 >
                                     Salvar {isExpense ? "Saída" : "Entrada"}
